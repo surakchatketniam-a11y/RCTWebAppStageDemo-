@@ -35,11 +35,19 @@ import {
   Edit3,
   X,
   FileSignature,
-  Save
+  Save,
+  Home,
+  ChevronRight,
+  Layers,
+  AlertTriangle,
+  Zap,
+  TrendingUp,
+  ShieldAlert
 } from "lucide-react";
 
 // Flow Step Types
 export type FlowStep = 
+  | "landing"           // 🏠 หน้าแรก: Hero Header + แผนพัฒนา ๓ เฟส + CTA
   | "branch_intake"     // 1. เคาน์เตอร์ สส. (รับคำขอ / เสียบบัตร)
   | "central_search"    // 2. ส่วนคัดแบบ (ค้นภาพ/สแกนกระดาษ & อัปโหลด & สร้าง QR)
   | "branch_payment"    // 3. เคาน์เตอร์ สส. (ประชาชนสแกน QR จ่ายเงิน)
@@ -214,8 +222,8 @@ export const WATERMARK_PRESETS: WatermarkPreset[] = [
 ];
 
 export default function RCTDemoApp() {
-  // Active Flow Step (Defaults to Step 1: เคาน์เตอร์ สส.)
-  const [currentStep, setCurrentStep] = useState<FlowStep>("branch_intake");
+  // Active Flow Step (Defaults to Landing Page: Hero Header + แผน ๓ เฟส)
+  const [currentStep, setCurrentStep] = useState<FlowStep>("landing");
   
   // Smart Card & Request Form States (Step 1)
   const [cardInserted, setCardInserted] = useState<boolean>(false);
@@ -325,7 +333,7 @@ export default function RCTDemoApp() {
 
   // Reset Demo
   const handleResetDemo = () => {
-    setCurrentStep("branch_intake");
+    setCurrentStep("landing");
     setCardInserted(false);
     setRequestSubmitted(false);
     setShowRequestModal(false);
@@ -339,7 +347,7 @@ export default function RCTDemoApp() {
     setPrintedCopies(0);
     setShowDocumentModal(false);
     setShowGuideModal(false);
-    showToast("🔄 รีเซ็ตข้อมูลการสาธิตกลับสู่จุดเริ่มต้น (ขั้นตอนที่ ๑: เคาน์เตอร์ สส.) เรียบร้อย");
+    showToast("🔄 รีเซ็ตข้อมูลการสาธิตกลับสู่หน้าแรก (Hero & แผนงาน ๓ เฟส) เรียบร้อย");
   };
 
   return (
@@ -358,13 +366,17 @@ export default function RCTDemoApp() {
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           
           {/* Logo & System Identity */}
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-md border border-blue-400/50">
+          <div 
+            onClick={() => setCurrentStep("landing")}
+            className="flex items-center gap-3.5 cursor-pointer group"
+            title="คลิกเพื่อกลับสู่หน้าแรก & แผนยุทธศาสตร์ ๓ เฟส"
+          >
+            <div className="w-12 h-12 rounded-xl bg-blue-600 group-hover:bg-blue-500 flex items-center justify-center shadow-md border border-blue-400/50 transition">
               <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="font-extrabold text-lg tracking-wide">RCT PLATFORM</span>
+                <span className="font-extrabold text-lg tracking-wide group-hover:text-blue-300 transition">RCT PLATFORM</span>
                 <span className="bg-amber-400 text-slate-950 text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">
                   STAGE DEMO
                 </span>
@@ -378,6 +390,23 @@ export default function RCTDemoApp() {
 
           {/* Quick Stage Controls */}
           <div className="flex items-center gap-3">
+            {currentStep === "landing" ? (
+              <button
+                onClick={() => setCurrentStep("branch_intake")}
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-sm font-bold rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer"
+              >
+                <span>เข้าสู่ระบบ Demo ➔</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setCurrentStep("landing")}
+                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium rounded-xl border border-slate-700 flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <Home className="w-4 h-4 text-amber-400" />
+                <span>หน้าแรก & แผน ๓ เฟส</span>
+              </button>
+            )}
+
             <button
               onClick={() => setShowGuideModal(true)}
               className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer"
@@ -399,11 +428,28 @@ export default function RCTDemoApp() {
         </div>
       </header>
 
-      {/* STEP PROGRESS BAR / FLOW CONTROLLER (6 Clear Operational Steps) */}
+      {/* STEP PROGRESS BAR / FLOW CONTROLLER (Home + 6 Clear Operational Steps) */}
       <div className="bg-white border-b border-slate-200 px-6 py-2.5 shadow-sm sticky top-[66px] z-30">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center">
             
+            {/* Tab: หน้าแรก & แผน ๓ เฟส */}
+            <button
+              onClick={() => setCurrentStep("landing")}
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-xl transition font-medium border cursor-pointer ${
+                currentStep === "landing"
+                  ? "bg-amber-50 border-amber-500 text-amber-950 shadow-sm ring-2 ring-amber-500/20 font-bold"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
+                currentStep === "landing" ? "bg-amber-500 text-slate-950 shadow-sm" : "bg-slate-200 text-slate-700"
+              }`}>
+                <Home className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-xs font-bold truncate">หน้าแรก & แผน ๓ เฟส</span>
+            </button>
+
             {/* Step 1: สส. รับคำขอ */}
             <button
               onClick={() => setCurrentStep("branch_intake")}
@@ -518,7 +564,704 @@ export default function RCTDemoApp() {
       </div>
 
       {/* MAIN VIEW CONTAINER */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
+
+        {/* ========================================================================= */}
+        {/* LANDING PAGE: Hero Header + CTA + 4 Feature Cards + 3-Phase Roadmap Table */}
+        {/* ========================================================================= */}
+        {currentStep === "landing" && (
+          <div className="space-y-10 animate-fadeIn">
+
+            {/* 1. HERO HEADER SECTION (Matching Reference Image Layout) */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1E33] via-[#102D4F] to-[#1A3D69] text-white p-8 md:p-12 shadow-2xl border border-blue-500/20">
+              {/* Background ambient glows */}
+              <div className="absolute top-0 right-0 -mt-16 -mr-16 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-1/3 -mb-16 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                
+                {/* Left Column: Text & Call-To-Actions */}
+                <div className="lg:col-span-7 space-y-6">
+                  
+                  {/* Pill Badge */}
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-200 text-xs font-bold tracking-wide backdrop-blur-md">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>RCT PLATFORM • สรรพากรพื้นที่พิจิตร กรมสรรพากร</span>
+                  </div>
+
+                  {/* Main Headline */}
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.15]">
+                    สร้างระบบบริการคัดแบบภาษี <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-yellow-400">
+                      ที่พร้อมใช้งานจริง
+                    </span>{" "}
+                    <span className="text-blue-300 text-2xl sm:text-3xl md:text-4xl font-extrabold block sm:inline">
+                      (RCT WebApp)
+                    </span>
+                  </h1>
+
+                  {/* Subtitle */}
+                  <p className="text-base sm:text-lg text-blue-100/90 leading-relaxed font-normal">
+                    ยกระดับความสะดวกให้ประชาชน ประหยัดเวลาและค่าเดินทาง พร้อมทั้งเพิ่มความมั่นคงปลอดภัยของข้อมูลภาษี ปิดความเสี่ยง PDPA และควบคุมการพิมพ์สำเนา ๔ ชั้น ป้องกันการทำซ้ำ 100%
+                  </p>
+
+                  {/* Feature Pills */}
+                  <div className="flex flex-wrap gap-2.5 pt-1">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-900/60 border border-blue-600/50 text-xs font-semibold text-blue-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      ลดเวลาเหลือ ๓ - ๕ นาที
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-900/60 border border-blue-600/50 text-xs font-semibold text-blue-200">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      ห้ามดาวน์โหลด No Local Storage
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-900/60 border border-blue-600/50 text-xs font-semibold text-blue-200">
+                      <Lock className="w-3.5 h-3.5 text-amber-300" />
+                      Print Quota Lock ๑ สิทธิ์/คำขอ
+                    </span>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap items-center gap-4 pt-3">
+                    <button
+                      onClick={() => setCurrentStep("branch_intake")}
+                      className="px-7 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-base font-black rounded-2xl shadow-xl hover:shadow-amber-500/25 flex items-center gap-3 transition transform hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      <span>เข้าสู่ระบบ Demo</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      onClick={() => setShowGuideModal(true)}
+                      className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-base font-bold rounded-2xl border border-white/20 backdrop-blur-md flex items-center gap-2.5 transition cursor-pointer"
+                    >
+                      <Award className="w-5 h-5 text-amber-300" />
+                      <span>ดูบทพูดบนเวที</span>
+                    </button>
+
+                    <a
+                      href="#roadmap-section"
+                      className="text-sm font-semibold text-blue-300 hover:text-white underline underline-offset-4 flex items-center gap-1.5 transition ml-1"
+                    >
+                      <span>ดูแผนพัฒนา ๓ เฟส</span>
+                      <span>↓</span>
+                    </a>
+                  </div>
+
+                </div>
+
+                {/* Right Column: Live Mockup / Platform Dashboard Frame */}
+                <div className="lg:col-span-5">
+                  <div className="bg-slate-900/80 backdrop-blur-xl border border-blue-400/30 rounded-2xl shadow-2xl p-5 relative overflow-hidden group">
+                    {/* Window Controls Header */}
+                    <div className="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-4 text-xs text-slate-400">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-rose-500/80"></span>
+                        <span className="w-3 h-3 rounded-full bg-amber-500/80"></span>
+                        <span className="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                        <span className="ml-2 font-mono text-[11px] text-blue-300">rct-internal.rd.go.th/portal</span>
+                      </div>
+                      <span className="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full text-[10px] border border-emerald-500/30 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        LIVE READY
+                      </span>
+                    </div>
+
+                    {/* Dashboard Preview Cards inside Mockup */}
+                    <div className="space-y-3.5">
+                      <div className="bg-gradient-to-r from-blue-900/50 to-indigo-950/50 p-4 rounded-xl border border-blue-500/30">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-blue-200">สถานะระบบวันนี้</span>
+                          <span className="text-[11px] font-bold text-amber-300">สท.พิจิตร ⇄ สส.โพทะเล</span>
+                        </div>
+                        <div className="mt-2 flex items-baseline gap-2">
+                          <span className="text-3xl font-black text-white">3.8</span>
+                          <span className="text-xs text-blue-300">นาที เฉลี่ย/คำขอ (SLA &lt; 5 นาที)</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700">
+                          <div className="text-[11px] text-slate-400">ความปลอดภัย PDPA</div>
+                          <div className="text-lg font-black text-emerald-400 mt-1">100%</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">No Local Storage</div>
+                        </div>
+                        <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700">
+                          <div className="text-[11px] text-slate-400">ระบบคุมพิมพ์ 4 ชั้น</div>
+                          <div className="text-lg font-black text-amber-300 mt-1">Active</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">Print Quota Locked</div>
+                        </div>
+                      </div>
+
+                      {/* Mockup Quick Jump */}
+                      <button
+                        onClick={() => setCurrentStep("branch_intake")}
+                        className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Scan className="w-4 h-4" />
+                        <span>เริ่มการจำลองขั้นตอนที่ ๑: เคาน์เตอร์ สส. ➔</span>
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 2. FOUR FEATURE HIGHLIGHT CARDS (Matching Reference Image) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              
+              {/* Card 1: ปลอดภัย มั่นใจได้ */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
+                <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">ปลอดภัย มั่นใจได้ (PDPA)</h3>
+                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  ปิดความเสี่ยงข้อมูลภาษีรั่วไหล 100% ด้วยสถาปัตยกรรม No Local Storage เจ้าหน้าที่ไม่สามารถเซฟหรือดาวน์โหลดไฟล์ลงเครื่องคอมพิวเตอร์ส่วนตัวได้
+                </p>
+              </div>
+
+              {/* Card 2: ใช้งานง่าย รวดเร็ว */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
+                <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">ใช้งานง่าย รวดเร็ว (Smart Counter)</h3>
+                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  เสียบบัตร Smart Card ดึงข้อมูลกรอกคำร้องอัตโนมัติ ลดขั้นตอนการพิมพ์และขจัดความผิดพลาดในการสะกดชื่อ-สกุล ข้อมูลแม่นยำ 100%
+                </p>
+              </div>
+
+              {/* Card 3: ควบคุมการพิมพ์ ๔ ชั้น */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
+                <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <Lock className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">ควบคุมการพิมพ์ ๔ ชั้น</h3>
+                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  ปลดล็อกโควตา 1 ครั้งต่อคำขอ + ลายน้ำระบุปลายทางเฉพาะเจาะจง + e-Seal + QR Code ตรวจสอบย้อนหลัง ป้องกันการเวียนใช้ซ้ำ 100%
+                </p>
+              </div>
+
+              {/* Card 4: ดูแลต่อเนื่องและโปร่งใส */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
+                <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">โปร่งใส ตรวจสอบได้ (SLA)</h3>
+                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  มีระบบ Audit Log บันทึกทุกกิจกรรมและจำนวนครั้งที่พิมพ์ พร้อมแดชบอร์ด SLA แบบ Real-Time ให้ผู้บริหารกำกับดูแลได้ทันที
+                </p>
+              </div>
+
+            </div>
+
+            {/* 3. ROADMAP SECTION: แผนการพัฒนาระบบคัดแบบแสดงรายการภาษีอากร RCT (3 เฟส) */}
+            <div id="roadmap-section" className="space-y-6 pt-4">
+              
+              {/* Section Header */}
+              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1.5">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>ROADMAP STRATEGY • ยุทธศาสตร์การพัฒนานวัตกรรม</span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+                      แผนการพัฒนาระบบคัดแบบแสดงรายการภาษีอากร RCT
+                    </h2>
+                    <p className="text-sm font-semibold text-blue-700">
+                      (Request for Copy of Tax Return Platform)
+                    </p>
+                    <p className="text-sm text-slate-600 max-w-4xl leading-relaxed pt-1">
+                      ถูกวางกรอบการดำเนินงานออกเป็น 3 เฟส เพื่อยกระดับความสะดวกให้ประชาชน ประหยัดเวลาและค่าเดินทาง พร้อมทั้งเพิ่มความมั่นคงปลอดภัยของข้อมูลภาษี ดังนี้
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentStep("branch_intake")}
+                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow flex items-center gap-2 transition flex-shrink-0 cursor-pointer"
+                  >
+                    <span>ทดสอบระบบ Demo ➔</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 3.1 COMPARATIVE TABLE (ตารางเปรียบเทียบ ๓ เฟส) */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="p-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+                      📊
+                    </div>
+                    <h3 className="font-extrabold text-slate-900 text-base">
+                      ตารางเปรียบเทียบการดำเนินงาน ๓ เฟส (Comparative Matrix)
+                    </h3>
+                  </div>
+                  <span className="text-xs text-slate-500 font-medium">
+                    เลื่อนในแนวนอนเพื่อดูรายละเอียดครบทุกคอลัมน์ ➔
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                      <tr className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                        <th className="p-4 w-[18%] min-w-[160px] bg-slate-100 text-slate-900 font-extrabold">
+                          มิติการเปรียบเทียบ
+                        </th>
+                        
+                        {/* Col 1: Phase 1 */}
+                        <th className="p-4 w-[27%] min-w-[240px] bg-amber-50/70 border-l border-slate-200">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-black">๑</span>
+                            <span className="text-amber-950 font-black text-sm">เฟส 1: ระบบปัจจุบัน</span>
+                          </div>
+                          <div className="text-xs font-semibold text-amber-800 mt-1">LINE + เครื่อง EDC</div>
+                          <span className="inline-block mt-1.5 px-2 py-0.5 rounded bg-amber-200/80 text-amber-950 text-[11px] font-bold">
+                            Zero Budget (เครื่องมือเดิม)
+                          </span>
+                        </th>
+
+                        {/* Col 2: Phase 2 (Current Demo) */}
+                        <th className="p-4 w-[28%] min-w-[260px] bg-blue-50/90 border-l border-blue-200 ring-1 ring-blue-500/20">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-black">๒</span>
+                            <span className="text-blue-950 font-black text-sm">เฟส 2: เว็บแอปภายใน (RCT)</span>
+                          </div>
+                          <div className="text-xs font-semibold text-blue-800 mt-1">[ระบบใน Stage Demo นี้]</div>
+                          <span className="inline-block mt-1.5 px-2.5 py-0.5 rounded-full bg-blue-600 text-white text-[11px] font-black shadow-sm">
+                            🌟 ปลอดภัย & คุมพิมพ์ ๔ ชั้น
+                          </span>
+                        </th>
+
+                        {/* Col 3: Phase 3 */}
+                        <th className="p-4 w-[27%] min-w-[240px] bg-emerald-50/70 border-l border-slate-200">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black">๓</span>
+                            <span className="text-emerald-950 font-black text-sm">เฟส 3: ดิจิทัลเต็มรูปแบบ</span>
+                          </div>
+                          <div className="text-xs font-semibold text-emerald-800 mt-1">Citizen Self-Service</div>
+                          <span className="inline-block mt-1.5 px-2 py-0.5 rounded bg-emerald-200/80 text-emerald-950 text-[11px] font-bold">
+                            🚀 Paperless 100% (ThaID)
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-slate-200">
+                      
+                      {/* Row 1: วัตถุประสงค์ & แนวคิด */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          🎯 วัตถุประสงค์หลัก & แนวคิด
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-700">
+                          เน้นแก้ปัญหาความเดือดร้อนเร่งด่วนด้วยเครื่องมือที่มีอยู่เดิม (Zero Budget)
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 font-semibold text-blue-950">
+                          เน้นยกระดับความปลอดภัย ปิดความเสี่ยง PDPA และควบคุมการพิมพ์สำเนา
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 text-slate-700">
+                          เน้นความสะดวกสูงสุด ประชาชนขอคัดแบบออนไลน์ได้เองทุกที่ ทุกเวลา สู่ระบบ Paperless 100%
+                        </td>
+                      </tr>
+
+                      {/* Row 2: การทำงานหลัก */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          ⚙️ รูปแบบการทำงาน
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-700 leading-relaxed">
+                          เจ้าหน้าที่ สส. รับคำร้อง สแกนบัตรฯ แจ้งขอคัดแบบไปยังส่วนคัดแบบผ่านกลุ่ม LINE (ไม่มีส่งไฟล์ภาพกลับทาง LINE) ค้นหา/พิมพ์แบบดั้งเดิม แล้วส่งเอกสารกระดาษ
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 text-blue-950 leading-relaxed">
+                          ระบบเว็บแอปพลิเคชันภายใน เชื่อมโยง สส. (สาขา) และส่วนคัดแบบ (สป.) แบบเรียลไทม์ รับส่งไฟล์ผ่านระบบปิดที่ควบคุมเบ็ดเสร็จ
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 text-slate-700 leading-relaxed">
+                          ประชาชนดำเนินการด้วยตนเองผ่านมือถือ/คอมพิวเตอร์ จากที่บ้าน เชื่อมโยงฐานข้อมูลภาษีและส่งเอกสารดิจิทัลตรงสู่ปลายทาง
+                        </td>
+                      </tr>
+
+                      {/* Row 3: การยืนยันตัวตน */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          🪪 การยืนยันตัวตน
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-700">
+                          สแกนบัตรประชาชนกระดาษ / ถ่ายสำเนาบัตร
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 font-semibold text-blue-950">
+                          อ่านบัตรประชาชน Smart Card ณ เคาน์เตอร์ สส. (ดึงข้อมูลอัตโนมัติ)
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 font-semibold text-emerald-900">
+                          ยืนยันตัวตนระดับสากลผ่านแอปพลิเคชัน <strong>ThaID (IAL 2.3)</strong>
+                        </td>
+                      </tr>
+
+                      {/* Row 4: ความปลอดภัย & PDPA */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          🛡️ ความปลอดภัย & PDPA
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-rose-700">
+                          <span className="font-bold flex items-center gap-1">
+                            <AlertTriangle className="w-3.5 h-3.5 text-rose-500 inline" />
+                            เสี่ยงต่อข้อมูลส่วนบุคคล (PDPA)
+                          </span>
+                          มีโอกาสข้อมูลตกหล่น หรือส่งผ่านแอปพลิเคชันภายนอก
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 text-blue-950 font-semibold">
+                          <span className="text-emerald-700 font-bold flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5 inline" />
+                            ปลอดภัยตามมาตรฐาน PDPA 100%
+                          </span>
+                          ห้ามบันทึกลงเครื่อง (No Local Storage) และมีสิทธิ์การเข้าถึงชัดเจน
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 text-emerald-950">
+                          <span className="text-emerald-700 font-bold flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5 inline" />
+                            Digital e-Consent
+                          </span>
+                          ให้ความยินยอมเปิดเผยข้อมูลตามมาตรฐาน PDPA สากล
+                        </td>
+                      </tr>
+
+                      {/* Row 5: ควบคุมการพิมพ์ / ป้องกันทำซ้ำ */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          🖨️ ระบบควบคุมการพิมพ์
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-600">
+                          ไม่มีระบบควบคุม อาจเกิดการทำซ้ำโดยไม่สามารถตรวจสอบย้อนหลังได้
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 text-blue-950">
+                          <div className="font-bold text-blue-900">ควบคุม ๔ ชั้น (Anti-Duplication):</div>
+                          <ul className="mt-1 space-y-0.5 text-xs text-blue-900 list-disc list-inside">
+                            <li>1. ห้ามเซฟไฟล์ลงเครื่อง (No Local Storage)</li>
+                            <li>2. Print Quota Lock (พิมพ์ได้ 1 ครั้ง/คำขอ)</li>
+                            <li>3. ลายน้ำระบุผู้รับ &amp; วัตถุประสงค์เจาะจง</li>
+                            <li>4. QR Code ตรวจสอบความถูกต้อง (e-Verification)</li>
+                          </ul>
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 text-emerald-950">
+                          <strong>สู่ Paperless 100%:</strong> ไม่ต้องพิมพ์กระดาษ ส่งสำเนาแบบลง Digital Signature/e-Seal ตรงสู่ปลายทาง หรือส่ง Digital Token
+                        </td>
+                      </tr>
+
+                      {/* Row 6: การชำระเงิน */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          💳 การชำระค่าธรรมเนียม
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-700">
+                          ชำระผ่านเครื่อง EDC ณ เคาน์เตอร์ สส.
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 font-semibold text-blue-950">
+                          Thai QR Payment บนหน้าจอเคาน์เตอร์ สส. ตัดรับเงินและออก e-Receipt อัตโนมัติ
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 font-semibold text-emerald-900">
+                          e-Payment (PromptPay / Mobile Banking) ผ่านระบบอิเล็กทรอนิกส์
+                        </td>
+                      </tr>
+
+                      {/* Row 7: ระยะเวลา SLA */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          ⏱️ ระยะเวลาให้บริการ (SLA)
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-700">
+                          1 - 2 ชั่วโมง หรือข้ามวัน (หากต้องเดินทางส่งเอกสารกระดาษ)
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 font-bold text-blue-900">
+                          ⚡ 3 - 5 นาที (ได้รับเอกสารทันที ณ สส. ใกล้บ้าน)
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 font-bold text-emerald-800">
+                          ⚡ ทันที (Real-Time Instant ในไม่กี่วินาที)
+                        </td>
+                      </tr>
+
+                      {/* Row 8: ความสะดวกของประชาชน */}
+                      <tr className="hover:bg-slate-50/80 transition">
+                        <td className="p-4 font-bold text-slate-900 bg-slate-50/50">
+                          🚶 การเดินทางของประชาชน
+                        </td>
+                        <td className="p-4 bg-amber-50/30 border-l border-slate-200 text-slate-700">
+                          ต้องเดินทางมาที่ สส. สาขา และรอนาน
+                        </td>
+                        <td className="p-4 bg-blue-50/40 border-l border-blue-200 font-semibold text-blue-950">
+                          เดินทางไปเพียง สส. สาขาใกล้บ้าน (ไม่ต้องเข้าเมือง/สท.)
+                        </td>
+                        <td className="p-4 bg-emerald-50/30 border-l border-slate-200 font-bold text-emerald-900">
+                          ไม่ต้องเดินทางมาที่ สส. เลยแม้แต่ก้าวเดียว (ทำจากที่บ้าน 100%)
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* 3.2 DETAILED PHASE CARDS (รายละเอียดแต่ละเฟสแบบเจาะลึก) */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* ---------------- PHASE 1 CARD ---------------- */}
+                <div className="bg-white rounded-2xl border border-amber-200/80 shadow-sm p-6 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-extrabold border border-amber-300">
+                        เฟส ๑ (ระบบปัจจุบัน)
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500">Zero Budget</span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-black text-slate-900">
+                        เฟส 1: ระบบปัจจุบัน (LINE + EDC)
+                      </h3>
+                      <p className="text-xs font-bold text-amber-800 mt-1">
+                        เน้นแก้ปัญหาความเดือดร้อนเร่งด่วนด้วยเครื่องมือที่มีอยู่เดิม (Zero Budget)
+                      </p>
+                    </div>
+
+                    <div className="space-y-2 text-xs text-slate-700 leading-relaxed border-t border-slate-100 pt-3">
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                        <FileText className="w-4 h-4 text-amber-600" />
+                        <span>การทำงาน:</span>
+                      </div>
+                      <p className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-700">
+                        เจ้าหน้าที่ สส. รับคำร้อง สแกนบัตรประชาชน และแจ้งขอคัดแบบไปยังส่วนคัดแบบผ่านกลุ่ม LINE โดยไม่มีการส่งไฟล์ภาพแบบกลับมาทาง LINE แต่ใช้ระบบค้นหา/พิมพ์แบบดั้งเดิม แล้วส่งเอกสารกระดาษ หรือให้ผู้เสียภาษีชำระค่าธรรมเนียมผ่านเครื่อง EDC
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs border-t border-slate-100 pt-3">
+                      <div className="font-bold text-rose-700 flex items-center gap-1.5">
+                        <AlertTriangle className="w-4 h-4 text-rose-500" />
+                        <span>ข้อจำกัด:</span>
+                      </div>
+                      <p className="bg-rose-50/70 p-3 rounded-xl border border-rose-200 text-rose-900 font-medium">
+                        เสี่ยงต่อความปลอดภัยของข้อมูลส่วนบุคคล (PDPA) มีโอกาสที่ข้อมูลจะตกหล่นหรือเกิดการทำซ้ำโดยไม่สามารถตรวจสอบย้อนหลังได้อย่างเป็นระบบ
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-5 border-t border-slate-100 mt-4 text-center">
+                    <span className="text-xs text-slate-400 font-medium">
+                      สถานะ: อยู่ระหว่างการยกระดับสู่เฟส ๒
+                    </span>
+                  </div>
+                </div>
+
+                {/* ---------------- PHASE 2 CARD (Current Demo) ---------------- */}
+                <div className="bg-gradient-to-b from-blue-50/80 via-white to-blue-50/40 rounded-2xl border-2 border-blue-500 shadow-md p-6 flex flex-col justify-between relative overflow-hidden ring-4 ring-blue-500/10">
+                  <div className="absolute top-0 right-0 bg-blue-600 text-white text-[11px] font-black px-3.5 py-1 rounded-bl-xl shadow-sm">
+                    🌟 ระบบใน Demo นี้
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-black shadow-sm">
+                        เฟส ๒ (ระบบปัจจุบันใน Demo)
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-black text-blue-950">
+                        เฟส 2: เว็บแอปภายในสำหรับเจ้าหน้าที่
+                      </h3>
+                      <p className="text-xs font-extrabold text-blue-700 mt-0.5">
+                        (RCT Internal WebApp)
+                      </p>
+                      <p className="text-xs font-bold text-slate-700 mt-1">
+                        เน้นยกระดับความปลอดภัย ปิดความเสี่ยง PDPA และควบคุมการพิมพ์สำเนา
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-slate-700 leading-relaxed border-t border-blue-100 pt-3">
+                      <div className="font-bold text-blue-900 flex items-center gap-1.5">
+                        <Building2 className="w-4 h-4 text-blue-600" />
+                        <span>การทำงาน:</span>
+                      </div>
+                      <p className="bg-white p-3 rounded-xl border border-blue-200 text-blue-950 font-medium">
+                        ระบบเว็บแอปพลิเคชันภายในที่เชื่อมโยงระหว่าง สส. (สาขา) และส่วนคัดแบบ (สป.)
+                      </p>
+                    </div>
+
+                    {/* 4-Tier Anti-Duplication Feature List */}
+                    <div className="space-y-2 text-xs border-t border-blue-100 pt-3">
+                      <div className="font-bold text-blue-950 flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span>จุดเด่นสำคัญ (ระบบควบคุมการพิมพ์ 4 ชั้น - Anti-Duplication):</span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="bg-white p-2.5 rounded-xl border border-blue-100 shadow-2xs">
+                          <span className="font-black text-blue-900 block">
+                            1. ห้ามดาวน์โหลด/บันทึกไฟล์ (No Local Storage)
+                          </span>
+                          <span className="text-slate-600 text-[11px] block mt-0.5">
+                            เจ้าหน้าที่ไม่สามารถ Save หรือ Download ไฟล์ PDF ต้นฉบับลงเครื่องคอมพิวเตอร์ส่วนตัวได้
+                          </span>
+                        </div>
+
+                        <div className="bg-white p-2.5 rounded-xl border border-blue-100 shadow-2xs">
+                          <span className="font-black text-blue-900 block">
+                            2. Print Quota Lock
+                          </span>
+                          <span className="text-slate-600 text-[11px] block mt-0.5">
+                            ปลดล็อกการพิมพ์ได้ 1 ครั้ง ต่อ 1 คำขอเท่านั้น โดยระบบจะนับถอยหลังและตัดสิทธิ์การพิมพ์ทันทีเมื่อพิมพ์สำเร็จ
+                          </span>
+                        </div>
+
+                        <div className="bg-white p-2.5 rounded-xl border border-blue-100 shadow-2xs">
+                          <span className="font-black text-blue-900 block">
+                            3. ลายน้ำระบุผู้รับและวัตถุประสงค์ (Dynamic Tailored Watermark)
+                          </span>
+                          <span className="text-slate-600 text-[11px] block mt-0.5">
+                            พิมพ์ลายน้ำลงบนเอกสารระบุชื่อหน่วยงานปลายทาง วัตถุประสงค์ และวันหมดอายุชัดเจน ป้องกันการนำไปเวียนใช้ซ้ำ
+                          </span>
+                        </div>
+
+                        <div className="bg-white p-2.5 rounded-xl border border-blue-100 shadow-2xs">
+                          <span className="font-black text-blue-900 block">
+                            4. QR Code ตรวจสอบความถูกต้อง (e-Verification)
+                          </span>
+                          <span className="text-slate-600 text-[11px] block mt-0.5">
+                            สแกนตรวจสอบความถูกต้องและเช็กจำนวนครั้งที่เคยพิมพ์ได้ทันที
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs border-t border-blue-100 pt-3">
+                      <div className="font-bold text-emerald-800 flex items-center gap-1.5">
+                        <TrendingUp className="w-4 h-4 text-emerald-600" />
+                        <span>ผลลัพธ์:</span>
+                      </div>
+                      <p className="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-950 font-bold leading-relaxed">
+                        ลดระยะเวลาการให้บริการลงเหลือ 3-5 นาที, มี Audit Log บันทึกทุกกิจกรรม และประหยัดงบประมาณในการเดินทาง/จัดส่งเอกสาร
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-5 border-t border-blue-200 mt-4">
+                    <button
+                      onClick={() => setCurrentStep("branch_intake")}
+                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>▶ ทดสอบการทำงาน เฟส ๒ (เข้าสู่ Demo)</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* ---------------- PHASE 3 CARD ---------------- */}
+                <div className="bg-white rounded-2xl border border-emerald-200/80 shadow-sm p-6 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-extrabold border border-emerald-300">
+                        เฟส ๓ (เป้าหมายอนาคต)
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500">Paperless 100%</span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-black text-slate-900">
+                        เฟส 3: บริการประชาชนดิจิทัลเต็มรูปแบบ
+                      </h3>
+                      <p className="text-xs font-extrabold text-emerald-700 mt-0.5">
+                        (Citizen Self-Service)
+                      </p>
+                      <p className="text-xs font-bold text-slate-700 mt-1">
+                        เน้นความสะดวกสูงสุด ประชาชนขอคัดแบบออนไลน์ได้เองทุกที่ ทุกเวลา สู่ระบบ Paperless 100%
+                      </p>
+                    </div>
+
+                    <div className="space-y-2 text-xs text-slate-700 leading-relaxed border-t border-slate-100 pt-3">
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                        <Smartphone className="w-4 h-4 text-emerald-600" />
+                        <span>การทำงาน:</span>
+                      </div>
+
+                      <ul className="space-y-2">
+                        <li className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                          <strong className="text-slate-900 block font-bold">
+                            • ยืนยันตัวตนระดับสากล:
+                          </strong>
+                          <span className="text-slate-600 block mt-0.5">
+                            ประชาชนเข้าใช้งานผ่านแอปพลิเคชัน <strong>ThaID (IAL 2.3)</strong> เพื่อความปลอดภัยสูงสุดของข้อมูลภาษี
+                          </span>
+                        </li>
+
+                        <li className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                          <strong className="text-slate-900 block font-bold">
+                            • Digital e-Consent &amp; e-Payment:
+                          </strong>
+                          <span className="text-slate-600 block mt-0.5">
+                            ให้ความยินยอมเปิดเผยข้อมูลตามมาตรฐาน PDPA และชำระค่าธรรมเนียมผ่านระบบอิเล็กทรอนิกส์ (PromptPay / Mobile Banking)
+                          </span>
+                        </li>
+
+                        <li className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                          <strong className="text-slate-900 block font-bold">
+                            • Digital Token / B2G Direct API:
+                          </strong>
+                          <span className="text-slate-600 block mt-0.5">
+                            ไม่ต้องพิมพ์เอกสารกระดาษอีกต่อไป แต่ระบบจะส่งสำเนาแบบที่ลงลายมือชื่อดิจิทัล (Digital Signature/e-Seal) ให้ธนาคารหรือหน่วยงานปลายทางโดยตรงผ่าน Secure API หรือส่ง Digital Token ทาง SMS/Email ให้ผู้เสียภาษียื่นต่อธนาคาร
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs border-t border-slate-100 pt-3">
+                      <div className="font-bold text-emerald-800 flex items-center gap-1.5">
+                        <Zap className="w-4 h-4 text-emerald-600" />
+                        <span>ผลลัพธ์:</span>
+                      </div>
+                      <p className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 text-emerald-950 font-bold leading-relaxed">
+                        ประชาชนไม่ต้องเดินทางมาที่ สส. เลยแม้แต่ก้าวเดียว, ต้นทุนการออกเอกสารลดลงเป็นศูนย์, และป้องกันการปลอมแปลงเอกสารภาษีได้อย่างสมบูรณ์แบบ 100%
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-5 border-t border-slate-100 mt-4 text-center">
+                    <span className="text-xs text-slate-500 font-semibold">
+                      เป้าหมายพัฒนาต่อเนื่องร่วมกับระบบยืนยันตัวตนดิจิทัลภาครัฐ
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* 3.3 BOTTOM CALL-TO-ACTION BANNER */}
+              <div className="rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-8 shadow-xl border border-blue-400/20 text-center space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>พร้อมเริ่มต้นการสาธิตสดบนเวที</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black">
+                  สัมผัสประสบการณ์การทำงานจริงของ RCT WebApp (เฟส ๒)
+                </h3>
+                <p className="text-blue-200 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+                  จำลองทุกขั้นตอนตั้งแต่การเสียบบัตรประชาชน Smart Card ณ เคาน์เตอร์ สส., การค้นหาและอัปโหลดไฟล์ของส่วนคัดแบบ, การชำระเงินผ่าน QR, ไปจนถึงการพิมพ์เอกสารพร้อมระบบควบคุมการพิมพ์ ๔ ชั้น
+                </p>
+                <div className="pt-2">
+                  <button
+                    onClick={() => setCurrentStep("branch_intake")}
+                    className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-base font-black rounded-2xl shadow-2xl hover:shadow-amber-500/20 inline-flex items-center gap-3 transition transform hover:scale-105 cursor-pointer"
+                  >
+                    <span>เริ่มต้นทดสอบระบบ Demo ทันที (ขั้นตอนที่ ๑: เคาน์เตอร์ สส.)</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        )}
 
         {/* ========================================================================= */}
         {/* STEP 1: เคาน์เตอร์ สส. (รับคำขอ / บันทึกข้อมูล / เสียบบัตร Smart Card) */}
