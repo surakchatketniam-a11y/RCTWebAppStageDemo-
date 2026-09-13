@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RCT WebApp Stage Demo (ระบบบริหารจัดการและคัดแบบแสดงรายการภาษีอัจฉริยะ)
+> **โครงการพัฒนาระบบให้บริการคัดสำเนาแบบแสดงรายการภาษีและใบเสร็จรับเงิน (ระยะที่ ๒ : Internal Smart Counter & Back-Office Web Portal)**  
+> พัฒนาขึ้นเพื่อใช้สาธิตระบบจริงบนเวทีนำเสนอผลงาน (Stage-Ready Interactive Simulation)
 
-## Getting Started
+---
 
-First, run the development server:
+## 🌟 จุดเด่นสำหรับการนำเสนอบนเวที (Stage Demo Features)
+1. **ไม่ต้องพิมพ์ข้อมูลหน้างาน (Zero Typing On-Stage):**
+   - มีปุ่ม **"⚡ จำลองเสียบบัตรประชาชน (Auto-Fill)"** กดเพียงคลิกเดียว ข้อมูลผู้เสียภาษี (นายสมชาย มุ่งมั่น / ภ.ง.ด.90 ปีภาษี 2568) จะถูกกรอกและเลือกรายการโดยอัตโนมัติ
+2. **ระบบป้องกันการทำซ้ำ (Anti-Duplication Protection):**
+   - **Targeted Diagonal Watermark:** ระบุสถาบันการเงินผู้รับเอกสารปลายทางชัดเจน (เช่น ธนาคารกสิกรไทย, ธนาคารไทยพาณิชย์, ธนาคารกรุงไทย ฯลฯ)
+   - **Print Quota Lock:** จำกัดโควตาการพิมพ์ตรงตามใบเสร็จ (ตัวอย่าง 2/2 ฉบับ) เมื่อพิมพ์ครบแล้ว ปุ่มจะถูกล็อคป้องกันการพิมพ์ซ้ำโดยไม่เสียค่าธรรมเนียม
+   - **Digital e-Seal Animation:** มีเอฟเฟกต์ประทับตรารับรองเอกสารอิเล็กทรอนิกส์เสมือนจริง
+   - **Verification QR Hash:** รหัสตรวจสอบเอกสารย้อนหลังที่ไม่สามารถปลอมแปลงได้
+3. **สลับมุมมอง 4 บทบาทเจ้าหน้าที่ (Multi-Role Switcher):**
+   - 🏢 **จุดบริการส่วนหน้า (Front Counter):** บันทึกคำขอ, ถ่ายโอนข้อมูลบัตรประชาชน, สรุปค่าธรรมเนียม
+   - 📋 **งานประมวลผล (Back-Office Kanban):** แดชบอร์ดติดตามงาน ดึงแบบ ภ.ง.ด. จากคลังจัดเก็บ (Document Repository)
+   - 💳 **งานการเงิน (Treasury / QR EDC):** จำลองระบบตัดรับชำระเงิน และออกใบเสร็จรับเงินราชการ
+   - 📊 **ผู้บริหารและติดตาม SLA (Executive SLA):** มอนิเตอร์ประสิทธิภาพแบบ Real-time ลดระยะเวลาบริการเหลือเพียง 4.2 นาที
+4. **คู่มือบทพูดบนเวทีในตัว (Built-in Stage Script):**
+   - กดปุ่ม **"🎙️ ดูบทพูดนำเสนอบนเวที (Stage Guide)"** ที่แถบด้านบน เพื่อเปิดดูสคริปต์ขั้นตอนการนำเสนอทีละสเต็ปได้ทันที
 
+---
+
+## 🚀 วิธีการติดตั้งและรันบนเครื่อง Local
+
+### 1. ติดตั้ง Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. รันโหมด Development
+```bash
+npm run dev
+```
+เปิดบราวเซอร์ที่: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. หรือ รันโหมด Production (เร็วและเสถียรที่สุด)
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ☁️ วิธีการ Deploy ขึ้น Vercel (ใช้งานได้จริงบนบราวเซอร์ทุกเครื่อง)
 
-To learn more about Next.js, take a look at the following resources:
+### วิธีที่ 1: Deploy ผ่าน Vercel CLI (ง่ายและเร็วที่สุด ภายใน 1 นาที)
+1. เปิด Terminal ในโฟลเดอร์ `rct-webapp-demo`
+2. รันคำสั่ง:
+   ```bash
+   npx vercel
+   ```
+3. ทำตามข้อความที่ขึ้นบนหน้าจอ:
+   - `Set up and deploy ...?` -> พิมพ์ `y`
+   - `Which scope do you want to deploy to?` -> เลือก Account ของคุณ
+   - `Link to existing project?` -> พิมพ์ `n`
+   - `What's your project's name?` -> กด Enter (หรือตั้งชื่อ เช่น `rct-webapp-demo`)
+   - `In which directory is your code located?` -> กด Enter (`./`)
+   - `Want to modify these settings?` -> พิมพ์ `n`
+4. เมื่อเสร็จสิ้น Vercel จะสร้าง URL พร้อมใช้งาน เช่น `https://rct-webapp-demo.vercel.app` สามารถเปิดสาธิตบนเวทีได้ทันที!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### วิธีที่ 2: Deploy ผ่าน GitHub (แนะนำสำหรับนำเสนอระยะยาว)
+1. สร้าง Git Repository และ Push โปรเจกต์ขึ้น GitHub:
+   ```bash
+   git init
+   git add .
+   git commit -m "feat: RCT WebApp Interactive Demo"
+   git branch -M main
+   git remote add origin https://github.com/<YOUR-USERNAME>/rct-webapp-demo.git
+   git push -u origin main
+   ```
+2. เข้าสู่เว็บไซต์ [vercel.com](https://vercel.com) แล้วล็อกอิน
+3. คลิกปุ่ม **"Add New..."** -> **"Project"**
+4. เลือก Repository `rct-webapp-demo` จาก GitHub
+5. กดปุ่ม **"Deploy"** ระบบจะ Build และให้ URL พร้อมใช้งานทันที
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎯 ลำดับการสาธิตบนเวที (Recommended Stage Walkthrough)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| สเต็ป | การกระทำบนหน้าจอ | จุดที่ต้องเน้นพูดบรรยาย |
+|:---|:---|:---|
+| **1. หน้าแรก** | อยู่ที่แท็บ **"จุดบริการส่วนหน้า"** | เกริ่นนำปัญหาเดิมที่ต้องคีย์ข้อมูลซ้ำซ้อนใน LINE และเสี่ยงต่อการหลุดรอด |
+| **2. คลิก 1 ครั้ง** | กดปุ่มส้ม **"⚡ จำลองเสียบบัตรประชาชน"** | ข้อมูลประชากรและรายการคำขอขึ้นทันที ลดเวลาบันทึกเหลือ 0 วินาที |
+| **3. เลือกลายน้ำ** | เปลี่ยนดรอปดาวน์ **"ธนาคารปลายทาง"** เป็น "ธนาคารกสิกรไทย" | อธิบายกลไก **Targeted Watermark** ป้องกันการนำเอกสารไปใช้ผิดวัตถุประสงค์ |
+| **4. พิมพ์เอกสาร** | กดปุ่ม **"🖨️ พิมพ์แบบพร้อมลายน้ำ & e-Seal"** | โชว์ใบเสร็จ/แบบ ภ.ง.ด.90 เสมือนจริง พร้อมตราประทับดิจิทัลสีแดง และตัวนับโควตา (เหลือ 1/2 ฉบับ) |
+| **5. สลับแท็บ** | คลิกแท็บ **"แดชบอร์ด SLA & รายงาน"** | โชว์ตัวเลขเฉลี่ย 4.2 นาที ความพึงพอใจ 99.4% และความโปร่งใสตรวจสอบได้ 100% |
+
