@@ -32,7 +32,10 @@ import {
   ExternalLink,
   ChevronRight,
   FileCheck2,
-  Check
+  Check,
+  Landmark,
+  CreditCard,
+  Receipt
 } from "lucide-react";
 
 interface SystemArchitectureViewProps {
@@ -307,6 +310,10 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                           <Printer className="w-4 h-4 text-indigo-600 flex-shrink-0" />
                           <span>เครื่องพิมพ์เคาน์เตอร์ (ลายน้ำ + ล็อคโควตา)</span>
                         </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <Landmark className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                          <span>จุดรับชำระเงิน (QR PromptPay / EDC กรุงไทย)</span>
+                        </div>
                       </div>
                     </div>
 
@@ -334,6 +341,10 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                         <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
                           <Printer className="w-4 h-4 text-indigo-600 flex-shrink-0" />
                           <span>เครื่องพิมพ์เคาน์เตอร์ (ลายน้ำ + ล็อคโควตา)</span>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <Landmark className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                          <span>จุดรับชำระเงิน (QR PromptPay / EDC กรุงไทย)</span>
                         </div>
                       </div>
                     </div>
@@ -745,6 +756,147 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
 
           </div>
 
+          {/* =================================================================== */}
+          {/* PAYMENT & BANKING INTEGRATION STRATEGY (ตอบข้อซักถามคณะกรรมการ)     */}
+          {/* =================================================================== */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+              <div>
+                <span className="text-xs font-bold text-blue-700 uppercase tracking-wider block">Banking & Financial Compliance</span>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5 mt-0.5">
+                  <Landmark className="w-6 h-6 text-blue-600" />
+                  แนวทางการเชื่อมโยงระบบรับชำระเงินกับธนาคาร & ใบเสร็จรับเงิน (e-Receipt)
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  ชี้แจงความโปร่งใส ถูกต้องตามระเบียบการเงินการคลังภาครัฐ และสถาปัตยกรรมการเชื่อมโยง ๒ ระยะ
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-300 px-3.5 py-1.5 rounded-xl text-xs font-bold self-start sm:self-auto">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>เงินเข้าบัญชีราชการ 100% ปลอดภัยตามระเบียบพัสดุ</span>
+              </div>
+            </div>
+
+            {/* 2-Phase Cards */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Phase 1 Card */}
+              <div className="rounded-2xl bg-gradient-to-br from-blue-50/70 to-indigo-50/70 border-2 border-blue-200 p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">
+                    ระยะที่ ๑ : พร้อมใช้งานทันที (Hybrid Integration) ⭐
+                  </span>
+                  <span className="text-xs font-bold text-blue-800 bg-blue-100/80 px-2.5 py-0.5 rounded-md">
+                    ไม่ต้องขออนุมัติ API พิเศษ
+                  </span>
+                </div>
+
+                <h3 className="font-black text-slate-900 text-base">
+                  ทำงานผสานกับช่องทางรับเงินเดิมของกรมสรรพากร (EDC / QR กรุงไทย)
+                </h3>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  ระบบ <strong>ไม่ได้ตัดเงินหรือเปิดบัญชีใหม่เอง</strong> เพื่อป้องกันข้อท้วงติงด้านระเบียบการเงินการคลัง แต่ทำงานสอดประสานกับระบบการเงินของสำนักงาน:
+                </p>
+
+                <div className="space-y-2.5 text-xs text-slate-700">
+                  <div className="bg-white p-3 rounded-xl border border-blue-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">1</div>
+                    <p><strong>คำนวณยอดเงินอัตโนมัติ:</strong> ระบบคำนวณตามจำนวนฉบับ (๒๐ บาท/ฉบับ) พร้อมสร้าง Reference No. ประจำคำขอ</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-xl border border-blue-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">2</div>
+                    <p><strong>ชำระผ่านช่องทางราชการ:</strong> ประชาชนสแกน QR Code PromptPay ของสำนักงาน หรือรูดบัตรผ่านเครื่อง EDC ธนาคารกรุงไทยของกรมฯ</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-xl border border-blue-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">3</div>
+                    <p><strong>บันทึกเลขที่ใบเสร็จ (e-Receipt):</strong> งานการเงินออกใบเสร็จราชการและบันทึกเลขที่ใบเสร็จเข้าระบบ</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-xl border border-blue-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">4</div>
+                    <p><strong>ปลดล็อคโควตาการพิมพ์:</strong> ระบบอนุญาตให้พิมพ์เอกสารตรงตามจำนวนฉบับที่ชำระจริง ป้องกันการพิมพ์ซ้ำ</p>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span><strong>คำตอบสำหรับกรรมการ:</strong> เงินเข้าบัญชีรายได้กรมสรรพากรตามปกติ ไม่เสี่ยงเงินหาย 100%</span>
+                </div>
+              </div>
+
+              {/* Phase 2 Card */}
+              <div className="rounded-2xl bg-gradient-to-br from-slate-50 to-purple-50/50 border-2 border-purple-200 p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="bg-purple-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">
+                    ระยะที่ ๒ : แผนขยายผลสู่อนาคต (Full API Integration)
+                  </span>
+                  <span className="text-xs font-bold text-purple-800 bg-purple-100/80 px-2.5 py-0.5 rounded-md">
+                    โครงสร้าง Schema รองรับแล้ว
+                  </span>
+                </div>
+
+                <h3 className="font-black text-slate-900 text-base">
+                  เชื่อมต่อตรงกับ KTB Corporate Gateway / Webhook อัตโนมัติ
+                </h3>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  สถาปัตยกรรมระบบได้ออกแบบ Schema ของฐานข้อมูล PostgreSQL ให้มีฟิลด์ทางการเงินครบถ้วน พร้อมรองรับเมื่อได้รับอนุมัติ API จากส่วนกลาง:
+                </p>
+
+                <div className="space-y-2.5 text-xs text-slate-700">
+                  <div className="bg-white p-3 rounded-xl border border-purple-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">A</div>
+                    <p><strong>โครงสร้างข้อมูลรองรับมาตรฐาน ธปท.:</strong> จัดเตรียมฟิลด์ <code className="bg-slate-100 text-purple-700 px-1 py-0.5 rounded font-mono">transaction_id</code>, <code className="bg-slate-100 text-purple-700 px-1 py-0.5 rounded font-mono">biller_id</code>, <code className="bg-slate-100 text-purple-700 px-1 py-0.5 rounded font-mono">ref1</code>, <code className="bg-slate-100 text-purple-700 px-1 py-0.5 rounded font-mono">ref2</code></p>
+                  </div>
+                  <div className="bg-white p-3 rounded-xl border border-purple-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">B</div>
+                    <p><strong>ตรวจจับยอดเงินเข้าทันที (Real-time Webhook):</strong> เมื่อประชาชนสแกนจ่าย ธนาคารกรุงไทยจะยิง Webhook แจ้งเข้าระบบเพื่อปลดล็อคพิมพ์อัตโนมัติภายใน ๓ วินาที</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-xl border border-purple-100 flex items-start gap-2.5 shadow-2xs">
+                    <div className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center flex-shrink-0 text-[11px] mt-0.5">C</div>
+                    <p><strong>เชื่อมต่อระบบ e-Receipt กรมสรรพากร:</strong> ดึงเลขอ้างอิงใบเสร็จอิเล็กทรอนิกส์จากระบบส่วนกลางอัตโนมัติ</p>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 text-purple-900 text-xs flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                  <span><strong>คำตอบสำหรับกรรมการ:</strong> ระบบคิดรองรับอนาคตไว้ล่วงหน้า เมื่อกรมฯ มีนโยบายก็เปิดสวิตช์ต่อได้ทันทีโดยไม่ต้องรื้อระบบใหม่</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Committee FAQ Cheat-sheet */}
+            <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-700 space-y-3">
+              <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <span>สรุปประเด็นชี้แจง ๓ ข้อ หากคณะกรรมการสอบถามในที่ประชุม</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700 space-y-1">
+                  <p className="text-amber-200 font-bold">๑. เงินเข้าบัญชีใคร?</p>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    เข้าบัญชีเงินรายได้ของสำนักงานสรรพากรพื้นที่พิจิตรโดยตรงผ่านระบบรับชำระของธนาคารกรุงไทย ไม่มีบัญชีพักเงินภายนอก
+                  </p>
+                </div>
+                <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700 space-y-1">
+                  <p className="text-amber-200 font-bold">๒. ต้องของบทำ API เพิ่มไหม?</p>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    ในระยะที่ ๑ ไม่ต้องของบเพิ่มแม้แต่บาทเดียว เพราะใช้ระบบรับชำระและเครื่อง EDC ที่มีอยู่แล้วของสำนักงาน
+                  </p>
+                </div>
+                <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700 space-y-1">
+                  <p className="text-amber-200 font-bold">๓. ป้องกันพิมพ์เกินเงินได้อย่างไร?</p>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    ระบบล็อคสิทธิ์การพิมพ์ด้วยยอดเงินในใบเสร็จ หากจ่าย ๒ ฉบับ ระบบจะยอมให้สั่งพิมพ์ได้แค่ ๒ ฉบับเท่านั้น ป้องกันเงินรั่วไหล 100%
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       )}
 
@@ -896,6 +1048,27 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                     </td>
                     <td className="p-3.5">
                       <span className="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-extrabold text-xs">ฟรี 0 บาท (MIT)</span>
+                    </td>
+                  </tr>
+
+                  <tr className="hover:bg-blue-50/40 transition bg-indigo-50/30">
+                    <td className="p-3.5 font-bold text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <Landmark className="w-4 h-4 text-blue-600" />
+                        <span>ระบบรับชำระเงิน & ธนาคาร</span>
+                      </div>
+                    </td>
+                    <td className="p-3.5">
+                      <span className="font-extrabold text-blue-800 block">Hybrid KTB & QR PromptPay</span>
+                      <span className="text-xs text-slate-500">ผสาน EDC/QR เดิม + Schema รองรับ KTB Webhook</span>
+                    </td>
+                    <td className="p-3.5 leading-relaxed">
+                      • <strong>ถูกระเบียบราชการ 100%:</strong> เงินรายได้เข้าบัญชีสำนักงานโดยตรง ไม่แตะต้องเงินสด<br />
+                      • <strong>Print Lock:</strong> ปลดล็อคโควตาการพิมพ์เอกสารตรงตามยอดในใบเสร็จรับเงินจริง (e-Receipt)<br />
+                      • <strong>Future-Ready:</strong> มีฟิลด์ Ref1/Ref2 พร้อมต่อ API ธนาคารกรุงไทยได้ทันทีในอนาคต
+                    </td>
+                    <td className="p-3.5">
+                      <span className="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-extrabold text-xs">ฟรี 0 บาท (ใช้ของเดิม)</span>
                     </td>
                   </tr>
                 </tbody>
