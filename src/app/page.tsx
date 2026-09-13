@@ -98,14 +98,92 @@ export interface ConsolidatedRequest {
 export const PHICHIT_BRANCHES = [
   { id: "ALL", label: "ทุกสาขาทั่วจังหวัด" },
   { id: "สส.โพทะเล", label: "🌾 สส.โพทะเล" },
-  { id: "สส.เมืองพิจิตร", label: "🏛️ สส.เมืองพิจิตร" },
+  { id: "สส.ทับคล้อ", label: "⛏️ สส.ทับคล้อ" },
   { id: "สส.บางมูลนาก", label: "🚂 สส.บางมูลนาก" },
-  { id: "สส.ตะพานหิน", label: "🌉 สส.ตะพานหิน" },
-  { id: "สส.สามง่าม", label: "🛶 สส.สามง่าม" },
   { id: "สส.วังทรายพูน", label: "🌳 สส.วังทรายพูน" },
+  { id: "สส.ตะพานหิน", label: "🌉 สส.ตะพานหิน" },
+  { id: "สส.สากเหล็ก", label: "⛰️ สส.สากเหล็ก" },
+  { id: "สส.โพธิ์ประทับช้าง", label: "🍊 สส.โพธิ์ประทับช้าง" },
+  { id: "สส.สามง่าม", label: "🛶 สส.สามง่าม" },
+  { id: "สส.เมืองพิจิตร", label: "🏛️ สส.เมืองพิจิตร" },
 ] as const;
 
 export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
+  {
+    id: "REQ-2569-0455",
+    trackingNo: "RCT-6908-012",
+    fullName: "นายประเสริฐ วงศ์สว่าง",
+    citizenId: "1-6608-00123-88-9",
+    taxForm: "ภ.ง.ด.90",
+    taxYears: ["2568"],
+    submittedBranch: "สส.ทับคล้อ",
+    status: "PAID",
+    statusLabel: "ชำระเงินแล้ว ออกใบเสร็จ",
+    statusBadgeColor: "bg-emerald-100 text-emerald-800 border-emerald-300",
+    currentStepDescription: "ชำระเงินเรียบร้อย อยู่ระหว่างรอพิมพ์เอกสาร e-Seal ณ เคาน์เตอร์ สส.ทับคล้อ",
+    inProgressMinutes: 14,
+    pages: 2,
+    fee: 40,
+    createdAt: "13 ก.ย. 2569, 09:10 น.",
+    updatedAt: "13 ก.ย. 2569, 09:24 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.ทับคล้อ", note: "รับคำร้องคัดแบบ ภ.ง.ด.90 ใช้ยื่นสินเชื่อ SME", timestamp: "13 ก.ย. 2569, 09:10 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.ทับคล้อ", note: "ส่งคำขอผ่านระบบสู่ส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 09:12 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "พบแบบดิจิทัลในคลัง พร้อมจัดทำ QR คิดเงิน 40 บ.", timestamp: "13 ก.ย. 2569, 09:18 น." },
+      { status: "PAID", role: "งานคลัง / PromptPay", note: "ผู้เสียภาษีสแกน QR จ่ายเงิน 40.00 บาท ออกใบเสร็จแล้ว", timestamp: "13 ก.ย. 2569, 09:24 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0453",
+    trackingNo: "RCT-6907-009",
+    fullName: "นางดาราวรรณ พรมสถิตย์",
+    citizenId: "1-6607-00456-77-1",
+    taxForm: "ภ.พ.30",
+    taxYears: ["ก.พ. 2569"],
+    submittedBranch: "สส.สากเหล็ก",
+    status: "SEARCHING",
+    statusLabel: "กำลังค้นหาแบบฯ ในคลัง",
+    statusBadgeColor: "bg-indigo-100 text-indigo-800 border-indigo-300",
+    currentStepDescription: "รอผลจากงานบริการแบบฯ สท. (อยู่ระหว่างตรวจสอบฐานข้อมูลภาษีมูลค่าเพิ่ม)",
+    inProgressMinutes: 8,
+    pages: undefined,
+    fee: undefined,
+    createdAt: "13 ก.ย. 2569, 09:18 น.",
+    updatedAt: "13 ก.ย. 2569, 09:25 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.สากเหล็ก", note: "รับคำร้องยื่นขอคัดแบบ ภ.พ.30 ประกอบธุรกิจค้าวัสดุก่อสร้าง", timestamp: "13 ก.ย. 2569, 09:18 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.สากเหล็ก", note: "ส่งคำขอทางระบบถึงส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 09:20 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "เจ้าหน้าที่คลังอยู่ระหว่างค้นหาไฟล์แบบ ภ.พ.30", timestamp: "13 ก.ย. 2569, 09:25 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0451",
+    trackingNo: "RCT-6904-018",
+    fullName: "นายสมเกียรติ มงคลทรัพย์",
+    citizenId: "1-6604-00789-22-3",
+    taxForm: "ภ.ง.ด.91",
+    taxYears: ["2567"],
+    submittedBranch: "สส.โพธิ์ประทับช้าง",
+    status: "COMPLETED",
+    statusLabel: "ส่งมอบสำเร็จแล้ว",
+    statusBadgeColor: "bg-green-100 text-green-800 border-green-300",
+    currentStepDescription: "ส่งมอบสำเนาแบบฯ พร้อมรับรอง e-Seal ให้ผู้เสียภาษีสำเร็จเรียบร้อย",
+    totalDurationMinutes: 18,
+    pages: 2,
+    fee: 20,
+    createdAt: "13 ก.ย. 2569, 08:45 น.",
+    updatedAt: "13 ก.ย. 2569, 09:03 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.โพธิ์ประทับช้าง", note: "รับคำร้องขอคัดแบบ ภ.ง.ด.91 ยื่นสมัครงาน", timestamp: "13 ก.ย. 2569, 08:45 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.โพธิ์ประทับช้าง", note: "ส่งคำขอให้ส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 08:47 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "ค้นพบแบบในระบบดิจิทัล ส่งงานคลังออก QR 20 บ.", timestamp: "13 ก.ย. 2569, 08:52 น." },
+      { status: "PAID", role: "งานคลัง / KTB", note: "ชำระเงินสำเร็จ 20.00 บาท ออกใบเสร็จ e-Receipt", timestamp: "13 ก.ย. 2569, 08:56 น." },
+      { status: "COMPLETED", role: "เจ้าหน้าที่ สส.โพธิ์ประทับช้าง", note: "พิมพ์เอกสารรับรอง e-Seal และส่งมอบให้ผู้เสียภาษี", timestamp: "13 ก.ย. 2569, 09:03 น." }
+    ]
+  },
   {
     id: "REQ-2569-0412",
     trackingNo: "RCT-6909-052",
@@ -266,6 +344,8 @@ export interface DistrictTravelCost {
   distanceOneWayKm: number;          // ระยะทางขาเดียวจากอำเภอมายัง สท.พิจิตร (กม.)
   distanceRoundTripKm: number;       // ระยะทางไป-กลับ (กม.)
   travelTimeMinutesRoundTrip: number;// เวลาเดินทางไป-กลับประมาณการ (นาที)
+  travelTimeDisplay: string;         // ข้อความแสดงเวลาเดินทาง เช่น "1 ชม. 48 นาที (108 นาที)"
+  mainRoute: string;                 // เส้นทางหลัก เช่น "ทล. 113, ทล. 1067"
   costPerTrip: number;               // ค่าน้ำมันเชื้อเพลิงประมาณการต่อเที่ยวไป-กลับ (บาท)
   casesToday: number;                // จำนวนคำขอวันนี้ (ราย)
   avgSlaMinutes: number;             // เวลาเฉลี่ยต่อเคส (นาที)
@@ -278,70 +358,124 @@ export const DISTRICT_TRAVEL_DATA: DistrictTravelCost[] = [
     districtName: "อำเภอโพทะเล",
     branchName: "สส.โพทะเล (เคสตัวอย่าง)",
     isDemoCase: true,
-    distanceOneWayKm: 65,
-    distanceRoundTripKm: 130,
-    travelTimeMinutesRoundTrip: 130, // 130 นาที (ไป-กลับ ขาละ ~65 นาที)
-    costPerTrip: 450, // 130 กม. x ~3.46 บ./กม.
+    distanceOneWayKm: 59.3,
+    distanceRoundTripKm: 118.6,
+    travelTimeMinutesRoundTrip: 108,
+    travelTimeDisplay: "1 ชม. 48 นาที (108 นาที)",
+    mainRoute: "ทล. 113, ทล. 1067",
+    costPerTrip: 415, // 118.6 กม. x ~3.50 บ./กม.
     casesToday: 28,
     avgSlaMinutes: 4.2,
     feeTotal: 1120.00
   },
   {
+    id: "thap_khlo",
+    districtName: "อำเภอทับคล้อ",
+    branchName: "สส.ทับคล้อ",
+    distanceOneWayKm: 54.9,
+    distanceRoundTripKm: 109.8,
+    travelTimeMinutesRoundTrip: 106,
+    travelTimeDisplay: "1 ชม. 46 นาที (106 นาที)",
+    mainRoute: "ทล. 113",
+    costPerTrip: 385, // 109.8 กม. x ~3.50 บ./กม.
+    casesToday: 18,
+    avgSlaMinutes: 4.1,
+    feeTotal: 720.00
+  },
+  {
     id: "bang_mun_nak",
     districtName: "อำเภอบางมูลนาก",
     branchName: "สส.บางมูลนาก",
-    distanceOneWayKm: 55,
-    distanceRoundTripKm: 110,
-    travelTimeMinutesRoundTrip: 110, // 110 นาที (ไป-กลับ ขาละ ~55 นาที)
-    costPerTrip: 380, // 110 กม. x ~3.45 บ./กม.
+    distanceOneWayKm: 51.9,
+    distanceRoundTripKm: 103.8,
+    travelTimeMinutesRoundTrip: 94,
+    travelTimeDisplay: "1 ชม. 34 นาที (94 นาที)",
+    mainRoute: "ทล. 113, ทล. 1374",
+    costPerTrip: 365, // 103.8 กม. x ~3.51 บ./กม.
     casesToday: 19,
     avgSlaMinutes: 4.0,
     feeTotal: 760.00
   },
   {
-    id: "taphan_hin",
-    districtName: "อำเภอตะพานหิน",
-    branchName: "สส.ตะพานหิน",
-    distanceOneWayKm: 30,
-    distanceRoundTripKm: 60,
-    travelTimeMinutesRoundTrip: 60, // 60 นาที (ไป-กลับ ขาละ ~30 นาที)
-    costPerTrip: 220, // 60 กม. x ~3.66 บ./กม.
-    casesToday: 24,
-    avgSlaMinutes: 4.5,
-    feeTotal: 960.00
-  },
-  {
-    id: "sam_ngam",
-    districtName: "อำเภอสามง่าม",
-    branchName: "สส.สามง่าม",
-    distanceOneWayKm: 40,
-    distanceRoundTripKm: 80,
-    travelTimeMinutesRoundTrip: 80, // 80 นาที (ไป-กลับ ขาละ ~40 นาที)
-    costPerTrip: 280, // 80 กม. x ~3.50 บ./กม.
-    casesToday: 16,
-    avgSlaMinutes: 3.9,
-    feeTotal: 640.00
-  },
-  {
     id: "wang_sai_phun",
     districtName: "อำเภอวังทรายพูน",
     branchName: "สส.วังทรายพูน",
-    distanceOneWayKm: 45,
-    distanceRoundTripKm: 90,
-    travelTimeMinutesRoundTrip: 90, // 90 นาที (ไป-กลับ ขาละ ~45 นาที)
-    costPerTrip: 320, // 90 กม. x ~3.55 บ./กม.
+    distanceOneWayKm: 31.8,
+    distanceRoundTripKm: 63.6,
+    travelTimeMinutesRoundTrip: 60,
+    travelTimeDisplay: "1 ชม. (60 นาที)",
+    mainRoute: "ทล. 11",
+    costPerTrip: 220, // 63.6 กม. x ~3.46 บ./กม.
     casesToday: 15,
     avgSlaMinutes: 4.1,
     feeTotal: 600.00
   },
   {
+    id: "taphan_hin",
+    districtName: "อำเภอตะพานหิน",
+    branchName: "สส.ตะพานหิน",
+    distanceOneWayKm: 29.3,
+    distanceRoundTripKm: 58.6,
+    travelTimeMinutesRoundTrip: 54,
+    travelTimeDisplay: "54 นาที",
+    mainRoute: "ทล. 113",
+    costPerTrip: 205, // 58.6 กม. x ~3.50 บ./กม.
+    casesToday: 24,
+    avgSlaMinutes: 4.5,
+    feeTotal: 960.00
+  },
+  {
+    id: "sak_lek",
+    districtName: "อำเภอสากเหล็ก",
+    branchName: "สส.สากเหล็ก",
+    distanceOneWayKm: 21.4,
+    distanceRoundTripKm: 42.8,
+    travelTimeMinutesRoundTrip: 42,
+    travelTimeDisplay: "42 นาที",
+    mainRoute: "ทล. 111, ทล. 11",
+    costPerTrip: 150, // 42.8 กม. x ~3.50 บ./กม.
+    casesToday: 14,
+    avgSlaMinutes: 3.9,
+    feeTotal: 560.00
+  },
+  {
+    id: "pho_prathap_chang",
+    districtName: "อำเภอโพธิ์ประทับช้าง",
+    branchName: "สส.โพธิ์ประทับช้าง",
+    distanceOneWayKm: 19.7,
+    distanceRoundTripKm: 39.4,
+    travelTimeMinutesRoundTrip: 46,
+    travelTimeDisplay: "46 นาที",
+    mainRoute: "ทล. 1068",
+    costPerTrip: 140, // 39.4 กม. x ~3.55 บ./กม.
+    casesToday: 17,
+    avgSlaMinutes: 4.0,
+    feeTotal: 680.00
+  },
+  {
+    id: "sam_ngam",
+    districtName: "อำเภอสามง่าม",
+    branchName: "สส.สามง่าม",
+    distanceOneWayKm: 18.3,
+    distanceRoundTripKm: 36.6,
+    travelTimeMinutesRoundTrip: 36,
+    travelTimeDisplay: "36 นาที",
+    mainRoute: "ทล. 111",
+    costPerTrip: 130, // 36.6 กม. x ~3.55 บ./กม.
+    casesToday: 16,
+    avgSlaMinutes: 3.9,
+    feeTotal: 640.00
+  },
+  {
     id: "mueang",
     districtName: "อำเภอเมืองพิจิตร",
     branchName: "สส.เมืองพิจิตร",
-    distanceOneWayKm: 8,
-    distanceRoundTripKm: 16,
-    travelTimeMinutesRoundTrip: 20, // 20 นาที (เดินทางในเขตอำเภอเมือง)
-    costPerTrip: 60, // เดินทางในตัวอำเภอเมืองพิจิตร
+    distanceOneWayKm: 0,
+    distanceRoundTripKm: 0,
+    travelTimeMinutesRoundTrip: 0,
+    travelTimeDisplay: "0 นาที",
+    mainRoute: "ตั้งอยู่อาคารเดียวกับ สกพ.พิจิตร",
+    costPerTrip: 0,
     casesToday: 42,
     avgSlaMinutes: 3.8,
     feeTotal: 1680.00
@@ -1619,7 +1753,7 @@ export default function RCTDemoApp() {
                     </span>
                   </div>
                   <p className="text-xs text-blue-50 mt-1 leading-relaxed">
-                    เราช่วยผู้เสียภาษีชาวโพทะเล <strong>ประหยัดค่าใช้จ่ายไปแล้ว 12,600 บาท</strong> (ค่าน้ำมัน 450 บ./คน) และ <strong>ประหยัดเวลาเดินทางไปแล้ว 3,640 นาที (~61 ชั่วโมง)</strong> โดยไม่ต้องขับรถไปถึงตัวจังหวัด (สท.พิจิตร ไป-กลับ 130 กม.)
+                    เราช่วยผู้เสียภาษีชาวโพทะเล <strong>ประหยัดค่าใช้จ่ายไปแล้ว 11,620 บาท</strong> (ค่าน้ำมัน 415 บ./คน) และ <strong>ประหยัดเวลาเดินทางไปแล้ว 3,024 นาที (~50.4 ชั่วโมง)</strong> โดยไม่ต้องขับรถไปถึงตัวจังหวัด (สท.พิจิตร ไป-กลับ 118.6 กม. เส้นทาง ทล. 113, ทล. 1067)
                   </p>
                 </div>
               </div>
@@ -1627,12 +1761,12 @@ export default function RCTDemoApp() {
               <div className="flex items-center gap-2.5 self-stretch md:self-auto justify-end flex-shrink-0">
                 <div className="bg-white/10 border border-white/25 rounded-xl px-3.5 py-2 text-center">
                   <span className="text-[10px] text-blue-100 block font-medium">ประหยัดค่าเดินทางรวม</span>
-                  <span className="font-mono font-black text-white text-base">12,600 บ.</span>
+                  <span className="font-mono font-black text-white text-base">11,620 บ.</span>
                 </div>
                 <div className="bg-white/10 border border-white/25 rounded-xl px-3.5 py-2 text-center">
                   <span className="text-[10px] text-blue-100 block font-medium">ประหยัดเวลาเดินทาง</span>
-                  <span className="font-mono font-black text-amber-300 text-base">3,640 นาที</span>
-                  <span className="text-[9px] text-blue-200 block font-mono">(~61 ชม.)</span>
+                  <span className="font-mono font-black text-amber-300 text-base">3,024 นาที</span>
+                  <span className="text-[9px] text-blue-200 block font-mono">(~50.4 ชม.)</span>
                 </div>
               </div>
             </div>
@@ -1938,14 +2072,14 @@ export default function RCTDemoApp() {
                     </span>
                     <div className="flex items-center justify-between text-slate-700 pt-0.5">
                       <span className="text-slate-500">ประหยัดค่าน้ำมัน:</span>
-                      <span className="font-bold text-emerald-800 font-mono">450.00 บาท</span>
+                      <span className="font-bold text-emerald-800 font-mono">415.00 บาท</span>
                     </div>
                     <div className="flex items-center justify-between text-slate-700">
                       <span className="text-slate-500">ประหยัดเวลาเดินทาง:</span>
-                      <span className="font-bold text-indigo-800 font-mono">130 นาที (~2.2 ชม.)</span>
+                      <span className="font-bold text-indigo-800 font-mono">108 นาที (~1.8 ชม.)</span>
                     </div>
                     <p className="text-[10px] text-slate-500 pt-1 border-t border-emerald-200/60 leading-tight">
-                      * เทียบกับประชาชนต้องขับรถไปคัดแบบที่ สท.พิจิตร (ไป-กลับ 130 กม.)
+                      * เทียบกับประชาชนต้องขับรถไปคัดแบบที่ สท.พิจิตร (ไป-กลับ 118.6 กม. เส้นทาง ทล. 113, ทล. 1067)
                     </p>
                   </div>
 
@@ -2053,7 +2187,7 @@ export default function RCTDemoApp() {
                             ความประหยัดเคสนี้:
                           </span>
                           <span className="font-bold font-mono">
-                            ค่าน้ำมัน 450 บ. • ประหยัดเวลา 130 นาที
+                            ค่าน้ำมัน 415 บ. • ประหยัดเวลา 108 นาที
                           </span>
                         </div>
                       </div>
@@ -2209,7 +2343,7 @@ export default function RCTDemoApp() {
                       <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
                         <span>🌐 กระดานรวมคำร้องทั่วทั้งจังหวัด (สท.พิจิตร)</span>
                         <span className="bg-purple-100 text-purple-900 text-xs font-bold px-2.5 py-0.5 rounded-full border border-purple-200">
-                          ศูนย์รวม ๖ อำเภอ
+                          ศูนย์รวม ๙ อำเภอ/สาขา
                         </span>
                       </h3>
                       <p className="text-xs text-slate-500 mt-0.5">
@@ -3190,17 +3324,17 @@ export default function RCTDemoApp() {
                     ประหยัดเวลาเดินทางประชาชน
                   </span>
                   <span className="bg-indigo-100 text-indigo-800 text-[10px] font-black px-2 py-0.5 rounded-full font-mono">
-                    ~177 ชม./วัน
+                    ~181 ชม./วัน
                   </span>
                 </div>
                 
                 <div className="flex items-baseline gap-1.5">
                   <div className="text-3xl sm:text-4xl font-black text-indigo-950 font-mono">
-                    10.6K
+                    10.9K
                   </div>
                   <span className="text-sm font-bold text-slate-500">นาที/วัน</span>
                   <span className="text-[11px] font-black text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300">
-                    ~4.4 หมื่น ชม./ปี
+                    ~4.5 หมื่น ชม./ปี
                   </span>
                 </div>
 
@@ -3210,7 +3344,7 @@ export default function RCTDemoApp() {
                     <span className="font-normal text-slate-700">∑ (เวลาเดินทางไป-กลับ สท. × เคสแต่ละอำเภอ)</span>
                   </div>
                   <p className="text-slate-500">
-                    เช่น โพทะเล 130 นาที × 28 เคส = <strong>ประหยัด 3,640 นาที (~61 ชม.)</strong>
+                    เช่น โพทะเล 108 นาที × 28 เคส = <strong>ประหยัด 3,024 นาที (~50.4 ชม.)</strong>
                   </p>
                 </div>
               </div>
@@ -3223,17 +3357,17 @@ export default function RCTDemoApp() {
                     ประหยัดค่าน้ำมัน & ค่าเดินทาง
                   </span>
                   <span className="bg-purple-100 text-purple-800 text-[10px] font-black px-2 py-0.5 rounded-full font-mono">
-                    144 คำขอวันนี้
+                    193 คำขอวันนี้
                   </span>
                 </div>
                 
                 <div className="flex items-baseline gap-1.5">
                   <div className="text-3xl sm:text-4xl font-black text-purple-950 font-mono">
-                    36.9K
+                    40.3K
                   </div>
                   <span className="text-sm font-bold text-slate-500">บ./วัน</span>
                   <span className="text-[11px] font-black text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300">
-                    ~9.22 ล้าน บ./ปี
+                    ~10.07 ล้าน บ./ปี
                   </span>
                 </div>
 
@@ -3243,7 +3377,7 @@ export default function RCTDemoApp() {
                     <span className="font-normal text-slate-700">∑ (ระยะทางไป-กลับ × ค่าน้ำมันเฉลี่ย × เคสแต่ละอำเภอ)</span>
                   </div>
                   <p className="text-slate-500">
-                    เช่น โพทะเล 130 กม. (450 บ.) × 28 เคส = <strong>12,600 บ./วัน</strong>
+                    เช่น โพทะเล 118.6 กม. (415 บ.) × 28 เคส = <strong>11,620 บ./วัน</strong>
                   </p>
                 </div>
               </div>
@@ -3259,18 +3393,18 @@ export default function RCTDemoApp() {
                   <div>
                     <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-blue-600" />
-                      สถิติการให้บริการ & ความประหยัดค่าน้ำมันและเวลาเดินทางแยกตามสาขา (๖ อำเภอ จ.พิจิตร)
+                      สถิติการให้บริการ & ความประหยัดค่าน้ำมันและเวลาเดินทางแยกตามสาขา (๙ อำเภอ/สาขา จ.พิจิตร)
                     </h3>
                     <p className="text-xs text-slate-500 mt-0.5">
-                      เปรียบเทียบกรณีประชาชนไม่ต้องขับรถมาคัดแบบที่ สท.พิจิตร (อ.เมือง) แต่มารับบริการที่ สส. สาขาใกล้บ้าน
+                      เปรียบเทียบกรณีประชาชนไม่ต้องขับรถมาคัดแบบที่ สท.พิจิตร (อ.เมือง) แต่มารับบริการที่ สส. สาขาใกล้บ้านตามเส้นทางจริง
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-indigo-800 font-bold bg-indigo-100 px-2.5 py-1 rounded-lg font-mono">
-                      ประหยัด 10,640 นาที/วัน (~177 ชม.)
+                      ประหยัด 10,860 นาที/วัน (~181 ชม.)
                     </span>
                     <span className="text-xs text-purple-800 font-bold bg-purple-100 px-2.5 py-1 rounded-lg font-mono">
-                      ประหยัด 36,900 บ./วัน
+                      ประหยัด 40,265 บ./วัน
                     </span>
                   </div>
                 </div>
@@ -3279,7 +3413,7 @@ export default function RCTDemoApp() {
                   <table className="w-full text-left text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-slate-50 text-slate-700 border-b border-slate-200 text-xs">
-                        <th className="py-3 px-3 font-bold">หน่วยบริการ (สส.)</th>
+                        <th className="py-3 px-3 font-bold">หน่วยบริการ (สส.) & เส้นทางหลัก</th>
                         <th className="py-3 px-2 font-bold text-center">ระยะทางไป-กลับ</th>
                         <th className="py-3 px-2 font-bold text-center">เวลาเดินทาง</th>
                         <th className="py-3 px-2 font-bold text-center">ค่าน้ำมัน</th>
@@ -3302,40 +3436,51 @@ export default function RCTDemoApp() {
                               d.isDemoCase ? "bg-blue-50/50 font-semibold" : ""
                             }`}
                           >
-                            <td className="py-3 px-3">
-                              <div className="flex items-center gap-1.5">
-                                <span className={`font-bold ${d.isDemoCase ? "text-blue-900 font-extrabold" : "text-slate-900"}`}>
-                                  {d.branchName}
-                                </span>
-                                {d.isDemoCase && (
-                                  <span className="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded-full">
-                                    Demo
+                            <td className="py-2.5 px-3">
+                              <div className="flex flex-col">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`font-bold ${d.isDemoCase ? "text-blue-900 font-extrabold" : "text-slate-900"}`}>
+                                    {d.branchName}
                                   </span>
-                                )}
+                                  {d.isDemoCase && (
+                                    <span className="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                                      Demo
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[10px] text-slate-500 font-normal mt-0.5">
+                                  🛣️ {d.mainRoute}
+                                </span>
                               </div>
                             </td>
-                            <td className="py-3 px-2 text-center font-mono text-slate-600">
-                              {d.distanceRoundTripKm} กม.
+                            <td className="py-2.5 px-2 text-center font-mono text-slate-600">
+                              {d.distanceRoundTripKm > 0 ? `${d.distanceRoundTripKm} กม.` : "0 กม."}
                             </td>
-                            <td className="py-3 px-2 text-center font-mono text-slate-600">
-                              {d.travelTimeMinutesRoundTrip} นาที
+                            <td className="py-2.5 px-2 text-center font-mono text-slate-600 text-[11px]">
+                              {d.travelTimeDisplay}
                             </td>
-                            <td className="py-3 px-2 text-center font-mono text-slate-600">
-                              {d.costPerTrip} บ.
+                            <td className="py-2.5 px-2 text-center font-mono text-slate-600">
+                              {d.costPerTrip > 0 ? `${d.costPerTrip} บ.` : "0 บ."}
                             </td>
-                            <td className="py-3 px-2 text-center font-mono font-bold text-slate-900">
+                            <td className="py-2.5 px-2 text-center font-mono font-bold text-slate-900">
                               {d.casesToday} ราย
                             </td>
-                            <td className="py-3 px-2.5 text-right font-mono font-bold text-indigo-900 bg-indigo-50/30">
-                              {timeSavedMinutesToday.toLocaleString()} น. <span className="text-[10px] text-slate-500 font-normal">({timeSavedHoursToday} ชม.)</span>
+                            <td className="py-2.5 px-2.5 text-right font-mono font-bold text-indigo-900 bg-indigo-50/30">
+                              {timeSavedMinutesToday > 0 ? (
+                                <>
+                                  {timeSavedMinutesToday.toLocaleString()} น. <span className="text-[10px] text-slate-500 font-normal">({timeSavedHoursToday} ชม.)</span>
+                                </>
+                              ) : (
+                                <span className="text-slate-400">0 นาที</span>
+                              )}
                             </td>
-                            <td className="py-3 px-2.5 text-right font-mono font-black text-purple-900 bg-purple-50/30 text-[13px]">
-                              {savingsToday.toLocaleString()} บ.
+                            <td className="py-2.5 px-2.5 text-right font-mono font-black text-purple-900 bg-purple-50/30 text-[13px]">
+                              {savingsToday > 0 ? `${savingsToday.toLocaleString()} บ.` : "0 บ."}
                             </td>
-                            <td className="py-3 px-2 text-right font-mono text-slate-700">
+                            <td className="py-2.5 px-2 text-right font-mono text-slate-700">
                               {d.feeTotal.toLocaleString()}.00 บ.
                             </td>
-                            <td className="py-3 px-1.5 text-center">
+                            <td className="py-2.5 px-1.5 text-center">
                               <span className="bg-emerald-100 text-emerald-900 text-[10px] px-2 py-0.5 rounded font-bold">
                                 ผ่าน
                               </span>
@@ -3349,29 +3494,29 @@ export default function RCTDemoApp() {
                         <td className="py-3.5 px-3">
                           <span className="text-indigo-950 font-black flex items-center gap-1">
                             <Fuel className="w-3.5 h-3.5 text-indigo-700 inline" />
-                            รวม ๖ อำเภอ (ทั้งจังหวัด)
+                            รวม ๙ อำเภอ/สาขา (ทั้งจังหวัด)
                           </span>
                         </td>
                         <td className="py-3.5 px-2 text-center font-mono text-[11px] text-indigo-950">
-                          10,472 กม./วัน
+                          11,484.4 กม./วัน
                         </td>
                         <td className="py-3.5 px-2 text-center font-mono text-[11px] text-indigo-950">
-                          เฉลี่ย 84 นาที
+                          รวม 181 ชม./วัน
                         </td>
                         <td className="py-3.5 px-2 text-center font-mono text-[11px] text-indigo-900">
-                          เฉลี่ย 256 บ.
+                          เฉลี่ย 209 บ./คน
                         </td>
                         <td className="py-3.5 px-2 text-center font-mono font-black text-indigo-950 text-sm">
-                          144 ราย
+                          193 ราย
                         </td>
                         <td className="py-3.5 px-2.5 text-right font-mono font-black text-indigo-950 text-xs bg-indigo-200/60">
-                          10,640 นาที <span className="block text-[10px] font-normal text-indigo-800">(~177.3 ชม.)</span>
+                          10,860 นาที <span className="block text-[10px] font-normal text-indigo-800">(~181.0 ชม.)</span>
                         </td>
                         <td className="py-3.5 px-2.5 text-right font-mono font-black text-purple-950 text-sm bg-purple-200/60">
-                          36,900.00 บ.
+                          40,265.00 บ.
                         </td>
                         <td className="py-3.5 px-2 text-right font-mono font-bold text-slate-900">
-                          5,760.00 บ.
+                          7,720.00 บ.
                         </td>
                         <td className="py-3.5 px-1.5 text-center">
                           <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-black">
@@ -3384,8 +3529,8 @@ export default function RCTDemoApp() {
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[11px] text-slate-500 border-t border-slate-100">
-                  <span>* คำนวณจากระยะทางจริง (ไป-กลับ) และเวลาเดินทางเฉลี่ยตามสภาพจราจรจริง</span>
-                  <span className="font-bold text-indigo-900">ประหยัดเวลาสะสม: ~44,333 ชั่วโมง/ปี • ประหยัดค่าน้ำมัน: ~9,225,000 บาท/ปี</span>
+                  <span>* คำนวณจากระยะทางจริง (ไป-กลับ) และเวลาเดินทางตามเส้นทางหลัก (ทล.) ของแขวงทางหลวงพิจิตร</span>
+                  <span className="font-bold text-indigo-900">ประหยัดเวลาสะสม: ~45,250 ชั่วโมง/ปี • ประหยัดค่าน้ำมัน: ~10,066,250 บาท/ปี</span>
                 </div>
               </div>
 
@@ -3404,17 +3549,17 @@ export default function RCTDemoApp() {
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-2xs">
                       <span className="text-slate-500 text-[10px] block">ประหยัดเวลาเดินทาง:</span>
-                      <span className="font-mono font-black text-indigo-950 text-sm">10,640 นาที</span>
-                      <span className="text-[10px] text-emerald-700 block font-bold">~4.4 หมื่น ชม./ปี</span>
+                      <span className="font-mono font-black text-indigo-950 text-sm">10,860 นาที</span>
+                      <span className="text-[10px] text-emerald-700 block font-bold">~4.5 หมื่น ชม./ปี</span>
                     </div>
                     <div className="bg-white p-2.5 rounded-lg border border-purple-100 shadow-2xs">
                       <span className="text-slate-500 text-[10px] block">ประหยัดค่าน้ำมัน:</span>
-                      <span className="font-mono font-black text-purple-950 text-sm">36,900 บ.</span>
-                      <span className="text-[10px] text-emerald-700 block font-bold">~9.22 ล้าน บ./ปี</span>
+                      <span className="font-mono font-black text-purple-950 text-sm">40,265 บ.</span>
+                      <span className="text-[10px] text-emerald-700 block font-bold">~10.07 ล้าน บ./ปี</span>
                     </div>
                   </div>
                   <p className="text-[11px] text-slate-600 leading-relaxed">
-                    ประชาชนในพื้นที่ห่างไกล เช่น โพทะเล (ประหยัด 130 นาที / 450 บ.) หรือบางมูลนาก (ประหยัด 110 นาที / 380 บ.) ไม่ต้องเดินทางมา อ.เมือง ช่วยลดความเหนื่อยล้า อุบัติเหตุ และค่าใช้จ่าย
+                    ประชาชนในพื้นที่ห่างไกล เช่น โพทะเล (ไป-กลับ 118.6 กม. ประหยัด 108 นาที / 415 บ.), ทับคล้อ (109.8 กม. ประหยัด 106 นาที / 385 บ.) หรือบางมูลนาก (103.8 กม. ประหยัด 94 นาที / 365 บ.) ไม่ต้องเดินทางมา อ.เมือง ช่วยลดความเหนื่อยล้า อุบัติเหตุ และค่าใช้จ่าย
                   </p>
                 </div>
 
@@ -3429,7 +3574,7 @@ export default function RCTDemoApp() {
 
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl">
                     <span className="font-bold text-blue-950 block">ระยะที่ ๒ (ปัจจุบัน - WebApp Demo):</span>
-                    <p className="text-blue-800 text-[11px] mt-0.5 leading-relaxed">Smart Counter + ประหยัดค่าน้ำมัน 9.2 ล้าน/ปี + ประหยัดเวลา 4.4 หมื่น ชม./ปี</p>
+                    <p className="text-blue-800 text-[11px] mt-0.5 leading-relaxed">Smart Counter + ประหยัดค่าน้ำมัน 10.07 ล้าน/ปี + ประหยัดเวลา 4.5 หมื่น ชม./ปี</p>
                   </div>
 
                   <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl">
