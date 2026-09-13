@@ -38,6 +38,8 @@ import {
   Save,
   Home,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Layers,
   AlertTriangle,
   Zap,
@@ -79,6 +81,9 @@ export interface ConsolidatedRequest {
   status: "SUBMITTED" | "SEARCHING" | "FEE_CALCULATED" | "AWAITING_PAYMENT" | "PAID" | "NOT_FOUND" | "READY_FOR_PICKUP" | "COMPLETED";
   statusLabel: string;
   statusBadgeColor: string;
+  currentStepDescription: string;
+  totalDurationMinutes?: number;
+  inProgressMinutes?: number;
   pages?: number;
   fee?: number;
   createdAt: string;
@@ -109,6 +114,8 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
     status: "COMPLETED",
     statusLabel: "ส่งมอบสำเร็จแล้ว",
     statusBadgeColor: "bg-green-100 text-green-800 border-green-300",
+    currentStepDescription: "ส่งมอบสำเนาแบบฯ พร้อมรับรอง e-Seal ให้ผู้เสียภาษีสำเร็จเรียบร้อย",
+    totalDurationMinutes: 15,
     pages: 3,
     fee: 20,
     createdAt: "13 ก.ย. 2569, 08:30 น.",
@@ -133,6 +140,8 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
     status: "SEARCHING",
     statusLabel: "กำลังค้นหาแบบฯ ในคลัง",
     statusBadgeColor: "bg-indigo-100 text-indigo-800 border-indigo-300",
+    currentStepDescription: "รอผลจากงานบริการแบบฯ สท. (กำลังค้นหาแฟ้มกระดาษในคลัง)",
+    inProgressMinutes: 5,
     pages: undefined,
     fee: undefined,
     createdAt: "13 ก.ย. 2569, 09:20 น.",
@@ -155,6 +164,8 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
     status: "PAID",
     statusLabel: "ชำระเงินแล้ว ออกใบเสร็จ",
     statusBadgeColor: "bg-emerald-100 text-emerald-800 border-emerald-300",
+    currentStepDescription: "ชำระเงินแล้ว ออกใบเสร็จ รอส่วนคัดแบบส่งภาพแบบฯ กลับสาขา",
+    inProgressMinutes: 17,
     pages: 2,
     fee: 20,
     createdAt: "13 ก.ย. 2569, 09:05 น.",
@@ -178,6 +189,8 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
     status: "NOT_FOUND",
     statusLabel: "ไม่พบแบบฯ ในระบบ",
     statusBadgeColor: "bg-rose-100 text-rose-800 border-rose-300",
+    currentStepDescription: "ไม่พบแบบฯ ในระบบคลัง สท. (ประสานแจ้งผู้เสียภาษีเรียบร้อย)",
+    totalDurationMinutes: 20,
     pages: undefined,
     fee: undefined,
     createdAt: "13 ก.ย. 2569, 08:50 น.",
@@ -200,6 +213,8 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
     status: "FEE_CALCULATED",
     statusLabel: "พบแบบฯ 4 หน้า รอคลังออก QR",
     statusBadgeColor: "bg-amber-100 text-amber-800 border-amber-300",
+    currentStepDescription: "พบแบบฯ 4 หน้า อยู่ระหว่างรอคลังสร้าง Dynamic QR ค่าธรรมเนียม",
+    inProgressMinutes: 22,
     pages: 4,
     fee: 20,
     createdAt: "13 ก.ย. 2569, 08:40 น.",
@@ -222,6 +237,8 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
     status: "COMPLETED",
     statusLabel: "ส่งมอบสำเร็จแล้ว",
     statusBadgeColor: "bg-green-100 text-green-800 border-green-300",
+    currentStepDescription: "ส่งมอบสำเนาแบบฯ พร้อมรับรอง e-Seal ให้ผู้เสียภาษีสำเร็จเรียบร้อย",
+    totalDurationMinutes: 35,
     pages: 2,
     fee: 20,
     createdAt: "13 ก.ย. 2569, 08:20 น.",
@@ -445,13 +462,23 @@ export default function RCTDemoApp() {
   // Role-Based Task Board States
   const [branchViewTab, setBranchViewTab] = useState<"intake_form" | "branch_board">("intake_form");
   const [centralBranchFilter, setCentralBranchFilter] = useState<string>("ALL");
-  const [selectedTimelineReq, setSelectedTimelineReq] = useState<ConsolidatedRequest | null>(null);
+  const [expandedTimelineIds, setExpandedTimelineIds] = useState<Record<string, boolean>>({});
+
+  const toggleTimeline = (id: string) => {
+    setExpandedTimelineIds(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   // Dynamic Demo Case Request (matches live simulation state)
   const getDemoCaseRequest = (): ConsolidatedRequest => {
     let status: ConsolidatedRequest["status"] = "SUBMITTED";
     let statusLabel = "ยื่นคำร้องแล้ว รอส่งต่อ";
     let statusBadgeColor = "bg-slate-100 text-slate-700 border-slate-300";
+    let currentStepDescription = "รอเจ้าหน้าที่ สส. ตรวจสอบและส่งคำร้องไปยังส่วนคัดแบบ";
+    let totalDurationMinutes: number | undefined = undefined;
+    let inProgressMinutes = 3;
 
     const tl: RequestTimelineEvent[] = [
       {
@@ -472,6 +499,8 @@ export default function RCTDemoApp() {
       status = "SEARCHING";
       statusLabel = "ส่งต่อแล้ว กำลังค้นหาแบบฯ ในคลัง";
       statusBadgeColor = "bg-indigo-100 text-indigo-800 border-indigo-300";
+      currentStepDescription = "รอผลจากงานบริการแบบฯ สท. (กำลังค้นหาต้นฉบับในคลัง)";
+      inProgressMinutes = 5;
     }
 
     if (currentStep === "central_search" && fileUploaded) {
@@ -481,6 +510,8 @@ export default function RCTDemoApp() {
         note: "พบต้นฉบับแบบ ภ.ง.ด.90 ปีภาษี 2568 ตรวจสอบแล้วจำนวน 2 หน้า",
         timestamp: "13 ก.ย. 2569, 09:20 น."
       });
+      currentStepDescription = "งานบริการแบบฯ สท. พบแบบแล้ว อยู่ระหว่างส่งยอดคิดเงิน QR";
+      inProgressMinutes = 7;
     }
 
     if (currentStep === "branch_payment" || currentStep === "treasury_finance" || currentStep === "branch_print" || currentStep === "executive_sla") {
@@ -493,6 +524,8 @@ export default function RCTDemoApp() {
       status = "AWAITING_PAYMENT";
       statusLabel = "รอชำระเงินผ่าน QR (40 บ.)";
       statusBadgeColor = "bg-orange-100 text-orange-800 border-orange-300";
+      currentStepDescription = "สร้าง QR สำเร็จแล้ว รอประชาชนสแกนจ่ายเงิน 40 บาท";
+      inProgressMinutes = 9;
     }
 
     if (qrScanned || currentStep === "treasury_finance" || currentStep === "branch_print" || currentStep === "executive_sla") {
@@ -505,6 +538,8 @@ export default function RCTDemoApp() {
       status = "PAID";
       statusLabel = "ชำระเงินแล้ว ออกใบเสร็จ";
       statusBadgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+      currentStepDescription = "ชำระเงินแล้ว งานคลังออกใบเสร็จรับเงินสำเร็จแล้ว";
+      inProgressMinutes = 11;
     }
 
     if (currentStep === "branch_print" || currentStep === "executive_sla") {
@@ -517,6 +552,18 @@ export default function RCTDemoApp() {
       status = printedCopies >= totalCopies ? "COMPLETED" : "READY_FOR_PICKUP";
       statusLabel = printedCopies >= totalCopies ? "ส่งมอบสำเร็จแล้ว" : "พร้อมพิมพ์/ส่งมอบ (e-Seal)";
       statusBadgeColor = printedCopies >= totalCopies ? "bg-green-100 text-green-800 border-green-300" : "bg-teal-100 text-teal-800 border-teal-300";
+      if (printedCopies >= totalCopies) {
+        currentStepDescription = "พิมพ์แบบรับรอง e-Seal ครบ 2 ชุดแล้ว ส่งมอบเอกสารสำเร็จ";
+        totalDurationMinutes = 12;
+      } else {
+        currentStepDescription = `ได้รับภาพแบบฯ แล้ว อยู่ระหว่างพิมพ์และรับรองสำเนา (${printedCopies}/${totalCopies} ชุด)`;
+        inProgressMinutes = 12;
+      }
+    }
+
+    if (currentStep === "executive_sla") {
+      currentStepDescription = "ส่งมอบสำเนาแบบฯ พร้อมรับรอง e-Seal ให้ผู้เสียภาษีสำเร็จเรียบร้อย";
+      totalDurationMinutes = 12;
     }
 
     return {
@@ -530,6 +577,9 @@ export default function RCTDemoApp() {
       status,
       statusLabel,
       statusBadgeColor,
+      currentStepDescription,
+      totalDurationMinutes,
+      inProgressMinutes,
       pages: 2,
       fee: 40,
       createdAt: "13 ก.ย. 2569, 09:15 น.",
@@ -636,7 +686,7 @@ export default function RCTDemoApp() {
     setShowGuideModal(false);
     setBranchViewTab("intake_form");
     setCentralBranchFilter("ALL");
-    setSelectedTimelineReq(null);
+    setExpandedTimelineIds({});
     showToast("🔄 รีเซ็ตข้อมูลการสาธิตกลับสู่หน้าแรก (Hero & แผนงาน ๓ เฟส) เรียบร้อย");
   };
 
@@ -1850,16 +1900,30 @@ export default function RCTDemoApp() {
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedTimelineReq(req)}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border border-slate-200"
-                        >
-                          <History className="w-3.5 h-3.5 text-blue-600" />
-                          <span>ดูประวัติไทม์ไลน์</span>
-                        </button>
+                      {/* Current Status Tracker & Duration Badge */}
+                      <div className="bg-slate-50 border border-slate-200/90 rounded-xl p-3 text-xs space-y-1.5">
+                        <div className="flex items-center justify-between gap-1 flex-wrap">
+                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-blue-600" />
+                            ขั้นตอนปัจจุบัน
+                          </span>
+                          {req.status === "COMPLETED" ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-md">
+                              ⏱️ เวลาให้บริการทั้งหมด: {req.totalDurationMinutes || 12} นาที
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-800 bg-blue-100/80 px-2 py-0.5 rounded-md">
+                              ⏱️ ดำเนินการแล้ว: ~{req.inProgressMinutes || 5} นาที
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-800 font-bold leading-relaxed text-[12px]">
+                          {req.currentStepDescription}
+                        </p>
+                      </div>
 
+                      {/* Card Action & Timeline Toggle */}
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
                         {req.isCurrentDemoCase ? (
                           <button
                             type="button"
@@ -1874,7 +1938,63 @@ export default function RCTDemoApp() {
                             ✓ ดำเนินการเสร็จสมบูรณ์
                           </span>
                         )}
+
+                        <button
+                          type="button"
+                          onClick={() => toggleTimeline(req.id)}
+                          className="ml-auto text-slate-600 hover:text-blue-700 text-xs font-bold cursor-pointer flex items-center gap-1 transition px-2.5 py-1.5 rounded-lg hover:bg-slate-100"
+                        >
+                          <span>{expandedTimelineIds[req.id] ? "ซ่อนประวัติ" : "ดูประวัติ"}</span>
+                          {expandedTimelineIds[req.id] ? (
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          ) : (
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          )}
+                        </button>
                       </div>
+
+                      {/* Inline Collapsible Timeline (Image 2 Style) */}
+                      {expandedTimelineIds[req.id] && (
+                        <div className="pt-3 border-t border-slate-200 animate-fadeIn">
+                          <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-3">
+                            ประวัติการดำเนินการ (Audit Trail Log)
+                          </p>
+                          <ol className="space-y-3.5 pl-1">
+                            {req.timeline.map((ev, idx) => {
+                              const isLast = idx === req.timeline.length - 1;
+                              return (
+                                <li key={idx} className="relative flex gap-3 text-xs">
+                                  <div className="flex flex-col items-center">
+                                    <div
+                                      className={`mt-1 h-2.5 w-2.5 rounded-full flex-shrink-0 ${
+                                        isLast 
+                                          ? "bg-blue-600 ring-4 ring-blue-100" 
+                                          : "bg-slate-300"
+                                      }`}
+                                    />
+                                    {!isLast && (
+                                      <div className="w-0.5 flex-1 bg-slate-200 mt-1 min-h-[28px]" />
+                                    )}
+                                  </div>
+                                  <div className="flex-1 pb-1">
+                                    <div className="flex items-baseline justify-between gap-2">
+                                      <span className={`font-bold ${isLast ? "text-slate-900 font-extrabold" : "text-slate-800"}`}>
+                                        {ev.role}
+                                      </span>
+                                    </div>
+                                    <p className="text-slate-600 text-[11px] mt-0.5 leading-snug">
+                                      {ev.note}
+                                    </p>
+                                    <span className="text-slate-400 text-[10px] font-mono mt-0.5 block">
+                                      {ev.timestamp}
+                                    </span>
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ol>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -2033,18 +2153,32 @@ export default function RCTDemoApp() {
                           </div>
                         )}
                       </div>
+
+                      {/* Current Status Tracker & Duration Badge */}
+                      <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 text-xs space-y-1 shadow-2xs">
+                        <div className="flex items-center justify-between gap-1 flex-wrap">
+                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-purple-600" />
+                            ขั้นตอนปัจจุบัน
+                          </span>
+                          {req.status === "COMPLETED" ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-md">
+                              ⏱️ รวม {req.totalDurationMinutes || 12} นาที
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-800 bg-purple-100/80 px-2 py-0.5 rounded-md">
+                              ⏱️ ดำเนินการ ~{req.inProgressMinutes || 5} นาที
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-800 font-bold leading-relaxed text-[11.5px]">
+                          {req.currentStepDescription}
+                        </p>
+                      </div>
                     </div>
 
+                    {/* Card Action & Timeline Toggle */}
                     <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTimelineReq(req)}
-                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer border border-slate-200"
-                      >
-                        <History className="w-3.5 h-3.5 text-purple-700" />
-                        <span>ดูประวัติ</span>
-                      </button>
-
                       {req.isCurrentDemoCase ? (
                         <button
                           type="button"
@@ -2059,10 +2193,66 @@ export default function RCTDemoApp() {
                         </button>
                       ) : (
                         <span className="text-[11px] text-slate-400 font-medium">
-                          คิวงานในพื้นที่
+                          {req.status === "COMPLETED" ? "✓ สำเร็จ" : "คิวงานในพื้นที่"}
                         </span>
                       )}
+
+                      <button
+                        type="button"
+                        onClick={() => toggleTimeline(req.id)}
+                        className="ml-auto text-slate-600 hover:text-purple-800 text-xs font-bold cursor-pointer flex items-center gap-1 transition px-2.5 py-1.5 rounded-lg hover:bg-slate-100"
+                      >
+                        <span>{expandedTimelineIds[req.id] ? "ซ่อนประวัติ" : "ดูประวัติ"}</span>
+                        {expandedTimelineIds[req.id] ? (
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        )}
+                      </button>
                     </div>
+
+                    {/* Inline Collapsible Timeline (Image 2 Style) */}
+                    {expandedTimelineIds[req.id] && (
+                      <div className="pt-3 border-t border-slate-200 animate-fadeIn mt-2">
+                        <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2.5">
+                          ประวัติการดำเนินการ (Audit Trail)
+                        </p>
+                        <ol className="space-y-3 pl-1">
+                          {req.timeline.map((ev, idx) => {
+                            const isLast = idx === req.timeline.length - 1;
+                            return (
+                              <li key={idx} className="relative flex gap-2.5 text-xs">
+                                <div className="flex flex-col items-center">
+                                  <div
+                                    className={`mt-1 h-2.5 w-2.5 rounded-full flex-shrink-0 ${
+                                      isLast 
+                                        ? "bg-purple-600 ring-4 ring-purple-100" 
+                                        : "bg-slate-300"
+                                    }`}
+                                  />
+                                  {!isLast && (
+                                    <div className="w-0.5 flex-1 bg-slate-200 mt-1 min-h-[26px]" />
+                                  )}
+                                </div>
+                                <div className="flex-1 pb-0.5">
+                                  <div className="flex items-baseline justify-between gap-1">
+                                    <span className={`font-bold ${isLast ? "text-slate-900 font-extrabold" : "text-slate-800"}`}>
+                                      {ev.role}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-600 text-[11px] mt-0.5 leading-snug">
+                                    {ev.note}
+                                  </p>
+                                  <span className="text-slate-400 text-[10px] font-mono mt-0.5 block">
+                                    {ev.timestamp}
+                                  </span>
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ol>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -3478,80 +3668,7 @@ export default function RCTDemoApp() {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* MODAL: Request Timeline History (ดูประวัติคำขอ / Audit Trail) */}
-      {/* ========================================================================= */}
-      {selectedTimelineReq && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full p-6 space-y-4 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-extrabold text-slate-900 text-lg flex items-center gap-1.5">
-                    <History className="w-5 h-5 text-blue-600" />
-                    <span>ประวัติคำขอ (Timeline Log)</span>
-                  </h3>
-                  <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded font-mono">
-                    {selectedTimelineReq.id}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {selectedTimelineReq.fullName} • {selectedTimelineReq.taxForm} ({selectedTimelineReq.submittedBranch})
-                </p>
-              </div>
-              <button
-                onClick={() => setSelectedTimelineReq(null)}
-                className="text-slate-400 hover:text-slate-700 font-bold text-xl p-1 cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
 
-            {/* Timeline Steps */}
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1 py-1">
-              <ol className="space-y-3.5 pl-1">
-                {selectedTimelineReq.timeline.map((ev, idx) => (
-                  <li key={idx} className="relative flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`mt-1 h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm flex-shrink-0 ${
-                          idx === selectedTimelineReq.timeline.length - 1 
-                            ? "bg-blue-600 ring-4 ring-blue-100" 
-                            : "bg-slate-300"
-                        }`}
-                      />
-                      {idx !== selectedTimelineReq.timeline.length - 1 && (
-                        <div className="w-0.5 flex-1 bg-slate-200 mt-1 min-h-[35px]" />
-                      )}
-                    </div>
-                    <div className="pb-1 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-bold text-slate-900">{ev.role}</p>
-                        <span className="text-[11px] text-slate-400 font-mono">{ev.timestamp}</span>
-                      </div>
-                      <p className="text-xs text-slate-700 mt-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 leading-relaxed">
-                        {ev.note}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[11px] text-slate-400">
-                สถานะปัจจุบัน: <strong className="text-slate-700">{selectedTimelineReq.statusLabel}</strong>
-              </span>
-              <button
-                onClick={() => setSelectedTimelineReq(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition cursor-pointer"
-              >
-                ปิดหน้าต่าง
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 text-slate-600 text-xs py-4 px-6 text-center">
