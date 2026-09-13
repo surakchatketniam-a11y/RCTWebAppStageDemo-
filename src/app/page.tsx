@@ -52,18 +52,21 @@ import {
   History,
   Fuel,
   Car,
-  Navigation
+  Navigation,
+  Server
 } from "lucide-react";
+import SystemArchitectureView from "@/components/SystemArchitectureView";
 
 // Flow Step Types
 export type FlowStep = 
-  | "landing"           // 🏠 หน้าแรก: Hero Header + แผนพัฒนา ๓ เฟส + CTA
-  | "branch_intake"     // 1. เคาน์เตอร์ สส. (รับคำขอ / เสียบบัตร)
-  | "central_search"    // 2. ส่วนคัดแบบ (ค้นภาพ/สแกนกระดาษ & อัปโหลด & สร้าง QR)
-  | "branch_payment"    // 3. เคาน์เตอร์ สส. (ประชาชนสแกน QR จ่ายเงิน)
-  | "treasury_finance"  // 4. หน้าจอการเงิน (ตัดรับเงิน & ออกใบเสร็จ)
-  | "branch_print"      // 5. เคาน์เตอร์ สส. (พิมพ์เอกสารพร้อมลายน้ำ & e-Seal)
-  | "executive_sla";    // 6. แดชบอร์ดผู้บริหาร
+  | "landing"               // 🏠 หน้าแรก: Hero Header + แผนพัฒนา ๓ เฟส + CTA
+  | "branch_intake"         // 1. เคาน์เตอร์ สส. (รับคำขอ / เสียบบัตร)
+  | "central_search"        // 2. ส่วนคัดแบบ (ค้นภาพ/สแกนกระดาษ & อัปโหลด & สร้าง QR)
+  | "branch_payment"        // 3. เคาน์เตอร์ สส. (ประชาชนสแกน QR จ่ายเงิน)
+  | "treasury_finance"      // 4. หน้าจอการเงิน (ตัดรับเงิน & ออกใบเสร็จ)
+  | "branch_print"          // 5. เคาน์เตอร์ สส. (พิมพ์เอกสารพร้อมลายน้ำ & e-Seal)
+  | "executive_sla"         // 6. แดชบอร์ดผู้บริหาร
+  | "system_architecture";  // 7. สถาปัตยกรรมระบบจริง & ความปลอดภัย (สำหรับคณะกรรมการ)
 
 // Request Timeline Event & Consolidated Request Interfaces
 export interface RequestTimelineEvent {
@@ -975,6 +978,20 @@ export default function RCTDemoApp() {
               </button>
             )}
 
+            {/* Real System Architecture Button for Committee */}
+            <button
+              onClick={() => setCurrentStep("system_architecture")}
+              className={`px-3.5 py-2 text-sm font-bold rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer border ${
+                currentStep === "system_architecture"
+                  ? "bg-emerald-500 text-slate-950 border-emerald-300 ring-2 ring-emerald-400"
+                  : "bg-blue-900 hover:bg-blue-800 text-emerald-300 border-emerald-500/40"
+              }`}
+              title="ดูสถาปัตยกรรมระบบจริง ความปลอดภัย และเทคโนโลยีที่ใช้ (สำหรับนำเสนอคณะกรรมการ)"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>🏛️ สถาปัตยกรรมระบบจริง</span>
+            </button>
+
             <button
               onClick={() => setShowGuideModal(true)}
               className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer"
@@ -996,10 +1013,10 @@ export default function RCTDemoApp() {
         </div>
       </header>
 
-      {/* STEP PROGRESS BAR / FLOW CONTROLLER (Home + 6 Clear Operational Steps) */}
+      {/* STEP PROGRESS BAR / FLOW CONTROLLER (Home + 6 Operational Steps + Real Architecture) */}
       <div className="bg-white border-b border-slate-200 px-6 py-2.5 shadow-sm sticky top-[66px] z-30">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-center">
             
             {/* Tab: หน้าแรก & แผน ๓ เฟส */}
             <button
@@ -1127,6 +1144,23 @@ export default function RCTDemoApp() {
               <span className="text-xs font-bold truncate">แดชบอร์ด SLA</span>
             </button>
 
+            {/* Step 7: สถาปัตยกรรมระบบจริง (สำหรับคณะกรรมการ) */}
+            <button
+              onClick={() => setCurrentStep("system_architecture")}
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-xl transition font-medium border cursor-pointer ${
+                currentStep === "system_architecture"
+                  ? "bg-emerald-50 border-emerald-600 text-emerald-950 shadow-sm ring-2 ring-emerald-500/20 font-bold"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
+                currentStep === "system_architecture" ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-200 text-slate-700"
+              }`}>
+                <ShieldCheck className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-xs font-bold truncate">สถาปัตยกรรมระบบจริง</span>
+            </button>
+
           </div>
         </div>
       </div>
@@ -1159,6 +1193,38 @@ export default function RCTDemoApp() {
                   <ArrowRight className="w-4 h-4 sm:w-5 h-5 text-slate-950" />
                 </button>
               </div>
+            </div>
+
+            {/* 2. EXECUTIVE CALLOUT BANNER: โครงสร้างสถาปัตยกรรมระบบจริง & ความมั่นคงปลอดภัย (สำหรับคณะกรรมการ) */}
+            <div className="bg-gradient-to-r from-[#0B1E36] via-[#102A4E] to-[#1E3A8A] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-400/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+              <div className="absolute -right-16 -top-16 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+              
+              <div className="space-y-2 relative z-10">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="bg-amber-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1.5">
+                    <Award className="w-3.5 h-3.5" />
+                    สำหรับคณะกรรมการพิจารณาผลงาน
+                  </span>
+                  <span className="bg-emerald-500/25 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full border border-emerald-400/40 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    On-Premise 100% (ไม่ใช่ Cloud)
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white">
+                  สถาปัตยกรรมระบบจริง ความปลอดภัย และเทคโนโลยีที่ใช้
+                </h3>
+                <p className="text-xs sm:text-sm text-blue-100/90 max-w-3xl leading-relaxed">
+                  พิมพ์เขียวการนำระบบ RCT WebApp ไปติดตั้งใช้งานจริง ณ สำนักงานสรรพากรพื้นที่พิจิตร ด้วยเทคโนโลยี <strong className="text-amber-300">Next.js + PostgreSQL 16 + Docker</strong> ควบคุมข้อมูลในห้อง Server 100% พร้อม ๕ เสาหลักความมั่นคงปลอดภัยตามมาตรฐาน PDPA
+                </p>
+              </div>
+
+              <button
+                onClick={() => setCurrentStep("system_architecture")}
+                className="px-6 py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-sm rounded-2xl shadow-xl hover:shadow-amber-500/30 flex items-center gap-2.5 transition transform hover:-translate-y-0.5 flex-shrink-0 cursor-pointer relative z-10"
+              >
+                <span>เปิดดูพิมพ์เขียวระบบจริง</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
 
             {/* 3. ROADMAP SECTION: แผนการพัฒนาระบบคัดแบบแสดงรายการภาษีอากร RCT (3 เฟส) */}
@@ -3587,6 +3653,16 @@ export default function RCTDemoApp() {
             </div>
 
           </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 7. PRODUCTION SYSTEM ARCHITECTURE & SECURITY (FOR COMMITTEE) */}
+        {/* ========================================================================= */}
+        {currentStep === "system_architecture" && (
+          <SystemArchitectureView
+            onGoToDemo={() => setCurrentStep("branch_intake")}
+            onGoToLanding={() => setCurrentStep("landing")}
+          />
         )}
 
       </main>
