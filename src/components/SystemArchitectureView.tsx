@@ -41,7 +41,7 @@ interface SystemArchitectureViewProps {
 }
 
 export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: SystemArchitectureViewProps) {
-  const [activeTab, setActiveTab] = useState<"topology" | "tech_stack" | "security" | "workflow" | "roi">("topology");
+  const [activeTab, setActiveTab] = useState<"topology" | "tech_stack" | "security" | "roi">("topology");
   const [diagramView, setDiagramView] = useState<"visual" | "blueprint">("visual");
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
@@ -130,7 +130,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
               <Shield className="w-4 h-4" />
               <span>PDPA & Zero Leak</span>
             </div>
-            <p className="text-xs text-blue-100">แยกข้อมูลจำลองที่บ้าน ข้อมูลจริงอยู่ในห้อง Server สำนักงาน</p>
+            <p className="text-xs text-blue-100">ระบบปิดในห้อง Server สำนักงาน ข้อมูลปลอดภัยตามระเบียบราชการ</p>
           </div>
 
           <div className="bg-white/5 backdrop-blur-md rounded-xl p-3.5 border border-white/10">
@@ -183,18 +183,6 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
         </button>
 
         <button
-          onClick={() => setActiveTab("workflow")}
-          className={`flex-1 min-w-[170px] py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
-            activeTab === "workflow"
-              ? "bg-[#0F2942] text-white shadow-md"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
-        >
-          <GitBranch className="w-4 h-4 text-amber-400" />
-          <span>๔. แผนพัฒนา บ้าน ↔ สำนักงาน</span>
-        </button>
-
-        <button
           onClick={() => setActiveTab("roi")}
           className={`flex-1 min-w-[170px] py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
             activeTab === "roi"
@@ -203,7 +191,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
           }`}
         >
           <TrendingUp className="w-4 h-4 text-rose-400" />
-          <span>๕. ความคุ้มค่าและผลประโยชน์ (ROI)</span>
+          <span>๔. ความคุ้มค่าและผลประโยชน์ (ROI)</span>
         </button>
       </div>
 
@@ -263,19 +251,16 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
               <div className="space-y-6">
                 
                 {/* 1. TOP NODE: FIBER OPTIC WAN/INTRANET HEADER */}
-                <div className="relative mx-auto max-w-4xl bg-gradient-to-r from-blue-900 via-indigo-900 to-[#0F2942] text-white p-5 rounded-2xl shadow-lg border-2 border-blue-400/40 text-center overflow-hidden">
+                <div className="relative mx-auto max-w-4xl bg-gradient-to-r from-blue-900 via-indigo-900 to-[#0F2942] text-white p-5 sm:p-6 rounded-2xl shadow-lg border-2 border-blue-400/40 text-center overflow-hidden">
                   <div className="absolute inset-0 bg-[radial-gradient(#38BDF8_1px,transparent_1px)] [background-size:12px_12px] opacity-15"></div>
-                  <div className="relative z-10 space-y-1.5">
-                    <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
-                      <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                      <span>เครือข่ายแลนภายใน (Intranet) ความเร็วสูง</span>
+                  <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
+                    <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-3.5 py-1 rounded-full text-xs font-black">
+                      <Zap className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                      <span>สาย Fiber Optic ความเร็วสูง</span>
                     </div>
-                    <h3 className="text-base sm:text-lg font-black tracking-wide text-white">
-                      [ เครือข่าย LAN ภายใน (Intranet) วิ่งผ่านสาย Fiber Optic กรมสรรพากร ]
+                    <h3 className="text-sm sm:text-base md:text-lg font-black tracking-wide text-white max-w-3xl leading-snug">
+                      เครือข่าย LAN ภายใน (Intranet) เชื่อมโยงระหว่างสำนักงานสรรพากรพื้นที่สาขาทั่วทั้งจังหวัดพิจิตร วิ่งตรงสู่สำนักงานสรรพากรพื้นที่พิจิตร (ไม่ผ่าน Internet สาธารณะ)
                     </h3>
-                    <p className="text-xs text-blue-200">
-                      เชื่อมโยงระหว่างสำนักงานสรรพากรพื้นที่สาขาทั่วทั้งจังหวัดพิจิตร วิ่งตรงสู่สำนักงานสรรพากรพื้นที่พิจิตร (ไม่ผ่าน Internet สาธารณะ)
-                    </p>
                   </div>
                 </div>
 
@@ -650,7 +635,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                   </div>
 
                   <button
-                    onClick={() => handleCopy(`[ เครือข่าย LAN ภายใน (Intranet) ผ่านสาย Fiber Optic กรมสรรพากร ]
+                    onClick={() => handleCopy(`[ เครือข่าย LAN ภายใน (Intranet) เชื่อมโยงระหว่างสำนักงานสรรพากรพื้นที่สาขาทั่วทั้งจังหวัดพิจิตร วิ่งตรงสู่สำนักงานสรรพากรพื้นที่พิจิตร (ไม่ผ่าน Internet สาธารณะ) ]
                                       │
             ┌─────────────────────────┴─────────────────────────┐
             │                                                   │
@@ -709,7 +694,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                 {/* Monospace Code Blueprint Container */}
                 <div className="bg-[#0B132B] text-cyan-300 p-5 sm:p-7 rounded-b-2xl border-x-2 border-b-2 border-slate-700 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed shadow-xl">
                   <pre className="select-all">
-{`          [ เครือข่าย LAN ภายใน (Intranet) วิ่งผ่านสาย Fiber Optic กรมสรรพากร ]
+{`[ เครือข่าย LAN ภายใน (Intranet) เชื่อมโยงระหว่างสำนักงานสรรพากรพื้นที่สาขาทั่วทั้งจังหวัดพิจิตร วิ่งตรงสู่สำนักงานสรรพากรพื้นที่พิจิตร (ไม่ผ่าน Internet สาธารณะ) ]
                                       │
             ┌─────────────────────────┴─────────────────────────┐
             │                                                   │
@@ -1042,140 +1027,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
       )}
 
       {/* ===================================================================== */}
-      {/* TAB 4: DUAL-ENVIRONMENT WORKFLOW (HOME VS OFFICE) */}
-      {/* ===================================================================== */}
-      {activeTab === "workflow" && (
-        <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
-            
-            <div>
-              <span className="text-xs font-bold text-blue-700 uppercase tracking-wider block">Development & Operational Lifecycle</span>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5 mt-0.5">
-                <GitBranch className="w-6 h-6 text-amber-600" />
-                แนวทางการพัฒนาระบบสลับระหว่าง "ที่บ้าน" กับ "ที่สำนักงาน"
-              </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                การทำงานที่ยืดหยุ่นของผู้พัฒนา ควบคู่กับความปลอดภัยสูงสุดของข้อมูลราชการ (Zero Leak Policy)
-              </p>
-            </div>
-
-            {/* Comparison Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Home Dev Box */}
-              <div className="bg-amber-50/50 rounded-2xl p-6 border-2 border-amber-200 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-amber-950 text-lg flex items-center gap-2">
-                    <Laptop className="w-5 h-5 text-amber-600" />
-                    ๑. เครื่องที่บ้าน (Development Environment)
-                  </span>
-                  <span className="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full">
-                    MOCK DATA ONLY
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-700 leading-relaxed">
-                  ใช้สำหรับพัฒนาหน้าจอ ปรับแต่ง UI และเขียนฟังก์ชันใหม่ โดยใช้สภาพแวดล้อมจำลอง:
-                </p>
-
-                <ul className="space-y-2 text-xs text-slate-700">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>PostgreSQL บน Docker ของเครื่องบ้าน:</strong> รันฐานข้อมูลจำลองในเครื่องตนเอง ไม่ต้องต่อเน็ตเข้าสำนักงาน</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>สคริปต์สร้างข้อมูลจำลอง (Seed Data):</strong> คำสั่ง <code className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-mono font-bold">npm run db:seed</code> สร้างชื่อและคำร้องสมมติให้ทดสอบทันที</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ShieldCheck className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>นโยบายความปลอดภัย PDPA:</strong> ไม่มีข้อมูลจริงของผู้เสียภาษีหลุดรอดออกจากสำนักงานแม้แต่ตัวอักษรเดียว</span>
-                  </li>
-                </ul>
-
-                <div className="bg-white p-3.5 rounded-xl border border-amber-200 text-xs text-slate-600 space-y-1.5">
-                  <span className="font-bold text-amber-900 block">เมื่อเพิ่มฟิลด์ในฐานข้อมูล:</span>
-                  <p className="font-mono bg-slate-900 text-emerald-400 p-2 rounded text-[11px]">
-                    npx prisma migrate dev --name add_new_feature
-                  </p>
-                  <p className="text-[11px] text-slate-500">ระบบจะสร้างไฟล์ Migration อัตโนมัติ พร้อมส่งขึ้น Git Repository</p>
-                </div>
-              </div>
-
-              {/* Office Prod Box */}
-              <div className="bg-blue-50/50 rounded-2xl p-6 border-2 border-blue-200 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-blue-950 text-lg flex items-center gap-2">
-                    <Building2 className="w-5 h-5 text-blue-600" />
-                    ๒. เซิร์ฟเวอร์สำนักงาน (Production Environment)
-                  </span>
-                  <span className="bg-blue-200 text-blue-900 text-xs font-bold px-2.5 py-0.5 rounded-full">
-                    REAL TAX DATA
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-700 leading-relaxed">
-                  เครื่องเซิร์ฟเวอร์หลักที่สำนักงานพื้นที่พิจิตร ให้บริการเจ้าหน้าที่เคาน์เตอร์ทั้งจังหวัด:
-                </p>
-
-                <ul className="space-y-2 text-xs text-slate-700">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>ฐานข้อมูลจริง (Real Data):</strong> เก็บข้อมูลคำร้อง แบบภาษี และใบเสร็จจริงของทางราชการ</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>อัปเดตระบบด้วย Git:</strong> สั่ง <code className="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded font-mono font-bold">git pull</code> ดึงโค้ดล่าสุดจากเครื่องบ้านมาปรับใช้</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>อัปเดตตารางโดยข้อมูลไม่หาย:</strong> สั่งรัน Migration อัปเดตโครงสร้างใหม่เข้า Database จริงได้ทันที</span>
-                  </li>
-                </ul>
-
-                <div className="bg-white p-3.5 rounded-xl border border-blue-200 text-xs text-slate-600 space-y-1.5">
-                  <span className="font-bold text-blue-900 block">คำสั่งอัปเดตฐานข้อมูล Production:</span>
-                  <p className="font-mono bg-slate-900 text-emerald-400 p-2 rounded text-[11px]">
-                    docker compose exec rct-app npx prisma migrate deploy
-                  </p>
-                  <p className="text-[11px] text-slate-500">ตารางจะอัปเกรดอัตโนมัติ โดยข้อมูลเก่าทั้งหมดของสำนักงานยังอยู่ครบ 100%</p>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Step-by-Step Flow Banner */}
-            <div className="p-4 bg-slate-900 text-white rounded-2xl space-y-3">
-              <span className="text-xs font-bold text-amber-400 flex items-center gap-2">
-                <Terminal className="w-4 h-4" />
-                วงจรชีวิตการทำงานจริง (Daily Development Cycle)
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                <div className="bg-white/10 p-3 rounded-xl border border-white/10">
-                  <span className="text-amber-300 font-bold block mb-1">สเต็ป ๑ (ที่บ้าน):</span>
-                  เขียนโค้ด ทดสอบกับ Mock Data จนมั่นใจ
-                </div>
-                <div className="bg-white/10 p-3 rounded-xl border border-white/10">
-                  <span className="text-amber-300 font-bold block mb-1">สเต็ป ๒ (ที่บ้าน):</span>
-                  สั่ง <code className="font-mono text-emerald-300">git push</code> ส่งขึ้น Private Repo
-                </div>
-                <div className="bg-white/10 p-3 rounded-xl border border-white/10">
-                  <span className="text-amber-300 font-bold block mb-1">สเต็ป ๓ (สำนักงาน):</span>
-                  สั่ง <code className="font-mono text-emerald-300">git pull</code> ดึงการอัปเดต
-                </div>
-                <div className="bg-white/10 p-3 rounded-xl border border-white/10">
-                  <span className="text-amber-300 font-bold block mb-1">สเต็ป ๔ (สำนักงาน):</span>
-                  Docker รีโหลดโค้ดใหม่ เจ้าหน้าที่ใช้งานได้ทันที
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* ===================================================================== */}
-      {/* TAB 5: VALUE & RETURN ON INVESTMENT (ROI) */}
+      {/* TAB 4: VALUE & RETURN ON INVESTMENT (ROI) */}
       {/* ===================================================================== */}
       {activeTab === "roi" && (
         <div className="space-y-6">
