@@ -254,10 +254,6 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                 <div className="relative mx-auto max-w-4xl bg-gradient-to-r from-blue-900 via-indigo-900 to-[#0F2942] text-white p-5 sm:p-6 rounded-2xl shadow-lg border-2 border-blue-400/40 text-center overflow-hidden">
                   <div className="absolute inset-0 bg-[radial-gradient(#38BDF8_1px,transparent_1px)] [background-size:12px_12px] opacity-15"></div>
                   <div className="relative z-10 flex flex-col items-center justify-center space-y-2">
-                    <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-3.5 py-1 rounded-full text-xs font-black">
-                      <Zap className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                      <span>สาย Fiber Optic ความเร็วสูง</span>
-                    </div>
                     <h3 className="text-sm sm:text-base md:text-lg font-black tracking-wide text-white max-w-3xl leading-snug">
                       เครือข่าย LAN ภายใน (Intranet) เชื่อมโยงระหว่างสำนักงานสรรพากรพื้นที่สาขาทั่วทั้งจังหวัดพิจิตร วิ่งตรงสู่สำนักงานสรรพากรพื้นที่พิจิตร (ไม่ผ่าน Internet สาธารณะ)
                     </h3>
