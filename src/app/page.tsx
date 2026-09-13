@@ -573,182 +573,25 @@ export default function RCTDemoApp() {
         {currentStep === "landing" && (
           <div className="space-y-10 animate-fadeIn">
 
-            {/* 1. HERO HEADER SECTION (Matching Reference Image Layout) */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1E33] via-[#102D4F] to-[#1A3D69] text-white p-8 md:p-12 shadow-2xl border border-blue-500/20">
-              {/* Background ambient glows */}
-              <div className="absolute top-0 right-0 -mt-16 -mr-16 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-1/3 -mb-16 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+            {/* 1. HERO HEADER BANNER (PowerPoint Cover Slide Background) */}
+            <div className="relative overflow-hidden rounded-3xl shadow-xl border border-slate-200/90 bg-white">
+              {/* PowerPoint Cover Image Filling the Header */}
+              <img 
+                src="/powerpoint_cover.png" 
+                alt="ยกระดับบริการคัดแบบแสดงรายการภาษีอากรผ่านระบบ RCT by Operating System" 
+                className="w-full h-auto object-cover block select-none"
+              />
 
-              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                
-                {/* Left Column: Text & Call-To-Actions */}
-                <div className="lg:col-span-7 space-y-6">
-                  
-                  {/* Pill Badge */}
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/40 text-blue-200 text-xs font-bold tracking-wide backdrop-blur-md">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>RCT PLATFORM • สรรพากรพื้นที่พิจิตร กรมสรรพากร</span>
-                  </div>
-
-                  {/* Main Headline */}
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-[1.15]">
-                    สร้างระบบบริการคัดแบบภาษี <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-yellow-400">
-                      ที่พร้อมใช้งานจริง
-                    </span>{" "}
-                    <span className="text-blue-300 text-2xl sm:text-3xl md:text-4xl font-extrabold block sm:inline">
-                      (RCT WebApp)
-                    </span>
-                  </h1>
-
-                  {/* Subtitle */}
-                  <p className="text-base sm:text-lg text-blue-100/90 leading-relaxed font-normal">
-                    ยกระดับความสะดวกให้ประชาชน ประหยัดเวลาและค่าเดินทาง พร้อมทั้งเพิ่มความมั่นคงปลอดภัยของข้อมูลภาษี ปิดความเสี่ยง PDPA และควบคุมการพิมพ์สำเนา ๔ ชั้น ป้องกันการทำซ้ำ 100%
-                  </p>
-
-                  {/* Feature Pills */}
-                  <div className="flex flex-wrap gap-2.5 pt-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-900/60 border border-blue-600/50 text-xs font-semibold text-blue-200">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      ลดเวลาเหลือ ๓ - ๕ นาที
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-900/60 border border-blue-600/50 text-xs font-semibold text-blue-200">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      ห้ามดาวน์โหลด No Local Storage
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-900/60 border border-blue-600/50 text-xs font-semibold text-blue-200">
-                      <Lock className="w-3.5 h-3.5 text-amber-300" />
-                      Print Quota Lock ๑ สิทธิ์/คำขอ
-                    </span>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-4 pt-3">
-                    <button
-                      onClick={() => setCurrentStep("branch_intake")}
-                      className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-base font-black rounded-2xl shadow-xl hover:shadow-amber-500/25 flex items-center gap-3 transition transform hover:-translate-y-0.5 cursor-pointer"
-                    >
-                      <span>เข้าสู่ระบบ Demo</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </button>
-
-                    <a
-                      href="#roadmap-section"
-                      className="text-sm font-semibold text-blue-300 hover:text-white underline underline-offset-4 flex items-center gap-1.5 transition ml-2"
-                    >
-                      <span>ดูแผนพัฒนา ๓ เฟส</span>
-                      <span>↓</span>
-                    </a>
-                  </div>
-
-                </div>
-
-                {/* Right Column: Live Mockup / Platform Dashboard Frame */}
-                <div className="lg:col-span-5">
-                  <div className="bg-slate-900/80 backdrop-blur-xl border border-blue-400/30 rounded-2xl shadow-2xl p-5 relative overflow-hidden group">
-                    {/* Window Controls Header */}
-                    <div className="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-4 text-xs text-slate-400">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-full bg-rose-500/80"></span>
-                        <span className="w-3 h-3 rounded-full bg-amber-500/80"></span>
-                        <span className="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-                        <span className="ml-2 font-mono text-[11px] text-blue-300">rct-internal.rd.go.th/portal</span>
-                      </div>
-                      <span className="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full text-[10px] border border-emerald-500/30 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                        LIVE READY
-                      </span>
-                    </div>
-
-                    {/* Dashboard Preview Cards inside Mockup */}
-                    <div className="space-y-3.5">
-                      <div className="bg-gradient-to-r from-blue-900/50 to-indigo-950/50 p-4 rounded-xl border border-blue-500/30">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-blue-200">สถานะระบบวันนี้</span>
-                          <span className="text-[11px] font-bold text-amber-300">สท.พิจิตร ⇄ สส.โพทะเล</span>
-                        </div>
-                        <div className="mt-2 flex items-baseline gap-2">
-                          <span className="text-3xl font-black text-white">3.8</span>
-                          <span className="text-xs text-blue-300">นาที เฉลี่ย/คำขอ (SLA &lt; 5 นาที)</span>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2.5">
-                        <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700">
-                          <div className="text-[11px] text-slate-400">ความปลอดภัย PDPA</div>
-                          <div className="text-lg font-black text-emerald-400 mt-1">100%</div>
-                          <div className="text-[10px] text-slate-400 mt-0.5">No Local Storage</div>
-                        </div>
-                        <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700">
-                          <div className="text-[11px] text-slate-400">ระบบคุมพิมพ์ 4 ชั้น</div>
-                          <div className="text-lg font-black text-amber-300 mt-1">Active</div>
-                          <div className="text-[10px] text-slate-400 mt-0.5">Print Quota Locked</div>
-                        </div>
-                      </div>
-
-                      {/* Mockup Quick Jump */}
-                      <button
-                        onClick={() => setCurrentStep("branch_intake")}
-                        className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <Scan className="w-4 h-4" />
-                        <span>เริ่มการจำลองขั้นตอนที่ ๑: เคาน์เตอร์ สส. ➔</span>
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-
+              {/* Interactive Call-To-Action Button positioned right below the title */}
+              <div className="absolute top-[54%] sm:top-[55%] md:top-[56%] left-[46%] sm:left-[46.5%] z-20">
+                <button
+                  onClick={() => setCurrentStep("branch_intake")}
+                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm md:text-base rounded-xl sm:rounded-2xl shadow-xl hover:shadow-amber-500/40 flex items-center gap-2 sm:gap-3 transition transform hover:-translate-y-0.5 hover:scale-105 cursor-pointer border border-amber-300/80"
+                >
+                  <span>เข้าสู่ระบบ Demo</span>
+                  <ArrowRight className="w-4 h-4 sm:w-5 h-5 text-slate-950" />
+                </button>
               </div>
-            </div>
-
-            {/* 2. FOUR FEATURE HIGHLIGHT CARDS (Matching Reference Image) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              
-              {/* Card 1: ปลอดภัย มั่นใจได้ */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
-                <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base">ปลอดภัย มั่นใจได้ (PDPA)</h3>
-                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                  ปิดความเสี่ยงข้อมูลภาษีรั่วไหล 100% ด้วยสถาปัตยกรรม No Local Storage เจ้าหน้าที่ไม่สามารถเซฟหรือดาวน์โหลดไฟล์ลงเครื่องคอมพิวเตอร์ส่วนตัวได้
-                </p>
-              </div>
-
-              {/* Card 2: ใช้งานง่าย รวดเร็ว */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
-                <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
-                  <UserCheck className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base">ใช้งานง่าย รวดเร็ว (Smart Counter)</h3>
-                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                  เสียบบัตร Smart Card ดึงข้อมูลกรอกคำร้องอัตโนมัติ ลดขั้นตอนการพิมพ์และขจัดความผิดพลาดในการสะกดชื่อ-สกุล ข้อมูลแม่นยำ 100%
-                </p>
-              </div>
-
-              {/* Card 3: ควบคุมการพิมพ์ ๔ ชั้น */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
-                <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
-                  <Lock className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base">ควบคุมการพิมพ์ ๔ ชั้น</h3>
-                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                  ปลดล็อกโควตา 1 ครั้งต่อคำขอ + ลายน้ำระบุปลายทางเฉพาะเจาะจง + e-Seal + QR Code ตรวจสอบย้อนหลัง ป้องกันการเวียนใช้ซ้ำ 100%
-                </p>
-              </div>
-
-              {/* Card 4: ดูแลต่อเนื่องและโปร่งใส */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition group">
-                <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-105 transition">
-                  <BarChart3 className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base">โปร่งใส ตรวจสอบได้ (SLA)</h3>
-                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                  มีระบบ Audit Log บันทึกทุกกิจกรรมและจำนวนครั้งที่พิมพ์ พร้อมแดชบอร์ด SLA แบบ Real-Time ให้ผู้บริหารกำกับดูแลได้ทันที
-                </p>
-              </div>
-
             </div>
 
             {/* 3. ROADMAP SECTION: แผนการพัฒนาระบบคัดแบบแสดงรายการภาษีอากร RCT (3 เฟส) */}
