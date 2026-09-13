@@ -385,7 +385,7 @@ export default function RCTDemoApp() {
                   เฟส ๒ WebApp
                 </span>
               </div>
-              <p className="text-xs text-blue-200 mt-0.5">ระบบบริการคัดแบบแสดงรายการภาษีอัจฉริยะ • สท.พิจิตร กรมสรรพากร</p>
+              <p className="text-xs text-blue-200 mt-0.5">ระบบบริการคัดแบบแสดงรายการภาษี plus+ • สท.พิจิตร กรมสรรพากร</p>
             </div>
           </div>
 
@@ -615,13 +615,6 @@ export default function RCTDemoApp() {
                       ถูกวางกรอบการดำเนินงานออกเป็น 3 เฟส เพื่อยกระดับความสะดวกให้ประชาชน ประหยัดเวลาและค่าเดินทาง พร้อมทั้งเพิ่มความมั่นคงปลอดภัยของข้อมูลภาษี ดังนี้
                     </p>
                   </div>
-
-                  <button
-                    onClick={() => setCurrentStep("branch_intake")}
-                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow flex items-center gap-2 transition flex-shrink-0 cursor-pointer"
-                  >
-                    <span>ทดสอบระบบ Demo ➔</span>
-                  </button>
                 </div>
               </div>
 
@@ -2906,7 +2899,7 @@ export default function RCTDemoApp() {
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 text-slate-600 text-xs py-4 px-6 text-center">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="font-medium">ระบบบริหารจัดการและคัดแบบแสดงรายการภาษีอัจฉริยะ (RCT WebApp Platform) • สำนักงานสรรพากรพื้นที่พิจิตร</span>
+          <span className="font-medium">ระบบบริการคัดแบบแสดงรายการภาษี plus+ (RCT WebApp Platform) • สำนักงานสรรพากรพื้นที่พิจิตร</span>
           <span className="font-mono text-slate-400">Next.js 16 • Tailwind CSS • Vercel Ready</span>
         </div>
       </footer>

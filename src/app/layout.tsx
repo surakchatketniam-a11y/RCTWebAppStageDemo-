@@ -15,7 +15,7 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  title: "RCT Platform - ระบบคัดแบบแสดงรายการภาษีอากรอัจฉริยะ (Live Demo)",
+  title: "RCT Platform - ระบบบริการคัดแบบแสดงรายการภาษี plus+ (Live Demo)",
   description: "ระบบบริหารจัดการการคัดแบบแสดงรายการภาษีอากรผ่านระบบ RCT Platform สำนักงานสรรพากรพื้นที่พิจิตร กรมสรรพากร",
 };
 
