@@ -298,11 +298,12 @@ export default function RCTDemoApp() {
 
   // Step 3: Citizen scans QR at Branch Counter
   const handleCitizenScanQR = () => {
+    if (qrScanned) return;
     setQrScanned(true);
-    showToast("✓ ประชาชนสแกน QR ชำระเงิน 40.00 บาท สำเร็จ -> ส่งสัญญาณแจ้งฝ่ายการเงินทันที");
+    showToast("✓ ประชาชนสแกน QR ชำระเงิน 40.00 บาท สำเร็จ -> กำลังส่งสัญญาณแจ้งฝ่ายการเงิน...");
     setTimeout(() => {
-      setCurrentStep("treasury_finance"); // Jump to Step 4!
-    }, 600);
+      setCurrentStep("treasury_finance"); // Jump to Step 4 after delay!
+    }, 2000);
   };
 
   // Step 4: Finance confirms & issues e-Receipt & unlocks quota
@@ -625,23 +626,15 @@ export default function RCTDemoApp() {
                   <div className="flex flex-wrap items-center gap-4 pt-3">
                     <button
                       onClick={() => setCurrentStep("branch_intake")}
-                      className="px-7 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-base font-black rounded-2xl shadow-xl hover:shadow-amber-500/25 flex items-center gap-3 transition transform hover:-translate-y-0.5 cursor-pointer"
+                      className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-base font-black rounded-2xl shadow-xl hover:shadow-amber-500/25 flex items-center gap-3 transition transform hover:-translate-y-0.5 cursor-pointer"
                     >
                       <span>เข้าสู่ระบบ Demo</span>
                       <ArrowRight className="w-5 h-5" />
                     </button>
 
-                    <button
-                      onClick={() => setShowGuideModal(true)}
-                      className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-base font-bold rounded-2xl border border-white/20 backdrop-blur-md flex items-center gap-2.5 transition cursor-pointer"
-                    >
-                      <Award className="w-5 h-5 text-amber-300" />
-                      <span>ดูบทพูดบนเวที</span>
-                    </button>
-
                     <a
                       href="#roadmap-section"
-                      className="text-sm font-semibold text-blue-300 hover:text-white underline underline-offset-4 flex items-center gap-1.5 transition ml-1"
+                      className="text-sm font-semibold text-blue-300 hover:text-white underline underline-offset-4 flex items-center gap-1.5 transition ml-2"
                     >
                       <span>ดูแผนพัฒนา ๓ เฟส</span>
                       <span>↓</span>
@@ -1804,11 +1797,25 @@ export default function RCTDemoApp() {
 
               {/* Transition Button to Step 4 */}
               <button
+                disabled={qrScanned}
                 onClick={handleCitizenScanQR}
-                className="px-5 py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm rounded-xl shadow-md flex items-center gap-2 flex-shrink-0 transition animate-pulse cursor-pointer whitespace-nowrap"
+                className={`px-5 py-3 font-bold text-sm rounded-xl shadow-md flex items-center gap-2 flex-shrink-0 transition cursor-pointer whitespace-nowrap ${
+                  qrScanned 
+                    ? "bg-emerald-600 text-white cursor-wait" 
+                    : "bg-blue-700 hover:bg-blue-800 text-white animate-pulse"
+                }`}
               >
-                <Smartphone className="w-5 h-5" />
-                <span>จำลองประชาชนสแกนชำระเงิน ➔</span>
+                {qrScanned ? (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 text-white animate-bounce" />
+                    <span>✓ ชำระเงินสำเร็จแล้ว...</span>
+                  </>
+                ) : (
+                  <>
+                    <Smartphone className="w-5 h-5" />
+                    <span>จำลองประชาชนสแกนชำระเงิน ➔</span>
+                  </>
+                )}
               </button>
             </div>
 
@@ -1824,9 +1831,16 @@ export default function RCTDemoApp() {
                     </h2>
                     <p className="text-sm text-slate-500 mt-1">เจ้าหน้าที่: นางสาว มยุรี ชื่นจิตต์</p>
                   </div>
-                  <span className="bg-blue-50 text-blue-800 border border-blue-300 text-xs font-bold px-3 py-1.5 rounded-full">
-                    รอชำระเงินค่าธรรมเนียม
-                  </span>
+                  {qrScanned ? (
+                    <span className="bg-emerald-100 text-emerald-900 border border-emerald-400 text-xs font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 animate-pulse">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>ชำระเงินสำเร็จแล้ว (รอฝ่ายการเงิน)</span>
+                    </span>
+                  ) : (
+                    <span className="bg-amber-50 text-amber-900 border border-amber-300 text-xs font-bold px-3 py-1.5 rounded-full">
+                      รอชำระเงินค่าธรรมเนียม
+                    </span>
+                  )}
                 </div>
 
                 {/* Incoming Central Data Banner */}
@@ -1861,14 +1875,28 @@ export default function RCTDemoApp() {
                 {/* Action Box to Simulate Citizen Scan */}
                 <div className="border-t border-slate-100 pt-4">
                   <button
+                    disabled={qrScanned}
                     onClick={handleCitizenScanQR}
-                    className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-3 transition cursor-pointer text-base"
+                    className={`w-full py-4 font-bold rounded-xl shadow-lg flex items-center justify-center gap-3 transition cursor-pointer text-base ${
+                      qrScanned
+                        ? "bg-emerald-700 text-white cursor-wait"
+                        : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
+                    }`}
                   >
-                    <Smartphone className="w-5 h-5 text-emerald-200" />
-                    <span>จำลอง: ประชาชนเปิดแอปธนาคารสแกน QR จ่าย 40 บาท สำเร็จ ➔ (กระโดดไปหน้าการเงิน)</span>
+                    {qrScanned ? (
+                      <>
+                        <CheckCircle2 className="w-5 h-5 text-white animate-bounce" />
+                        <span>✓ ชำระเงินสำเร็จแล้ว! กำลังส่งสัญญาณแจ้งฝ่ายการเงิน...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Smartphone className="w-5 h-5 text-emerald-200" />
+                        <span>จำลอง: ประชาชนเปิดแอปธนาคารสแกน QR จ่าย 40 บาท สำเร็จ ➔</span>
+                      </>
+                    )}
                   </button>
                   <p className="text-xs text-slate-500 text-center mt-2.5">
-                    * เมื่อกดปุ่มนี้ ระบบจะจำลองว่าประชาชนโอนเงินสำเร็จ แล้วกระโดดไปหน้าจอการเงินเพื่อดูว่าเกิดอะไรขึ้นอัตโนมัติ
+                    * เมื่อกดปุ่มนี้ ระบบจะจำลองว่าประชาชนโอนเงินสำเร็จ แสดงผลบนหน้าจอชั่วครู่ แล้วกระโดดไปหน้าจอการเงินโดยอัตโนมัติ
                   </p>
                 </div>
               </div>
@@ -1889,22 +1917,38 @@ export default function RCTDemoApp() {
                     40.00 <span className="text-lg font-bold text-slate-600">บาท</span>
                   </div>
 
-                  <div className="p-3 bg-white border-2 border-blue-600 rounded-xl shadow-sm relative">
+                  <div className={`p-3 bg-white border-2 rounded-2xl shadow-sm relative transition-all duration-300 overflow-hidden ${
+                    qrScanned ? "border-emerald-500 ring-4 ring-emerald-400/20 shadow-emerald-500/20" : "border-blue-600"
+                  }`}>
                     <img 
                       src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=PROMPTPAY-TAX-REF-RCT6909088-AMOUNT-40.00" 
                       alt="Citizen Payment QR"
-                      className="w-48 h-48 mx-auto"
+                      className="w-48 h-48 mx-auto rounded-lg"
                     />
                     {qrScanned && (
-                      <div className="absolute inset-0 bg-emerald-600/95 rounded-lg flex flex-col items-center justify-center text-white font-bold">
-                        <CheckCircle2 className="w-14 h-14 mb-2 text-white" />
-                        <span className="text-lg">ชำระเงินสำเร็จแล้ว</span>
+                      <div className="absolute inset-0 bg-emerald-600/95 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center text-white font-bold p-4 animate-fadeIn shadow-inner">
+                        <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-2.5 animate-bounce">
+                          <CheckCircle2 className="w-12 h-12 text-white" />
+                        </div>
+                        <span className="text-xl font-black text-amber-200">ชำระเงินสำเร็จแล้ว</span>
+                        <span className="text-xs text-white/95 mt-1 font-semibold">ยอดเงิน 40.00 บาท (๒ ฉบับ)</span>
+                        <div className="mt-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-800/90 text-[11px] font-bold text-emerald-100 border border-emerald-400/40">
+                          <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping"></span>
+                          <span>กำลังส่งสัญญาณไปยังฝ่ายการเงิน...</span>
+                        </div>
                       </div>
                     )}
                   </div>
 
                   <div className="text-xs text-slate-600 mt-3 font-semibold">
-                    สแกนจ่ายได้ทุกธนาคาร (KTB, SCB, KBANK, BBL ฯลฯ)
+                    {qrScanned ? (
+                      <span className="text-emerald-700 font-bold flex items-center justify-center gap-1">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 inline" />
+                        <span>ระบบได้รับยอดเงินเรียบร้อยแล้ว</span>
+                      </span>
+                    ) : (
+                      <span>สแกนจ่ายได้ทุกธนาคาร (KTB, SCB, KBANK, BBL ฯลฯ)</span>
+                    )}
                   </div>
                 </div>
 
