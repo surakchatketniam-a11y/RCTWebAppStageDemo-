@@ -31,7 +31,10 @@ import {
   Scan,
   HardDrive,
   UserCheck,
-  Search
+  Search,
+  Edit3,
+  X,
+  FileSignature
 } from "lucide-react";
 
 // Flow Step Types
@@ -213,8 +216,10 @@ export default function RCTDemoApp() {
   // Active Flow Step (Defaults to Step 1: เคาน์เตอร์ สส.)
   const [currentStep, setCurrentStep] = useState<FlowStep>("branch_intake");
   
-  // Smart Card State
-  const [cardInserted, setCardInserted] = useState<boolean>(true);
+  // Smart Card & Request Form States (Step 1)
+  const [cardInserted, setCardInserted] = useState<boolean>(false);
+  const [showRequestModal, setShowRequestModal] = useState<boolean>(false);
+  const [requestSubmitted, setRequestSubmitted] = useState<boolean>(false);
 
   // Search & Upload State in Central (Step 2)
   const [searchSource, setSearchSource] = useState<"database_image" | "paper_scan">("database_image");
@@ -260,6 +265,12 @@ export default function RCTDemoApp() {
 
   // Step 1: Branch sends request to Central
   const handleBranchSendToCentral = () => {
+    if (!requestSubmitted) {
+      showToast("⚠️ กรุณากดเขียนคำร้องและกด 'ส่งคำร้อง' ก่อนส่งต่อไปยังส่วนคัดแบบ");
+      if (!cardInserted) setCardInserted(true);
+      setShowRequestModal(true);
+      return;
+    }
     showToast("✓ เคาน์เตอร์ สส.โพทะเล ส่งคำขอคัดแบบ ภ.ง.ด.90 ไปยังส่วนคัดแบบ (สท.พิจิตร) เรียบร้อย");
     setCurrentStep("central_search"); // Jump to Step 2!
   };
@@ -314,7 +325,9 @@ export default function RCTDemoApp() {
   // Reset Demo
   const handleResetDemo = () => {
     setCurrentStep("branch_intake");
-    setCardInserted(true);
+    setCardInserted(false);
+    setRequestSubmitted(false);
+    setShowRequestModal(false);
     setSearchSource("database_image");
     setFileFound(true);
     setFileUploaded(true);
@@ -524,7 +537,7 @@ export default function RCTDemoApp() {
                     <span className="bg-blue-200 text-blue-900 text-xs font-bold px-2 py-0.5 rounded">สส. สาขา</span>
                   </h3>
                   <p className="text-sm text-blue-800 mt-1 leading-relaxed">
-                    <strong>จุดสังเกตสำหรับคณะกรรมการ:</strong> ประชาชนเดินทางมายื่นคำขอที่สาขาใกล้บ้าน เจ้าหน้าที่เสียบบัตรประชาชน Smart Card ดึงข้อมูลประชากรอัตโนมัติ เลือกระบุแบบ ภ.ง.ด.90 และกดส่งคำขอไปยัง <strong>"ส่วนคัดแบบ"</strong> เพื่อเริ่มกระบวนการ
+                    <strong>ขั้นตอนการทำงาน ๓ สเต็ป:</strong> ๑. เจ้าหน้าที่ สส. กดปุ่มอ่านบัตรฯ ➔ ๒. กดปุ่มเขียนคำร้อง (เปิด Modal ตรวจสอบแล้วกดส่งคำร้อง) ➔ ๓. กดปุ่มบันทึกคำร้องและส่งต่อไปยัง ส่วนคัดแบบ (สท.พิจิตร)
                   </p>
                 </div>
               </div>
@@ -532,7 +545,11 @@ export default function RCTDemoApp() {
               {/* Transition Button to Step 2 */}
               <button
                 onClick={handleBranchSendToCentral}
-                className="px-5 py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm rounded-xl shadow-md flex items-center gap-2 flex-shrink-0 transition animate-pulse cursor-pointer whitespace-nowrap"
+                className={`px-5 py-3 font-bold text-sm rounded-xl shadow-md flex items-center gap-2 flex-shrink-0 transition cursor-pointer whitespace-nowrap ${
+                  requestSubmitted
+                    ? "bg-blue-700 hover:bg-blue-800 text-white animate-pulse"
+                    : "bg-slate-200 hover:bg-blue-100 text-slate-700 hover:text-blue-900 border border-slate-300"
+                }`}
               >
                 <span>ส่งคำขอไปยัง ส่วนคัดแบบ (สท.) ➔</span>
                 <ArrowRight className="w-5 h-5" />
@@ -541,370 +558,265 @@ export default function RCTDemoApp() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
-              {/* Left Column: Official Government Request Form (คำร้องขอคัดแบบฯ กรมสรรพากร) */}
-              <div className="lg:col-span-8 bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-5">
+              {/* Left Column: 3 Operational Steps at Counter สส. */}
+              <div className="lg:col-span-8 space-y-5">
                 
-                {/* Header: Office & Smart Card Controls */}
-                <div className="border-b-2 border-slate-900/80 pb-4 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-xs text-slate-600 font-bold">
-                      <Building2 className="w-4 h-4 text-blue-600" />
-                      <span>สส.โพทะเล • สท.พิจิตร กรมสรรพากร</span>
+                {/* STEP 1.1: เครื่องอ่านบัตรประจำตัวประชาชน (Smart Card Reader) */}
+                <div className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shadow-xs ${cardInserted ? "bg-emerald-600 text-white" : "bg-blue-600 text-white"}`}>
+                        ๑
+                      </div>
+                      <div>
+                        <h4 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                          <span>ขั้นตอนที่ ๑ : อ่านบัตรประจำตัวประชาชน (Smart Card)</span>
+                          <span className="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded">
+                            IAL 2.3
+                          </span>
+                        </h4>
+                        <p className="text-xs text-slate-500">ตรวจสอบตัวตนและดึงข้อมูลทะเบียนราษฎร์อัตโนมัติ</p>
+                      </div>
                     </div>
 
-                    {/* Smart Card Simulator Controls */}
-                    <div className="flex items-center gap-2">
-                      {cardInserted ? (
-                        <div className="flex items-center gap-2">
-                          <span className="bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
-                            <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
-                            Dip-Chip Smart Card แล้ว (IAL 2.3)
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCardInserted(false);
-                              showToast("ถอดบัตรประชาชนออกจากเครื่องอ่านแล้ว (สถานะ: รอเสียบบัตร)");
-                            }}
-                            className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-bold border border-slate-300 transition cursor-pointer"
-                            title="จำลองการถอดบัตรประชาชน"
-                          >
-                            ถอดบัตร
-                          </button>
-                        </div>
-                      ) : (
+                    {cardInserted && (
+                      <div className="flex items-center gap-2">
+                        <span className="bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
+                          <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                          Dip-Chip สำเร็จ (พร้อมใช้งาน)
+                        </span>
                         <button
                           type="button"
                           onClick={() => {
-                            setCardInserted(true);
-                            showToast("✓ ตรวจพบเครื่องอ่านบัตร: ดึงข้อมูลบัตรประชาชนสำเร็จ (IAL 2.3) - นายสมชาย มุ่งมั่นพัฒนา");
+                            setCardInserted(false);
+                            showToast("ถอดบัตรประชาชนออกจากเครื่องอ่านแล้ว (สถานะ: รอเสียบบัตร)");
                           }}
-                          className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold text-xs rounded-lg shadow-sm flex items-center gap-1.5 transition animate-pulse cursor-pointer"
+                          className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-bold border border-slate-300 transition cursor-pointer"
+                          title="จำลองการถอดบัตรประชาชน"
                         >
-                          <HardDrive className="w-3.5 h-3.5" />
-                          <span>⚡ จำลองเสียบบัตรประชาชน (Smart Card)</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Form Title according to คำร้องขอคัดแบบ.pdf */}
-                  <div className="text-center space-y-1 pt-1">
-                    <h2 className="text-base md:text-lg font-black text-slate-900 tracking-tight">
-                      แบบการขอรับบริการข้อมูลสำเนาแบบแสดงรายการภาษี และเอกสารที่เกี่ยวข้อง
-                    </h2>
-                    <p className="text-xs text-slate-600 font-bold">ของกรมสรรพากร</p>
-                  </div>
-
-                  {/* Metadata Boxes: (สำหรับเจ้าหน้าที่) On Left & Written Details On Right */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
-                    {/* Left Box: สำหรับเจ้าหน้าที่ */}
-                    <div className="md:col-span-5 border border-slate-400 rounded-lg p-2.5 bg-slate-50 text-[11px] space-y-1">
-                      <div className="font-bold text-slate-800 border-b border-slate-200 pb-0.5 flex justify-between">
-                        <span>(สำหรับเจ้าหน้าที่)</span>
-                        <span className="text-blue-700 font-mono font-bold">REQ-2569-0449</span>
-                      </div>
-                      <div className="text-slate-600 flex justify-between">
-                        <span>รับที่:</span>
-                        <span className="font-semibold text-slate-900">เคาน์เตอร์ สส.โพทะเล</span>
-                      </div>
-                      <div className="text-slate-600 flex justify-between">
-                        <span>วันที่/เวลา:</span>
-                        <span className="font-semibold text-slate-900">13 ก.ย. 2569 เวลา 09:15 น.</span>
-                      </div>
-                    </div>
-
-                    {/* Right Box: Written Place & Date */}
-                    <div className="md:col-span-7 flex flex-col justify-end text-xs text-slate-700 space-y-1.5 md:pl-3">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-slate-500 font-medium">เขียนที่:</span>
-                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 flex-1 truncate">
-                          สำนักงานสรรพากรพื้นที่สาขาโพทะเล จ.พิจิตร
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-[11px]">
-                        <span className="text-slate-500 font-medium">วันที่</span>
-                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 px-1.5">๑๓</span>
-                        <span className="text-slate-500 font-medium">เดือน</span>
-                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 px-1.5">กันยายน</span>
-                        <span className="text-slate-500 font-medium">พ.ศ.</span>
-                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 px-1.5">๒๕๖๙</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Form Body - Matching authentic fields from คำร้องขอคัดแบบ.pdf */}
-                <div className="space-y-4 text-xs md:text-sm text-slate-800">
-                  
-                  {/* SECTION 1: ข้อมูลผู้ยื่นคำร้อง */}
-                  <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/60 space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                      <span className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
-                        <FileCheck className="w-4 h-4 text-blue-600" />
-                        ๑. ข้อมูลผู้ยื่นคำร้อง (ข้าพเจ้า)
-                      </span>
-                      {cardInserted && (
-                        <span className="text-[10px] text-emerald-800 bg-emerald-100 font-mono font-bold px-2 py-0.5 rounded">
-                          ✓ ดึงข้อมูลชิปบัตรประชาชนอัตโนมัติ
-                        </span>
-                      )}
-                    </div>
-
-                    {cardInserted ? (
-                      <div className="space-y-2.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-slate-600">ข้าพเจ้า:</span>
-                          <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-xs">
-                            ☑ นาย □ นาง □ นางสาว
-                          </span>
-                          <span className="font-bold text-slate-900 text-base border-b border-dotted border-slate-500 px-2">
-                            นายสมชาย มุ่งมั่นพัฒนา
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-slate-600">เลขบัตรประจำตัวประชาชน / เลขประจำตัวผู้เสียภาษีอากร:</span>
-                          <span className="font-mono font-bold text-slate-900 text-sm bg-white px-2 py-0.5 rounded border border-slate-300 shadow-xs">
-                            1-6699-00123-45-6
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200">
-                          <span>ที่อยู่: <strong className="text-slate-900">124/5</strong></span>
-                          <span>หมู่ที่: <strong className="text-slate-900">3</strong></span>
-                          <span>ถนน: <strong className="text-slate-900">-</strong></span>
-                          <span>ตำบล/แขวง: <strong className="text-slate-900">โพทะเล</strong></span>
-                          <span>อำเภอ/เขต: <strong className="text-slate-900">โพทะเล</strong></span>
-                          <span>จังหวัด: <strong className="text-slate-900">พิจิตร</strong></span>
-                          <span>โทรศัพท์มือถือ: <strong className="text-slate-900 font-mono">081-999-8877</strong></span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs">
-                          <span className="text-slate-600">มีฐานะเป็น:</span>
-                          <span className="inline-flex flex-wrap items-center gap-2 text-slate-700">
-                            <span className="text-slate-400">□ กรรมการผู้มีอำนาจ</span>
-                            <span className="text-slate-400">□ ผู้รับมอบอำนาจ</span>
-                            <span className="font-bold text-blue-900 bg-blue-100/70 px-2 py-0.5 rounded border border-blue-200">☑ ผู้มีเงินได้</span>
-                            <span className="text-slate-400">□ อื่นๆ</span>
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-5 space-y-2 bg-amber-50/50 rounded-lg border border-dashed border-amber-300">
-                        <div className="text-slate-600 text-xs font-medium">รอการเสียบบัตรประจำตัวประชาชน Smart Card เพื่อดึงข้อมูลอัตโนมัติ</div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setCardInserted(true);
-                            showToast("✓ ตรวจพบเครื่องอ่านบัตร: ดึงข้อมูลบัตรประชาชนสำเร็จ (IAL 2.3) - นายสมชาย มุ่งมั่นพัฒนา");
-                          }}
-                          className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs rounded-xl shadow inline-flex items-center gap-1.5 transition cursor-pointer"
-                        >
-                          <HardDrive className="w-3.5 h-3.5" />
-                          <span>⚡ คลิกเพื่อจำลองเสียบบัตรประชาชน (Dip-Chip Auto Fill)</span>
+                          ถอดบัตร
                         </button>
                       </div>
                     )}
                   </div>
 
-                  {/* SECTION 2: ความประสงค์ขอรับบริการข้อมูลสำเนาแบบแสดงรายการภาษี */}
-                  <div className="border border-slate-200 rounded-xl p-4 bg-white space-y-3">
-                    <div className="font-bold text-slate-900 text-xs border-b border-slate-100 pb-2 flex items-center gap-1.5">
-                      <FileText className="w-4 h-4 text-blue-600" />
-                      ๒. ความประสงค์ขอรับบริการข้อมูลสำเนาแบบแสดงรายการภาษี และเอกสารที่เกี่ยวข้อง
-                    </div>
-
-                    <div className="space-y-2.5 text-xs">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-slate-600">ขอรับบริการ:</span>
-                        <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                          ☑ ข้อมูลสำเนาแบบแสดงรายการภาษี
-                        </span>
-                        <span className="text-slate-400">□ ใบเสร็จรับเงิน</span>
-                        <span className="text-slate-400">□ อื่นๆ</span>
-                        <span className="font-bold text-emerald-900 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                          (☑ รับรองสำเนาแบบฯ □ ไม่รับรองสำเนาแบบฯ)
-                        </span>
+                  {!cardInserted ? (
+                    <div className="bg-amber-50/70 border-2 border-dashed border-amber-300 rounded-2xl p-6 text-center space-y-3.5">
+                      <div className="w-14 h-14 mx-auto bg-amber-100 text-amber-800 rounded-2xl flex items-center justify-center shadow-inner">
+                        <HardDrive className="w-7 h-7 animate-pulse" />
                       </div>
-
-                      <div className="flex flex-wrap items-center gap-2 text-slate-700">
-                        <span>ตามระเบียบฯ ของราชการกรมสรรพากร ของราย:</span>
-                        <strong className="text-slate-900 text-sm border-b border-dotted border-slate-400 px-1">นายสมชาย มุ่งมั่นพัฒนา</strong>
-                        <span>เลขประจำตัวประชาชน:</span>
-                        <strong className="font-mono text-slate-900 bg-slate-100 px-2 py-0.5 rounded">1-6699-00123-45-6</strong>
+                      <div className="max-w-md mx-auto space-y-1">
+                        <h5 className="font-bold text-slate-900 text-base">รอเจ้าหน้าที่กดปุ่มอ่านบัตรประชาชน</h5>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          ประชาชนยื่นบัตรประจำตัวประชาชน ณ เคาน์เตอร์ สส.โพทะเล เจ้าหน้าที่กดปุ่มอ่านบัตรฯ เพื่อดึงข้อมูลประชากรเข้าสู่ระบบทันที
+                        </p>
                       </div>
-
-                      {/* Item Rows matching paper form */}
-                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2 mt-1">
-                        <div className="flex flex-wrap items-center gap-2 bg-white p-2.5 rounded-md border border-blue-200 text-xs">
-                          <span className="font-bold text-blue-900">☑ แบบฯ</span>
-                          <span className="font-bold text-blue-900 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">ภ.ง.ด.90 (บุคคลธรรมดา)</span>
-                          <span className="text-slate-600">ปีภาษี:</span>
-                          <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">2568</span>
-                          <span className="text-slate-600">เดือน:</span>
-                          <span className="font-bold text-slate-800">มกราคม</span>
-                          <span className="text-slate-600">ถึงเดือน:</span>
-                          <span className="font-bold text-slate-800">ธันวาคม</span>
-                          <span className="text-slate-600">จำนวน:</span>
-                          <span className="font-mono font-black text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded text-sm">2</span>
-                          <span>(ชุด)</span>
-                        </div>
-                        <div className="text-[11px] text-slate-400 pl-2">
-                          □ แบบฯ .............................. ปีภาษี ............ เดือน ............ ถึงเดือน ............ จำนวน ...... (ชุด)
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* SECTION 3: วัตถุประสงค์เพื่อนำไปเป็นหลักฐานในการ */}
-                  <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/60 space-y-3">
-                    <div className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-2 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5">
-                        <Shield className="w-4 h-4 text-blue-600" />
-                        ๓. เพื่อนำไปเป็นหลักฐานในการ (จัดทำลายน้ำระบุปลายทางป้องกันการทำซ้ำ)
-                      </span>
-                      <span className="text-blue-700 text-[11px] font-bold bg-blue-100/70 px-2 py-0.5 rounded border border-blue-200">
-                        {currentPreset.category}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2.5 text-xs">
-                      <div className="flex flex-wrap items-center gap-3 text-slate-600">
-                        <span>เพื่อนำไปเป็นหลักฐานในการ:</span>
-                        <span className="text-slate-400">□ ขอต่อวีซ่า</span>
-                        <span className="text-slate-400">□ ขอใบอนุญาตทำงาน</span>
-                        <span className="text-slate-400">□ เก็บไว้เป็นหลักฐาน</span>
-                        <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                          ☑ อื่นๆ (ระบุวัตถุประสงค์/ปลายทางเพื่อจัดทำลายน้ำ):
-                        </span>
-                      </div>
-
-                      {/* Dropdown matching our 8 categories */}
-                      <select
-                        value={selectedPurposeId}
-                        onChange={(e) => setSelectedPurposeId(e.target.value)}
-                        className="w-full bg-white border-2 border-slate-300 rounded-xl p-2.5 text-sm font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCardInserted(true);
+                          showToast("✓ ตรวจพบเครื่องอ่านบัตร: ดึงข้อมูลบัตรประชาชนสำเร็จ (IAL 2.3) - นายสมชาย มุ่งมั่นพัฒนา");
+                        }}
+                        className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-sm rounded-xl shadow-md inline-flex items-center gap-2 transition cursor-pointer transform hover:scale-[1.02]"
                       >
-                        {Array.from(new Set(WATERMARK_PRESETS.map(p => p.category))).map(cat => (
-                          <optgroup key={cat} label={`📂 ${cat}`}>
-                            {WATERMARK_PRESETS.filter(p => p.category === cat).map(p => (
-                              <option key={p.id} value={p.id}>{p.label}</option>
-                            ))}
-                          </optgroup>
-                        ))}
-                      </select>
-
-                      {selectedPurposeId === "custom" && (
-                        <div className="pt-1">
-                          <input
-                            type="text"
-                            placeholder="พิมพ์ระบุหน่วยงานหรือข้อความลายน้ำเอง..."
-                            value={customWatermark}
-                            onChange={(e) => setCustomWatermark(e.target.value)}
-                            className="w-full bg-white border-2 border-blue-400 rounded-xl p-2 text-sm text-slate-900 font-bold focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] bg-blue-50/80 p-2.5 rounded-lg border border-blue-200 text-blue-900">
-                        <span><strong>สิ่งที่ปลายทางต้องการตรวจ:</strong> {currentPreset.inspectionFocus}</span>
-                        <span className="font-mono font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
-                          ลายน้ำที่จะพิมพ์: "ใช้สำหรับ {activeWatermarkText} เท่านั้น"
-                        </span>
-                      </div>
+                        <HardDrive className="w-4 h-4" />
+                        <span>⚡ กดปุ่มอ่านบัตรฯ (Dip-Chip Smart Card)</span>
+                      </button>
                     </div>
-                  </div>
-
-                  {/* SECTION 4: ลายมือชื่อ & ส่วนสำหรับเจ้าหน้าที่ตามแบบฟอร์มจริง */}
-                  <div className="border border-slate-300 rounded-xl overflow-hidden text-xs bg-white space-y-0">
-                    
-                    {/* Signatures row */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 p-3.5 border-b border-slate-200 gap-4 bg-slate-50/40">
-                      <div>
-                        <span className="text-slate-500 block mb-1">ได้รับแบบฯ แล้ว (ลงชื่อเมื่อรับเอกสาร):</span>
-                        <div className="border-b border-dotted border-slate-400 h-6 text-slate-400 text-center italic">
-                          (จะลงชื่อรับมอบในขั้นตอนที่ ๕)
+                  ) : (
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-3">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-14 bg-blue-100 border border-blue-300 rounded-lg flex flex-col items-center justify-center text-blue-800 font-bold text-[10px] shadow-xs">
+                            <span className="text-xs">👤</span>
+                            <span>บัตร ปชช.</span>
+                          </div>
+                          <div>
+                            <div className="text-xs text-slate-500">ชื่อผู้ถือบัตร / ผู้มีเงินได้:</div>
+                            <div className="text-base font-black text-slate-900">นายสมชาย มุ่งมั่นพัฒนา</div>
+                            <div className="font-mono text-xs font-bold text-blue-700">เลข ๑๓ หลัก: 1-6699-00123-45-6</div>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block mb-1">ผู้ยื่นคำร้อง:</span>
-                        <div className="border-b border-dotted border-slate-400 pb-0.5 flex justify-between items-center">
-                          <span className="font-bold text-slate-900">ลงชื่อ: สมชาย มุ่งมั่นพัฒนา</span>
-                          <span className="text-slate-500 font-mono text-[11px]">โทร. 081-999-8877</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Official Examination Grid */}
-                    <div className="bg-slate-100 font-bold text-slate-800 px-3.5 py-1.5 border-b border-slate-300 flex justify-between items-center">
-                      <span>(ส่วนสำหรับเจ้าหน้าที่ผู้ตรวจรับคำขอและคัดค้นข้อมูล)</span>
-                      <span className="text-[11px] font-normal text-slate-500 font-mono">คำร้องขอคัดแบบฯ พ.ศ. ๒๕๖๙</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-300">
-                      {/* Left: เรียน / คำสั่ง */}
-                      <div className="p-3.5 space-y-2 bg-white">
-                        <div>
-                          <span className="text-slate-500">เรียน:</span>
-                          <span className="font-bold text-slate-800 ml-1.5">หัวหน้าสำนักงานสรรพากรพื้นที่สาขาโพทะเล</span>
-                        </div>
-                        <div className="text-emerald-800 font-bold bg-emerald-50 p-1.5 rounded border border-emerald-200">
-                          ☑ เห็นควรดำเนินการได้
-                        </div>
-                        <div className="text-[11px] text-slate-600 flex justify-between pt-0.5">
-                          <span>เจ้าหน้าที่ผู้ตรวจ:</span>
-                          <span className="font-bold text-slate-900">นางสาว มยุรี ชื่นจิตต์ (จนท.สส.)</span>
-                        </div>
-                        <div className="border-t border-slate-200 pt-1.5 flex items-center justify-between">
-                          <span className="font-bold text-slate-700">คำสั่ง:</span>
-                          <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                            ☑ อนุมัติ □ ไม่อนุมัติ
+                        <div className="text-left sm:text-right text-xs">
+                          <span className="text-slate-500 block">สถานะการยืนยันตัวตน:</span>
+                          <span className="font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-300 inline-block mt-0.5">
+                            ✓ ตรวจสอบผ่าน DOPA IAL 2.3
                           </span>
                         </div>
                       </div>
 
-                      {/* Right: ผลการคัดค้นข้อมูล & อัตราค่าธรรมเนียม */}
-                      <div className="p-3.5 space-y-2 bg-slate-50/50">
-                        <div className="font-bold text-slate-800 text-[11px]">ผลการคัดค้นข้อมูล & ค่าธรรมเนียม:</div>
-                        <div className="text-[11px] space-y-1 text-slate-700">
-                          <div className="text-emerald-800 font-semibold">☑ ค้นพบข้อมูลการยื่นแบบแสดงรายการภาษีในระบบ</div>
-                          <div className="flex justify-between">
-                            <span>จำนวนที่ให้บริการ:</span>
-                            <span className="font-mono font-bold text-slate-900">2 ฉบับ (ฉบับละ 20.00 บาท)</span>
-                          </div>
-                          <div className="flex justify-between text-emerald-800 font-black border-t border-slate-200 pt-1 text-xs">
-                            <span>รวมค่าธรรมเนียมทั้งสิ้น:</span>
-                            <span className="font-mono text-sm">40.00 บาท</span>
-                          </div>
-                          <div className="text-[10px] text-slate-500">
-                            เลขที่ใบเสร็จรับเงิน: <span className="font-mono font-bold text-purple-700">RC-2569-00188</span>
-                          </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+                        <div>
+                          <span className="text-slate-500">ที่อยู่ตามทะเบียนราษฎร์: </span>
+                          <span className="font-bold text-slate-900">124/5 หมู่ 3 ต.โพทะเล อ.โพทะเล จ.พิจิตร 66130</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500">โทรศัพท์มือถือ: </span>
+                          <span className="font-mono font-bold text-slate-900">081-999-8877</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500">ฐานะ: </span>
+                          <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">ผู้มีเงินได้ (ขอคัดแบบของตนเอง)</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500">จุดบริการ: </span>
+                          <span className="font-bold text-slate-800">เคาน์เตอร์ สส.โพทะเล</span>
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Footnotes matching คำร้องขอคัดแบบ.pdf */}
-                  <div className="text-[10px] text-slate-400 leading-tight space-y-0.5 border-t border-slate-100 pt-2">
-                    <div>1. กรณีมอบอำนาจให้นำสำเนาบัตรประจำตัวประชาชนหรือหนังสือเดินทาง (กรณีชาวต่างชาติ) ของผู้มอบอำนาจพร้อมรับรองสำเนา</div>
-                    <div>2. กรณีมอบอำนาจให้ผู้อื่นทำการแทน หนังสือมอบอำนาจให้ติดอากรแสตมป์ 10 บาท หรือ 30 บาท ตามระเบียบกรมสรรพากร</div>
-                  </div>
-
+                  )}
                 </div>
 
-                {/* Step Action Box */}
-                <div className="pt-3 border-t border-slate-200">
-                  <button
-                    onClick={handleBranchSendToCentral}
-                    className="w-full py-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-3 transition cursor-pointer text-base"
-                  >
-                    <Send className="w-5 h-5" />
-                    <span>บันทึกคำร้องและส่งต่อไปยัง ส่วนคัดแบบ (สท.พิจิตร) ➔ (กระโดดไปส่วนคัดแบบ)</span>
-                  </button>
-                  <p className="text-xs text-slate-500 text-center mt-2">
-                    * เมื่อบันทึกคำร้อง ระบบจะส่งคำขอทางอิเล็กทรอนิกส์ไปยังห้องจัดเก็บเอกสาร และสลับหน้าจอไปที่ส่วนคัดแบบทันที
-                  </p>
+                {/* STEP 1.2: การเขียนคำร้องขอคัดแบบฯ (ตามคำร้องขอคัดแบบ.pdf) */}
+                <div className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shadow-xs ${requestSubmitted ? "bg-emerald-600 text-white" : "bg-indigo-600 text-white"}`}>
+                        ๒
+                      </div>
+                      <div>
+                        <h4 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                          <span>ขั้นตอนที่ ๒ : จัดทำคำร้องขอรับบริการข้อมูลสำเนาแบบฯ</span>
+                          <span className="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2 py-0.5 rounded">
+                            คำร้องขอคัดแบบ.pdf
+                          </span>
+                        </h4>
+                        <p className="text-xs text-slate-500">เปิดแบบฟอร์มคำร้องฉบับเต็ม ระบุแบบ ภ.ง.ด.90 และเลือกลายน้ำปลายทาง</p>
+                      </div>
+                    </div>
+
+                    {requestSubmitted && (
+                      <span className="bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        ส่งคำร้องในระบบแล้ว (REQ-2569-0449)
+                      </span>
+                    )}
+                  </div>
+
+                  {!requestSubmitted ? (
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center space-y-4">
+                      <div className="w-14 h-14 mx-auto bg-indigo-100 text-indigo-700 rounded-2xl flex items-center justify-center shadow-inner">
+                        <FileSignature className="w-7 h-7" />
+                      </div>
+                      <div className="max-w-md mx-auto space-y-1.5">
+                        <h5 className="font-bold text-slate-900 text-base">คำร้องขอคัดแบบฯ ถูกซ่อนไว้เพื่อความเรียบร้อย</h5>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          กดปุ่ม <strong>"เขียนคำร้อง"</strong> ด้านล่างเพื่อเปิดหน้าต่าง Modal แสดงแบบฟอร์มคำร้องฉบับเต็มของกรมสรรพากร พร้อมข้อมูลที่กรอกจากบัตรประชาชน และกดส่งคำร้องกลับมาที่หน้านี้
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!cardInserted) {
+                            setCardInserted(true);
+                            showToast("✓ ดึงข้อมูลบัตรประชาชนและเปิดแบบฟอร์มคำร้อง");
+                          }
+                          setShowRequestModal(true);
+                        }}
+                        className="px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 text-white font-extrabold text-sm rounded-xl shadow-md inline-flex items-center gap-2 transition cursor-pointer transform hover:scale-[1.02]"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                        <span>✍️ กดปุ่ม เขียนคำร้อง (เปิด Modal คำร้องขอคัดแบบ)</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Summary of Submitted Request */}
+                      <div className="bg-emerald-50/60 border border-emerald-200 rounded-xl p-4.5 space-y-3 text-xs">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200 pb-2">
+                          <span className="font-bold text-emerald-950 text-sm flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            รายละเอียดคำร้องที่จัดทำและส่งเข้าระบบเรียบร้อย
+                          </span>
+                          <span className="font-mono font-bold text-blue-800 bg-blue-100 px-2 py-0.5 rounded">
+                            เลขที่รับ: REQ-2569-0449
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700">
+                          <div>
+                            <span className="text-slate-500">แบบภาษีที่ขอรับบริการ: </span>
+                            <span className="font-bold text-slate-900">แบบ ภ.ง.ด.90 (บุคคลธรรมดา)</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500">ปีภาษี: </span>
+                            <span className="font-bold text-slate-900">๒๕๖๘ (มกราคม - ธันวาคม)</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500">จำนวนที่ขอ: </span>
+                            <span className="font-bold text-slate-900 font-mono">2 ชุด</span>
+                            <span className="text-slate-500 ml-2">(รวมค่าธรรมเนียม 40.00 บาท)</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500">วัตถุประสงค์ปลายทาง: </span>
+                            <span className="font-bold text-slate-900">{currentPreset.label}</span>
+                          </div>
+                          <div className="sm:col-span-2 flex flex-wrap items-center gap-2 pt-1 border-t border-emerald-100">
+                            <span className="text-slate-500">ข้อความลายน้ำที่จะพิมพ์บนแบบ:</span>
+                            <span className="font-mono font-bold text-red-700 bg-red-50 px-2.5 py-0.5 rounded border border-red-200">
+                              "ใช้สำหรับ {activeWatermarkText} เท่านั้น"
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-1 border-t border-emerald-200 text-emerald-900 font-medium">
+                          <span>สถานะการตรวจรับ: [✓] เห็นควรดำเนินการได้ / [✓] คำสั่งอนุมัติ (นางสาว มยุรี ชื่นจิตต์)</span>
+                          <button
+                            type="button"
+                            onClick={() => setShowRequestModal(true)}
+                            className="text-xs bg-white hover:bg-slate-100 text-blue-700 font-bold px-3 py-1 rounded-lg border border-blue-300 transition cursor-pointer flex items-center gap-1 shadow-xs"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>ดู/แก้ไขคำร้องฉบับเต็ม</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* STEP 1.3: ส่งต่อไปยัง ส่วนคัดแบบ (สท.พิจิตร) */}
+                <div className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-4">
+                  <div className="flex items-center gap-2.5 border-b border-slate-200 pb-3">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shadow-xs ${requestSubmitted ? "bg-blue-600 text-white" : "bg-slate-300 text-slate-700"}`}>
+                      ๓
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-900 text-base">
+                        ขั้นตอนที่ ๓ : บันทึกคำร้องและส่งต่อไปยัง ส่วนคัดแบบ (สท.พิจิตร)
+                      </h4>
+                      <p className="text-xs text-slate-500">ส่งคำขออิเล็กทรอนิกส์ข้ามสาขาไปยังห้องจัดเก็บเอกสารศูนย์กลาง</p>
+                    </div>
+                  </div>
+
+                  {!requestSubmitted ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        showToast("⚠️ กรุณากดอ่านบัตรฯ และเขียนคำร้อง (ส่งคำร้อง) ก่อนส่งต่อไปยังส่วนคัดแบบ");
+                        if (!cardInserted) setCardInserted(true);
+                        setShowRequestModal(true);
+                      }}
+                      className="w-full py-4 bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold rounded-xl flex items-center justify-center gap-2.5 transition cursor-pointer text-base border border-slate-300"
+                    >
+                      <Lock className="w-5 h-5 text-slate-500" />
+                      <span>กรุณากดเขียนและ "ส่งคำร้อง" ในขั้นตอนที่ ๒ ก่อนส่งต่อไปยัง ส่วนคัดแบบ</span>
+                    </button>
+                  ) : (
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={handleBranchSendToCentral}
+                        className="w-full py-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-extrabold rounded-xl shadow-lg flex items-center justify-center gap-3 transition cursor-pointer text-base transform hover:scale-[1.01] animate-pulse"
+                      >
+                        <Send className="w-5 h-5" />
+                        <span>บันทึกคำร้องและส่งต่อไปยัง ส่วนคัดแบบ (สท.พิจิตร) ➔ (กระโดดไปส่วนคัดแบบ)</span>
+                      </button>
+                      <p className="text-xs text-slate-500 text-center">
+                        * เมื่อบันทึกคำร้อง ระบบจะส่งคำขอทางอิเล็กทรอนิกส์ไปยังห้องจัดเก็บเอกสาร และสลับหน้าจอไปที่ส่วนคัดแบบทันที
+                      </p>
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -933,6 +845,25 @@ export default function RCTDemoApp() {
                     <div className="flex justify-between py-1.5 border-b border-slate-100">
                       <span className="text-slate-500">ช่องทางให้บริการ:</span>
                       <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-bold">Smart Counter สาขา</span>
+                    </div>
+                  </div>
+
+                  {/* Sub-step Checklist Status */}
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 text-xs">
+                    <span className="font-bold text-slate-800 block text-sm">📋 ลำดับขั้นตอน ณ เคาน์เตอร์ สส.:</span>
+                    <div className="space-y-2 text-slate-700">
+                      <div className={`flex items-center gap-2 p-2 rounded-lg border ${cardInserted ? "bg-emerald-50 border-emerald-200 text-emerald-900 font-bold" : "bg-white border-slate-200"}`}>
+                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${cardInserted ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-600"}`}>๑</span>
+                        <span>อ่านบัตรประชาชน: {cardInserted ? "อ่านสำเร็จ (IAL 2.3)" : "รอเสียบบัตร"}</span>
+                      </div>
+                      <div className={`flex items-center gap-2 p-2 rounded-lg border ${requestSubmitted ? "bg-emerald-50 border-emerald-200 text-emerald-900 font-bold" : "bg-white border-slate-200"}`}>
+                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${requestSubmitted ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-600"}`}>๒</span>
+                        <span>เขียนคำร้อง (Modal): {requestSubmitted ? "ส่งคำร้องแล้ว" : "รอเขียนคำร้อง"}</span>
+                      </div>
+                      <div className={`flex items-center gap-2 p-2 rounded-lg border ${requestSubmitted ? "bg-blue-50 border-blue-200 text-blue-900 font-bold" : "bg-white border-slate-200 text-slate-400"}`}>
+                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${requestSubmitted ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500"}`}>๓</span>
+                        <span>ส่งต่อส่วนคัดแบบ: {requestSubmitted ? "พร้อมส่งต่อ ➔" : "รอดำเนินการ"}</span>
+                      </div>
                     </div>
                   </div>
 
@@ -1827,6 +1758,368 @@ export default function RCTDemoApp() {
         )}
 
       </main>
+
+      {/* ========================================================================= */}
+      {/* MODAL: Official Government Request Form (คำร้องขอคัดแบบ.pdf) */}
+      {/* ========================================================================= */}
+      {showRequestModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-300 max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+            
+            {/* Modal Top Bar */}
+            <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white px-6 py-4 flex items-center justify-between flex-shrink-0 shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-amber-300" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-white leading-tight">
+                    แบบการขอรับบริการข้อมูลสำเนาแบบแสดงรายการภาษี และเอกสารที่เกี่ยวข้อง
+                  </h3>
+                  <p className="text-xs text-blue-200 mt-0.5">
+                    ของกรมสรรพากร (คำร้องขอคัดแบบฯ) • สส.โพทะเล | เลขที่รับ: <span className="font-mono font-bold text-amber-300">REQ-2569-0449</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRequestModal(false)}
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+                title="ปิดหน้าต่าง"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body: Full Official Form */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 bg-slate-50/50">
+              
+              {/* Paper Replica Container */}
+              <div className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-5">
+                
+                {/* Header: Office Details */}
+                <div className="border-b-2 border-slate-900/80 pb-4 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-xs text-slate-600 font-bold">
+                      <Building2 className="w-4 h-4 text-blue-600" />
+                      <span>สส.โพทะเล • สท.พิจิตร กรมสรรพากร</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
+                        <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                        Dip-Chip Smart Card แล้ว (IAL 2.3)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Form Title according to คำร้องขอคัดแบบ.pdf */}
+                  <div className="text-center space-y-1 pt-1">
+                    <h2 className="text-base md:text-lg font-black text-slate-900 tracking-tight">
+                      แบบการขอรับบริการข้อมูลสำเนาแบบแสดงรายการภาษี และเอกสารที่เกี่ยวข้อง
+                    </h2>
+                    <p className="text-xs text-slate-600 font-bold">ของกรมสรรพากร</p>
+                  </div>
+
+                  {/* Metadata Boxes: (สำหรับเจ้าหน้าที่) On Left & Written Details On Right */}
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
+                    <div className="md:col-span-5 border border-slate-300 rounded-lg p-2.5 bg-slate-50 text-xs space-y-1">
+                      <span className="font-bold text-slate-700 block border-b border-slate-200 pb-1">
+                        (สำหรับเจ้าหน้าที่)
+                      </span>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">เลขที่รับคำขอ:</span>
+                        <span className="font-mono font-bold text-blue-700">REQ-2569-0449</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">รับที่:</span>
+                        <span className="font-bold text-slate-800">เคาน์เตอร์ สส.โพทะเล</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">วันที่/เวลา:</span>
+                        <span className="font-mono text-slate-700">13 ก.ย. 2569 เวลา 09:15 น.</span>
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-7 flex flex-col justify-end text-xs text-right space-y-1.5 pt-2 md:pt-0">
+                      <div>
+                        <span className="text-slate-500">เขียนที่: </span>
+                        <span className="font-bold text-slate-800 border-b border-dotted border-slate-400 pb-0.5">
+                          สำนักงานสรรพากรพื้นที่สาขาโพทะเล จ.พิจิตร
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">วันที่ </span>
+                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 px-2 pb-0.5">๑๓</span>
+                        <span className="text-slate-500"> เดือน </span>
+                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 px-2 pb-0.5">กันยายน</span>
+                        <span className="text-slate-500"> พ.ศ. </span>
+                        <span className="font-bold text-slate-900 border-b border-dotted border-slate-400 px-2 pb-0.5">๒๕๖๙</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 1: ข้อมูลผู้ยื่นคำร้อง */}
+                <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/60 space-y-3">
+                  <div className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-2 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <FileText className="w-4 h-4 text-blue-600" />
+                      ๑. ข้อมูลผู้ยื่นคำร้อง (ข้าพเจ้า)
+                    </span>
+                    <span className="text-emerald-700 text-[11px] font-bold bg-emerald-100/70 px-2 py-0.5 rounded border border-emerald-300">
+                      ✓ ดึงข้อมูลบัตรประชาชนอัตโนมัติ
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-slate-500">ข้าพเจ้า:</span>
+                      <span className="font-bold text-blue-900">☑ นาย □ นาง □ นางสาว</span>
+                      <span className="font-bold text-slate-900 text-sm bg-white px-3 py-1 rounded border border-slate-300 shadow-xs">
+                        นายสมชาย มุ่งมั่นพัฒนา
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-slate-500">เลขบัตรประจำตัวประชาชน / เลขประจำตัวผู้เสียภาษีอากร:</span>
+                      <span className="font-mono font-bold text-blue-800 bg-white px-2.5 py-1 rounded border border-slate-300 text-sm">
+                        1-6699-00123-45-6
+                      </span>
+                    </div>
+
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-slate-700 leading-relaxed space-y-1">
+                      <div>
+                        ที่อยู่: <span className="font-bold text-slate-900">124/5</span> หมู่ที่: <span className="font-bold text-slate-900">3</span> ถนน: <span className="font-bold text-slate-900">-</span> ตำบล/แขวง: <span className="font-bold text-slate-900">โพทะเล</span> อำเภอ/เขต: <span className="font-bold text-slate-900">โพทะเล</span> จังหวัด: <span className="font-bold text-slate-900">พิจิตร</span> โทรศัพท์มือถือ: <span className="font-mono font-bold text-slate-900">081-999-8877</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 pt-1 text-slate-600">
+                      <span>มีฐานะเป็น:</span>
+                      <span className="text-slate-400">□ กรรมการผู้มีอำนาจ</span>
+                      <span className="text-slate-400">□ ผู้รับมอบอำนาจ</span>
+                      <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        ☑ ผู้มีเงินได้
+                      </span>
+                      <span className="text-slate-400">□ อื่นๆ</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 2: ความประสงค์ขอรับบริการข้อมูลสำเนาแบบฯ */}
+                <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/60 space-y-3">
+                  <div className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-2 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <FolderSearch className="w-4 h-4 text-blue-600" />
+                      ๒. ความประสงค์ขอรับบริการข้อมูลสำเนาแบบแสดงรายการภาษี และเอกสารที่เกี่ยวข้อง
+                    </span>
+                  </div>
+
+                  <div className="space-y-3 text-xs">
+                    <div className="flex flex-wrap items-center gap-4">
+                      <span className="text-slate-500">ขอรับบริการ:</span>
+                      <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        ☑ ข้อมูลสำเนาแบบแสดงรายการภาษี
+                      </span>
+                      <span className="text-slate-400">□ ใบเสร็จรับเงิน</span>
+                      <span className="text-slate-400">□ อื่นๆ</span>
+                      <span className="font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        ☑ รับรองสำเนาแบบฯ □ ไม่รับรองสำเนาแบบฯ
+                      </span>
+                    </div>
+
+                    <div className="text-slate-700 bg-white p-3 rounded-lg border border-slate-200 space-y-2">
+                      <div className="text-slate-500 text-[11px]">
+                        ตามระเบียบฯ ของราชการกรมสรรพากร ของราย: <span className="font-bold text-slate-900">นายสมชาย มุ่งมั่นพัฒนา</span> เลขประจำตัวประชาชน: <span className="font-mono font-bold text-slate-900">1-6699-00123-45-6</span>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2 bg-white p-2.5 rounded-md border border-blue-200 text-xs">
+                          <span className="font-bold text-blue-900">☑ แบบฯ</span>
+                          <span className="font-bold text-blue-900 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">ภ.ง.ด.90 (บุคคลธรรมดา)</span>
+                          <span className="text-slate-600">ปีภาษี:</span>
+                          <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">2568</span>
+                          <span className="text-slate-600">เดือน:</span>
+                          <span className="font-bold text-slate-800">มกราคม</span>
+                          <span className="text-slate-600">ถึงเดือน:</span>
+                          <span className="font-bold text-slate-800">ธันวาคม</span>
+                          <span className="text-slate-600">จำนวน:</span>
+                          <span className="font-mono font-black text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded text-sm">2</span>
+                          <span>(ชุด)</span>
+                        </div>
+                        <div className="text-[11px] text-slate-400 pl-2">
+                          □ แบบฯ .............................. ปีภาษี ............ เดือน ............ ถึงเดือน ............ จำนวน ...... (ชุด)
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 3: เพื่อนำไปเป็นหลักฐานในการ */}
+                <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/60 space-y-3">
+                  <div className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-2 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Shield className="w-4 h-4 text-blue-600" />
+                      ๓. เพื่อนำไปเป็นหลักฐานในการ (จัดทำลายน้ำระบุปลายทางป้องกันการทำซ้ำ)
+                    </span>
+                    <span className="text-blue-700 text-[11px] font-bold bg-blue-100/70 px-2 py-0.5 rounded border border-blue-200">
+                      {currentPreset.category}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    <div className="flex flex-wrap items-center gap-3 text-slate-600">
+                      <span>เพื่อนำไปเป็นหลักฐานในการ:</span>
+                      <span className="text-slate-400">□ ขอต่อวีซ่า</span>
+                      <span className="text-slate-400">□ ขอใบอนุญาตทำงาน</span>
+                      <span className="text-slate-400">□ เก็บไว้เป็นหลักฐาน</span>
+                      <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        ☑ อื่นๆ (ระบุวัตถุประสงค์/ปลายทางเพื่อจัดทำลายน้ำ):
+                      </span>
+                    </div>
+
+                    {/* Dropdown matching our 8 categories */}
+                    <select
+                      value={selectedPurposeId}
+                      onChange={(e) => setSelectedPurposeId(e.target.value)}
+                      className="w-full bg-white border-2 border-slate-300 rounded-xl p-2.5 text-sm font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
+                    >
+                      {Array.from(new Set(WATERMARK_PRESETS.map(p => p.category))).map(cat => (
+                        <optgroup key={cat} label={`📂 ${cat}`}>
+                          {WATERMARK_PRESETS.filter(p => p.category === cat).map(p => (
+                            <option key={p.id} value={p.id}>{p.label}</option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+
+                    {selectedPurposeId === "custom" && (
+                      <div className="pt-1">
+                        <input
+                          type="text"
+                          placeholder="พิมพ์ระบุหน่วยงานหรือข้อความลายน้ำเอง..."
+                          value={customWatermark}
+                          onChange={(e) => setCustomWatermark(e.target.value)}
+                          className="w-full bg-white border-2 border-blue-400 rounded-xl p-2 text-sm text-slate-900 font-bold focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] bg-blue-50/80 p-2.5 rounded-lg border border-blue-200 text-blue-900">
+                      <span><strong>สิ่งที่ปลายทางต้องการตรวจ:</strong> {currentPreset.inspectionFocus}</span>
+                      <span className="font-mono font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                        ลายน้ำที่จะพิมพ์: "ใช้สำหรับ {activeWatermarkText} เท่านั้น"
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 4: ลายมือชื่อ & ส่วนสำหรับเจ้าหน้าที่ตามแบบฟอร์มจริง */}
+                <div className="border border-slate-300 rounded-xl overflow-hidden text-xs bg-white space-y-0">
+                  
+                  {/* Signatures row */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 p-3.5 border-b border-slate-200 gap-4 bg-slate-50/40">
+                    <div>
+                      <span className="text-slate-500 block mb-1">ได้รับแบบฯ แล้ว (ลงชื่อเมื่อรับเอกสาร):</span>
+                      <div className="border-b border-dotted border-slate-400 h-6 text-slate-400 text-center italic">
+                        (จะลงชื่อรับมอบในขั้นตอนที่ ๕)
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block mb-1">ผู้ยื่นคำร้อง:</span>
+                      <div className="border-b border-dotted border-slate-400 pb-0.5 flex justify-between items-center">
+                        <span className="font-bold text-slate-900">ลงชื่อ: สมชาย มุ่งมั่นพัฒนา</span>
+                        <span className="text-slate-500 font-mono text-[11px]">โทร. 081-999-8877</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Official Examination Grid */}
+                  <div className="bg-slate-100 font-bold text-slate-800 px-3.5 py-1.5 border-b border-slate-300 flex justify-between items-center">
+                    <span>(ส่วนสำหรับเจ้าหน้าที่ผู้ตรวจรับคำขอและคัดค้นข้อมูล)</span>
+                    <span className="text-[11px] font-normal text-slate-500 font-mono">คำร้องขอคัดแบบฯ พ.ศ. ๒๕๖๙</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-300">
+                    {/* Left: เรียน / คำสั่ง */}
+                    <div className="p-3.5 space-y-2 bg-white">
+                      <div>
+                        <span className="text-slate-500">เรียน:</span>
+                        <span className="font-bold text-slate-800 ml-1.5">หัวหน้าสำนักงานสรรพากรพื้นที่สาขาโพทะเล</span>
+                      </div>
+                      <div className="text-emerald-800 font-bold bg-emerald-50 p-1.5 rounded border border-emerald-200">
+                        ☑ เห็นควรดำเนินการได้
+                      </div>
+                      <div className="text-[11px] text-slate-600 flex justify-between pt-0.5">
+                        <span>เจ้าหน้าที่ผู้ตรวจ:</span>
+                        <span className="font-bold text-slate-900">นางสาว มยุรี ชื่นจิตต์ (จนท.สส.)</span>
+                      </div>
+                      <div className="border-t border-slate-200 pt-1.5 flex items-center justify-between">
+                        <span className="font-bold text-slate-700">คำสั่ง:</span>
+                        <span className="font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                          ☑ อนุมัติ □ ไม่อนุมัติ
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right: ผลการคัดค้นข้อมูล & อัตราค่าธรรมเนียม */}
+                    <div className="p-3.5 space-y-2 bg-slate-50/50">
+                      <div className="font-bold text-slate-800 text-[11px]">ผลการคัดค้นข้อมูล & ค่าธรรมเนียม:</div>
+                      <div className="text-[11px] space-y-1 text-slate-700">
+                        <div className="text-emerald-800 font-semibold">☑ ค้นพบข้อมูลการยื่นแบบแสดงรายการภาษีในระบบ</div>
+                        <div className="flex justify-between">
+                          <span>จำนวนที่ให้บริการ:</span>
+                          <span className="font-mono font-bold text-slate-900">2 ฉบับ (ฉบับละ 20.00 บาท)</span>
+                        </div>
+                        <div className="flex justify-between text-emerald-800 font-black border-t border-slate-200 pt-1 text-xs">
+                          <span>รวมค่าธรรมเนียมทั้งสิ้น:</span>
+                          <span className="font-mono text-sm">40.00 บาท</span>
+                        </div>
+                        <div className="text-[10px] text-slate-500">
+                          เลขที่ใบเสร็จรับเงิน: <span className="font-mono font-bold text-purple-700">RC-2569-00188</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footnotes matching คำร้องขอคัดแบบ.pdf */}
+                <div className="text-[10px] text-slate-400 leading-tight space-y-0.5 border-t border-slate-100 pt-2">
+                  <div>1. กรณีมอบอำนาจให้นำสำเนาบัตรประจำตัวประชาชนหรือหนังสือเดินทาง (กรณีชาวต่างชาติ) ของผู้มอบอำนาจพร้อมรับรองสำเนา</div>
+                  <div>2. กรณีมอบอำนาจให้ผู้อื่นทำการแทน หนังสือมอบอำนาจให้ติดอากรแสตมป์ 10 บาท หรือ 30 บาท ตามระเบียบกรมสรรพากร</div>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Modal Sticky Footer with Submit Button */}
+            <div className="flex items-center justify-between p-4.5 bg-slate-100 border-t border-slate-300 flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowRequestModal(false)}
+                className="px-5 py-2.5 bg-white hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition cursor-pointer border border-slate-300 shadow-xs"
+              >
+                ยกเลิก / ปิดหน้าต่าง
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setRequestSubmitted(true);
+                  setShowRequestModal(false);
+                  showToast("✓ ส่งคำร้องขอคัดแบบ (REQ-2569-0449) เรียบร้อย -> กลับมาที่หน้าเคาน์เตอร์ สส.");
+                }}
+                className="px-7 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-base rounded-xl shadow-lg flex items-center gap-2.5 transition cursor-pointer transform hover:scale-[1.02]"
+              >
+                <Send className="w-5 h-5" />
+                <span>📨 ส่งคำร้อง (กลับสู่หน้าเคาน์เตอร์ สส.)</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* MODAL: Full Document Preview (When Print is clicked) */}
