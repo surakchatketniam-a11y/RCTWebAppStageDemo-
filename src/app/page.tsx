@@ -49,7 +49,10 @@ import {
   ListFilter,
   MapPin,
   Users,
-  History
+  History,
+  Fuel,
+  Car,
+  Navigation
 } from "lucide-react";
 
 // Flow Step Types
@@ -251,6 +254,90 @@ export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
       { status: "PAID", role: "งานคลัง / EDC", note: "ชำระเงินเรียบร้อย 20.00 บาท ออกใบเสร็จ", timestamp: "13 ก.ย. 2569, 08:40 น." },
       { status: "COMPLETED", role: "เจ้าหน้าที่ สส.วังทรายพูน", note: "พิมพ์เอกสารประทับ e-Seal และส่งมอบให้ผู้เสียภาษีเรียบร้อย", timestamp: "13 ก.ย. 2569, 08:55 น." }
     ]
+  }
+];
+
+// District Fuel & Travel Cost Savings Dataset (คำนวณระยะทางจากแต่ละอำเภอมายัง สท.พิจิตร)
+export interface DistrictTravelCost {
+  id: string;
+  districtName: string;
+  branchName: string;
+  isDemoCase?: boolean;
+  distanceOneWayKm: number;       // ระยะทางขาเดียวจากอำเภอมายัง สท.พิจิตร (กม.)
+  distanceRoundTripKm: number;    // ระยะทางไป-กลับ (กม.)
+  costPerTrip: number;            // ค่าน้ำมันเชื้อเพลิงประมาณการต่อเที่ยวไป-กลับ (บาท)
+  casesToday: number;             // จำนวนคำขอวันนี้ (ราย)
+  avgSlaMinutes: number;          // เวลาเฉลี่ยต่อเคส (นาที)
+  feeTotal: number;               // ค่าธรรมเนียมรวม (บาท)
+}
+
+export const DISTRICT_TRAVEL_DATA: DistrictTravelCost[] = [
+  {
+    id: "pho_thale",
+    districtName: "อำเภอโพทะเล",
+    branchName: "สส.โพทะเล (เคสตัวอย่าง)",
+    isDemoCase: true,
+    distanceOneWayKm: 65,
+    distanceRoundTripKm: 130,
+    costPerTrip: 450, // 130 กม. x ~3.46 บ./กม.
+    casesToday: 28,
+    avgSlaMinutes: 4.2,
+    feeTotal: 1120.00
+  },
+  {
+    id: "bang_mun_nak",
+    districtName: "อำเภอบางมูลนาก",
+    branchName: "สส.บางมูลนาก",
+    distanceOneWayKm: 55,
+    distanceRoundTripKm: 110,
+    costPerTrip: 380, // 110 กม. x ~3.45 บ./กม.
+    casesToday: 19,
+    avgSlaMinutes: 4.0,
+    feeTotal: 760.00
+  },
+  {
+    id: "taphan_hin",
+    districtName: "อำเภอตะพานหิน",
+    branchName: "สส.ตะพานหิน",
+    distanceOneWayKm: 30,
+    distanceRoundTripKm: 60,
+    costPerTrip: 220, // 60 กม. x ~3.66 บ./กม.
+    casesToday: 24,
+    avgSlaMinutes: 4.5,
+    feeTotal: 960.00
+  },
+  {
+    id: "sam_ngam",
+    districtName: "อำเภอสามง่าม",
+    branchName: "สส.สามง่าม",
+    distanceOneWayKm: 40,
+    distanceRoundTripKm: 80,
+    costPerTrip: 280, // 80 กม. x ~3.50 บ./กม.
+    casesToday: 16,
+    avgSlaMinutes: 3.9,
+    feeTotal: 640.00
+  },
+  {
+    id: "wang_sai_phun",
+    districtName: "อำเภอวังทรายพูน",
+    branchName: "สส.วังทรายพูน",
+    distanceOneWayKm: 45,
+    distanceRoundTripKm: 90,
+    costPerTrip: 320, // 90 กม. x ~3.55 บ./กม.
+    casesToday: 15,
+    avgSlaMinutes: 4.1,
+    feeTotal: 600.00
+  },
+  {
+    id: "mueang",
+    districtName: "อำเภอเมืองพิจิตร",
+    branchName: "สส.เมืองพิจิตร",
+    distanceOneWayKm: 8,
+    distanceRoundTripKm: 16,
+    costPerTrip: 60, // เดินทางในตัวอำเภอเมืองพิจิตร
+    casesToday: 42,
+    avgSlaMinutes: 3.8,
+    feeTotal: 1680.00
   }
 ];
 
@@ -3035,98 +3122,212 @@ export default function RCTDemoApp() {
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-2xl p-5.5 shadow-sm space-y-2">
+              {/* 4th KPI Card: ประหยัดค่าน้ำมันและค่าเดินทางประชาชนตามระยะทางจริง */}
+              <div className="bg-white border-2 border-purple-300 hover:border-purple-400 rounded-2xl p-5.5 shadow-sm space-y-2 relative overflow-hidden transition">
                 <div className="flex items-center justify-between text-slate-500 text-xs font-bold">
-                  <span>ประหยัดงบประมาณและเวลาเดินทาง</span>
-                  <DollarSign className="w-5 h-5 text-purple-600" />
+                  <span className="text-purple-900 font-extrabold flex items-center gap-1.5">
+                    <Fuel className="w-4 h-4 text-purple-600" />
+                    ประหยัดค่าน้ำมัน & ค่าเดินทาง
+                  </span>
+                  <span className="bg-purple-100 text-purple-800 text-[10px] font-black px-2 py-0.5 rounded-full font-mono">
+                    144 คำขอวันนี้
+                  </span>
                 </div>
-                <div className="text-4xl font-black text-slate-900 font-mono">840K <span className="text-base font-bold text-slate-500">บ./ปี</span></div>
-                <div className="text-xs text-purple-700 font-bold">
-                  ประหยัดค่ากระดาษและเวลาประชากร
+                
+                <div className="flex items-baseline gap-1.5">
+                  <div className="text-3xl sm:text-4xl font-black text-purple-950 font-mono">
+                    36.9K
+                  </div>
+                  <span className="text-sm font-bold text-slate-500">บ./วัน</span>
+                  <span className="text-[11px] font-black text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300">
+                    ~9.22 ล้าน บ./ปี
+                  </span>
+                </div>
+
+                <div className="text-[11px] text-slate-600 leading-snug pt-1 border-t border-slate-100 space-y-0.5">
+                  <div className="font-bold text-purple-900 flex items-center gap-1">
+                    <span>สูตร:</span>
+                    <span className="font-normal text-slate-700">∑ (ระยะทางไป-กลับ × ค่าน้ำมันเฉลี่ย × เคสแต่ละอำเภอ)</span>
+                  </div>
+                  <p className="text-slate-500">
+                    เช่น โพทะเล 130 กม. (450 บ.) × 28 เคส = <strong>12,600 บ./วัน</strong>
+                  </p>
                 </div>
               </div>
 
             </div>
 
-            {/* Performance Comparison & Table */}
+            {/* Performance Comparison & Table with District Travel Savings */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
-              {/* Branch Statistics Table */}
+              {/* Branch Statistics & Fuel Savings Table */}
               <div className="lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
-                    สถิติการให้บริการคัดแบบฯ แยกตามสาขา สส. (พื้นที่ จ.พิจิตร)
-                  </h3>
-                  <span className="text-xs text-slate-500 font-medium">ข้อมูล Real-Time ประจำวัน</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                  <div>
+                    <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-blue-600" />
+                      สถิติการให้บริการ & ตัวเลขความประหยัดค่าน้ำมันแยกตามสาขา (๖ อำเภอ จ.พิจิตร)
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      เปรียบเทียบกรณีประชาชนไม่ต้องขับรถมาคัดแบบที่ สท.พิจิตร (อ.เมือง) แต่มารับบริการที่ สส. สาขาใกล้บ้าน
+                    </p>
+                  </div>
+                  <span className="text-xs text-purple-800 font-bold bg-purple-100 px-2.5 py-1 rounded-lg self-start sm:self-auto font-mono">
+                    ประหยัด 36,900 บ./วัน
+                  </span>
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
+                  <table className="w-full text-left text-xs sm:text-sm">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-700 border-b border-slate-200">
-                        <th className="py-3 px-3.5 font-bold">หน่วยบริการ (สส.)</th>
-                        <th className="py-3 px-3.5 font-bold text-center">คำขอวันนี้</th>
-                        <th className="py-3 px-3.5 font-bold text-center">เวลาเฉลี่ย</th>
-                        <th className="py-3 px-3.5 font-bold text-right">ค่าธรรมเนียมรวม</th>
-                        <th className="py-3 px-3.5 font-bold text-center">สถานะ SLA</th>
+                      <tr className="bg-slate-50 text-slate-700 border-b border-slate-200 text-xs">
+                        <th className="py-3 px-3 font-bold">หน่วยบริการ (สส.)</th>
+                        <th className="py-3 px-2 font-bold text-center">ระยะทางไป-กลับ</th>
+                        <th className="py-3 px-2 font-bold text-center">ค่าน้ำมัน/เที่ยว</th>
+                        <th className="py-3 px-2 font-bold text-center">คำขอวันนี้</th>
+                        <th className="py-3 px-3 font-bold text-right text-purple-900 bg-purple-50/50">ประหยัดค่าน้ำมันวันนี้</th>
+                        <th className="py-3 px-2.5 font-bold text-right">ค่าธรรมเนียม</th>
+                        <th className="py-3 px-2 font-bold text-center">เวลาเฉลี่ย</th>
+                        <th className="py-3 px-2 font-bold text-center">SLA</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      <tr className="hover:bg-blue-50/50">
-                        <td className="py-3 px-3.5 font-bold text-slate-900">สส.เมืองพิจิตร</td>
-                        <td className="py-3 px-3.5 text-center font-mono">42 ราย</td>
-                        <td className="py-3 px-3.5 text-center font-mono text-emerald-700 font-bold">3.8 นาที</td>
-                        <td className="py-3 px-3.5 text-right font-mono font-bold">1,680.00 บ.</td>
-                        <td className="py-3 px-3.5 text-center"><span className="bg-emerald-100 text-emerald-900 text-xs px-2.5 py-0.5 rounded font-bold">100% ผ่าน</span></td>
-                      </tr>
-                      <tr className="hover:bg-blue-50/50 bg-blue-50/40">
-                        <td className="py-3 px-3.5 font-extrabold text-blue-950">สส.โพทะเล (เคสตัวอย่าง)</td>
-                        <td className="py-3 px-3.5 text-center font-mono font-extrabold text-blue-950">28 ราย</td>
-                        <td className="py-3 px-3.5 text-center font-mono text-emerald-700 font-extrabold">4.2 นาที</td>
-                        <td className="py-3 px-3.5 text-right font-mono font-extrabold text-blue-950">1,120.00 บ.</td>
-                        <td className="py-3 px-3.5 text-center"><span className="bg-emerald-100 text-emerald-900 text-xs px-2.5 py-0.5 rounded font-bold">100% ผ่าน</span></td>
-                      </tr>
-                      <tr className="hover:bg-blue-50/50">
-                        <td className="py-3 px-3.5 font-bold text-slate-900">สส.บางมูลนาก</td>
-                        <td className="py-3 px-3.5 text-center font-mono">19 ราย</td>
-                        <td className="py-3 px-3.5 text-center font-mono text-emerald-700 font-bold">4.0 นาที</td>
-                        <td className="py-3 px-3.5 text-right font-mono font-bold">760.00 บ.</td>
-                        <td className="py-3 px-3.5 text-center"><span className="bg-emerald-100 text-emerald-900 text-xs px-2.5 py-0.5 rounded font-bold">100% ผ่าน</span></td>
-                      </tr>
-                      <tr className="hover:bg-blue-50/50">
-                        <td className="py-3 px-3.5 font-bold text-slate-900">สส.ตะพานหิน</td>
-                        <td className="py-3 px-3.5 text-center font-mono">24 ราย</td>
-                        <td className="py-3 px-3.5 text-center font-mono text-emerald-700 font-bold">4.5 นาที</td>
-                        <td className="py-3 px-3.5 text-right font-mono font-bold">960.00 บ.</td>
-                        <td className="py-3 px-3.5 text-center"><span className="bg-emerald-100 text-emerald-900 text-xs px-2.5 py-0.5 rounded font-bold">100% ผ่าน</span></td>
+                    <tbody className="divide-y divide-slate-100 text-xs">
+                      {DISTRICT_TRAVEL_DATA.map((d) => {
+                        const savingsToday = d.casesToday * d.costPerTrip;
+                        return (
+                          <tr 
+                            key={d.id} 
+                            className={`hover:bg-blue-50/40 transition ${
+                              d.isDemoCase ? "bg-blue-50/50 font-semibold" : ""
+                            }`}
+                          >
+                            <td className="py-3 px-3">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`font-bold ${d.isDemoCase ? "text-blue-900 font-extrabold" : "text-slate-900"}`}>
+                                  {d.branchName}
+                                </span>
+                                {d.isDemoCase && (
+                                  <span className="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded-full">
+                                    Demo
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-3 px-2 text-center font-mono text-slate-600">
+                              {d.distanceRoundTripKm} กม.
+                            </td>
+                            <td className="py-3 px-2 text-center font-mono text-slate-600">
+                              {d.costPerTrip} บ.
+                            </td>
+                            <td className="py-3 px-2 text-center font-mono font-bold text-slate-900">
+                              {d.casesToday} ราย
+                            </td>
+                            <td className="py-3 px-3 text-right font-mono font-black text-purple-900 bg-purple-50/30 text-[13px]">
+                              {savingsToday.toLocaleString()} บ.
+                            </td>
+                            <td className="py-3 px-2.5 text-right font-mono text-slate-700">
+                              {d.feeTotal.toLocaleString()}.00 บ.
+                            </td>
+                            <td className="py-3 px-2 text-center font-mono text-emerald-700 font-bold">
+                              {d.avgSlaMinutes} นาที
+                            </td>
+                            <td className="py-3 px-2 text-center">
+                              <span className="bg-emerald-100 text-emerald-900 text-[10px] px-2 py-0.5 rounded font-bold">
+                                ผ่าน
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+
+                      {/* TOTAL SUMMARY ROW */}
+                      <tr className="bg-purple-100/70 border-t-2 border-purple-300 font-extrabold text-slate-900">
+                        <td className="py-3.5 px-3">
+                          <span className="text-purple-950 font-black flex items-center gap-1">
+                            <Fuel className="w-3.5 h-3.5 text-purple-700 inline" />
+                            รวม ๖ อำเภอ (ทั้งจังหวัด)
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-2 text-center font-mono text-[11px] text-purple-950">
+                          10,472 กม./วัน
+                        </td>
+                        <td className="py-3.5 px-2 text-center font-mono text-[11px] text-purple-900">
+                          เฉลี่ย 256 บ.
+                        </td>
+                        <td className="py-3.5 px-2 text-center font-mono font-black text-purple-950 text-sm">
+                          144 ราย
+                        </td>
+                        <td className="py-3.5 px-3 text-right font-mono font-black text-purple-950 text-sm bg-purple-200/60">
+                          36,900.00 บ.
+                        </td>
+                        <td className="py-3.5 px-2.5 text-right font-mono font-bold text-slate-900">
+                          5,760.00 บ.
+                        </td>
+                        <td className="py-3.5 px-2 text-center font-mono text-emerald-800 font-black">
+                          4.1 นาที
+                        </td>
+                        <td className="py-3.5 px-2 text-center">
+                          <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-black">
+                            100% ผ่าน
+                          </span>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[11px] text-slate-500 border-t border-slate-100">
+                  <span>* ประมาณการค่าน้ำมันเชื้อเพลิงเฉลี่ย 3.45 - 3.66 บาท/กม. (ไป-กลับ) ตามระยะทางจริงของทางหลวง</span>
+                  <span className="font-bold text-purple-900">รวมประหยัดค่าน้ำมันสะสมต่อปี: ~9,225,000 บาท (250 วันทำการ)</span>
+                </div>
               </div>
 
-              {/* Evolution Summary Card */}
+              {/* Evolution & Fuel Savings Impact Model Card */}
               <div className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                 <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <Award className="w-5 h-5 text-amber-500" />
-                  บทสรุปความก้าวหน้าโครงการ ๓ ระยะ
+                  <Fuel className="w-5 h-5 text-purple-600" />
+                  โมเดลความคุ้มค่าค่าน้ำมัน (Fuel & Travel Impact)
                 </h3>
 
-                <div className="space-y-3 text-sm">
-                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                    <span className="font-bold text-slate-800 block text-sm">ระยะที่ ๑ (ระบบเดิม):</span>
-                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">LINE OA + KTB Corporate + เจ้าหน้าที่ส่งไฟล์ PDF ให้พิมพ์เอง</p>
+                {/* Impact Highlight Box */}
+                <div className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-xl space-y-2.5">
+                  <span className="font-black text-purple-950 block text-xs">
+                    ผลประโยชน์ทางตรงต่อประชาชน (Citizen Direct Savings):
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-white p-2.5 rounded-lg border border-purple-100 shadow-2xs">
+                      <span className="text-slate-500 text-[10px] block">ประหยัดค่าน้ำมันต่อวัน:</span>
+                      <span className="font-mono font-black text-purple-950 text-sm">36,900 บ.</span>
+                      <span className="text-[10px] text-emerald-700 block font-bold">~9.22 ล้าน บ./ปี</span>
+                    </div>
+                    <div className="bg-white p-2.5 rounded-lg border border-purple-100 shadow-2xs">
+                      <span className="text-slate-500 text-[10px] block">ลดระยะทางสัญจรรวม:</span>
+                      <span className="font-mono font-black text-purple-950 text-sm">10,472 กม.</span>
+                      <span className="text-[10px] text-emerald-700 block font-bold">~2.61 ล้าน กม./ปี</span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    แทนที่ประชาชนจากโพทะเล (130 กม.) หรือบางมูลนาก (110 กม.) ต้องขับรถข้ามอำเภอมาที่ สท.พิจิตร แต่สามารถรับบริการที่ สส. ใกล้บ้านได้ทันที
+                  </p>
+                </div>
+
+                <div className="space-y-2.5 text-xs pt-1">
+                  <span className="font-extrabold text-slate-800 block text-xs">
+                    บทสรุปความก้าวหน้าโครงการ ๓ ระยะ:
+                  </span>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    <span className="font-bold text-slate-800 block">ระยะที่ ๑ (ระบบเดิม):</span>
+                    <p className="text-slate-600 text-[11px] mt-0.5 leading-relaxed">LINE OA + KTB Corporate + เสี่ยงทำซ้ำและเดินทางไกล</p>
                   </div>
 
-                  <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl">
-                    <span className="font-bold text-blue-950 block text-sm">ระยะที่ ๒ (ปัจจุบัน - WebApp Demo):</span>
-                    <p className="text-blue-800 text-xs mt-0.5 leading-relaxed">ระบบ Smart Counter + Targeted Watermark + Print Quota Lock + e-Seal</p>
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                    <span className="font-bold text-blue-950 block">ระยะที่ ๒ (ปัจจุบัน - WebApp Demo):</span>
+                    <p className="text-blue-800 text-[11px] mt-0.5 leading-relaxed">Smart Counter + ควบคุมพิมพ์ ๔ ชั้น + ประหยัดค่าน้ำมัน 9.2 ล้าน/ปี</p>
                   </div>
 
-                  <div className="p-3.5 bg-purple-50 border border-purple-200 rounded-xl">
-                    <span className="font-bold text-purple-950 block text-sm">ระยะที่ ๓ (เป้าหมายอนาคต):</span>
-                    <p className="text-purple-800 text-xs mt-0.5 leading-relaxed">Citizen Self-Service คัดแบบผ่าน ThaID (IAL 2.3) ได้จากที่บ้านตลอด 24 ชม.</p>
+                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                    <span className="font-bold text-purple-950 block">ระยะที่ ๓ (เป้าหมายอนาคต):</span>
+                    <p className="text-purple-800 text-[11px] mt-0.5 leading-relaxed">คัดแบบผ่าน ThaID จากที่บ้าน ไม่ต้องเดินทาง 0 กิโลเมตร 100%</p>
                   </div>
                 </div>
               </div>
