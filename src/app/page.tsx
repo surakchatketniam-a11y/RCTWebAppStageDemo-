@@ -42,7 +42,12 @@ import {
   AlertTriangle,
   Zap,
   TrendingUp,
-  ShieldAlert
+  ShieldAlert,
+  Filter,
+  ListFilter,
+  MapPin,
+  Users,
+  History
 } from "lucide-react";
 
 // Flow Step Types
@@ -54,6 +59,183 @@ export type FlowStep =
   | "treasury_finance"  // 4. หน้าจอการเงิน (ตัดรับเงิน & ออกใบเสร็จ)
   | "branch_print"      // 5. เคาน์เตอร์ สส. (พิมพ์เอกสารพร้อมลายน้ำ & e-Seal)
   | "executive_sla";    // 6. แดชบอร์ดผู้บริหาร
+
+// Request Timeline Event & Consolidated Request Interfaces
+export interface RequestTimelineEvent {
+  status: string;
+  role: string;
+  note: string;
+  timestamp: string;
+}
+
+export interface ConsolidatedRequest {
+  id: string;
+  trackingNo: string;
+  fullName: string;
+  citizenId: string;
+  taxForm: string;
+  taxYears: string[];
+  submittedBranch: string;
+  status: "SUBMITTED" | "SEARCHING" | "FEE_CALCULATED" | "AWAITING_PAYMENT" | "PAID" | "NOT_FOUND" | "READY_FOR_PICKUP" | "COMPLETED";
+  statusLabel: string;
+  statusBadgeColor: string;
+  pages?: number;
+  fee?: number;
+  createdAt: string;
+  updatedAt: string;
+  isCurrentDemoCase?: boolean;
+  timeline: RequestTimelineEvent[];
+}
+
+export const PHICHIT_BRANCHES = [
+  { id: "ALL", label: "ทุกสาขาทั่วจังหวัด" },
+  { id: "สส.โพทะเล", label: "🌾 สส.โพทะเล" },
+  { id: "สส.เมืองพิจิตร", label: "🏛️ สส.เมืองพิจิตร" },
+  { id: "สส.บางมูลนาก", label: "🚂 สส.บางมูลนาก" },
+  { id: "สส.ตะพานหิน", label: "🌉 สส.ตะพานหิน" },
+  { id: "สส.สามง่าม", label: "🛶 สส.สามง่าม" },
+  { id: "สส.วังทรายพูน", label: "🌳 สส.วังทรายพูน" },
+] as const;
+
+export const OTHER_PROVINCE_REQUESTS: ConsolidatedRequest[] = [
+  {
+    id: "REQ-2569-0412",
+    trackingNo: "RCT-6909-052",
+    fullName: "นายประดิษฐ์ พงษ์ศิริ",
+    citizenId: "1-6604-00088-12-9",
+    taxForm: "ภ.ง.ด.91",
+    taxYears: ["2567"],
+    submittedBranch: "สส.โพทะเล",
+    status: "COMPLETED",
+    statusLabel: "ส่งมอบสำเร็จแล้ว",
+    statusBadgeColor: "bg-green-100 text-green-800 border-green-300",
+    pages: 3,
+    fee: 20,
+    createdAt: "13 ก.ย. 2569, 08:30 น.",
+    updatedAt: "13 ก.ย. 2569, 08:45 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.โพทะเล", note: "ยื่นคำขอที่เคาน์เตอร์ สส.โพทะเล (เพื่อใช้สมัครงาน)", timestamp: "13 ก.ย. 2569, 08:30 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.โพทะเล", note: "ส่งคำขอทางระบบให้ส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 08:32 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "ค้นพบแบบในระบบดิจิทัล 3 หน้า ส่งคิดค่าธรรมเนียม", timestamp: "13 ก.ย. 2569, 08:35 น." },
+      { status: "PAID", role: "งานคลัง / PromptPay", note: "ชำระเงินผ่าน QR 20.00 บาท ออกใบเสร็จรับเงินสำเร็จ", timestamp: "13 ก.ย. 2569, 08:38 น." },
+      { status: "COMPLETED", role: "เจ้าหน้าที่ สส.โพทะเล", note: "พิมพ์เอกสารประทับ e-Seal และส่งมอบให้ผู้เสียภาษีเรียบร้อย", timestamp: "13 ก.ย. 2569, 08:45 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0450",
+    trackingNo: "RCT-6901-091",
+    fullName: "น.ส.กานดา รัตนวิชัย",
+    citizenId: "1-6601-00345-67-8",
+    taxForm: "ภ.พ.30",
+    taxYears: ["ม.ค. - ก.พ. 2569"],
+    submittedBranch: "สส.เมืองพิจิตร",
+    status: "SEARCHING",
+    statusLabel: "กำลังค้นหาแบบฯ ในคลัง",
+    statusBadgeColor: "bg-indigo-100 text-indigo-800 border-indigo-300",
+    pages: undefined,
+    fee: undefined,
+    createdAt: "13 ก.ย. 2569, 09:20 น.",
+    updatedAt: "13 ก.ย. 2569, 09:25 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.เมืองพิจิตร", note: "รับคำร้องขอยื่นแบบ ภ.พ.30 ใช้ขอสินเชื่อ SME สถาบันการเงิน", timestamp: "13 ก.ย. 2569, 09:20 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.เมืองพิจิตร", note: "ส่งคำขอทางระบบให้ส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 09:22 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "อยู่ระหว่างดึงแฟ้มเอกสารกระดาษจากห้องจัดเก็บคลังกลาง", timestamp: "13 ก.ย. 2569, 09:25 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0448",
+    trackingNo: "RCT-6903-085",
+    fullName: "นายวิเชียร ธนกิจเจริญ",
+    citizenId: "1-6603-00567-89-0",
+    taxForm: "ภ.ง.ด.91",
+    taxYears: ["2567"],
+    submittedBranch: "สส.บางมูลนาก",
+    status: "PAID",
+    statusLabel: "ชำระเงินแล้ว ออกใบเสร็จ",
+    statusBadgeColor: "bg-emerald-100 text-emerald-800 border-emerald-300",
+    pages: 2,
+    fee: 20,
+    createdAt: "13 ก.ย. 2569, 09:05 น.",
+    updatedAt: "13 ก.ย. 2569, 09:22 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.บางมูลนาก", note: "รับคำร้องขอคัดแบบ ภ.ง.ด.91 ยื่นสมัครงานราชการ", timestamp: "13 ก.ย. 2569, 09:05 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.บางมูลนาก", note: "ส่งคำขอให้ส่วนกลาง สท.พิจิตร", timestamp: "13 ก.ย. 2569, 09:07 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "พบแบบดิจิทัลในระบบ จัดทำไฟล์ PDF ความละเอียด 300 DPI", timestamp: "13 ก.ย. 2569, 09:12 น." },
+      { status: "PAID", role: "งานคลัง / KTB", note: "ผู้เสียภาษีสแกนจ่าย QR 20.00 บาท สำเร็จ ออกใบเสร็จรับเงินแล้ว", timestamp: "13 ก.ย. 2569, 09:22 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0445",
+    trackingNo: "RCT-6902-077",
+    fullName: "นางวันเพ็ญ ศรีสุข",
+    citizenId: "1-6602-00789-01-2",
+    taxForm: "ภ.ง.ด.90",
+    taxYears: ["2565"],
+    submittedBranch: "สส.ตะพานหิน",
+    status: "NOT_FOUND",
+    statusLabel: "ไม่พบแบบฯ ในระบบ",
+    statusBadgeColor: "bg-rose-100 text-rose-800 border-rose-300",
+    pages: undefined,
+    fee: undefined,
+    createdAt: "13 ก.ย. 2569, 08:50 น.",
+    updatedAt: "13 ก.ย. 2569, 09:10 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.ตะพานหิน", note: "รับคำร้องขอคัดแบบ ภ.ง.ด.90 ย้อนหลังปี 2565", timestamp: "13 ก.ย. 2569, 08:50 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.ตะพานหิน", note: "ส่งคำขอให้ส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 08:52 น." },
+      { status: "NOT_FOUND", role: "งานบริการแบบฯ สท.", note: "ตรวจสอบคลังเอกสารแล้วไม่พบประวัติการยื่นแบบปี 2565 (แจ้ง สส.ตะพานหิน ประสานผู้เสียภาษี)", timestamp: "13 ก.ย. 2569, 09:10 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0442",
+    trackingNo: "RCT-6905-064",
+    fullName: "นายสุรชัย ชัยชนะ",
+    citizenId: "1-6605-00912-34-5",
+    taxForm: "ภ.ธ.40",
+    taxYears: ["2568"],
+    submittedBranch: "สส.สามง่าม",
+    status: "FEE_CALCULATED",
+    statusLabel: "พบแบบฯ 4 หน้า รอคลังออก QR",
+    statusBadgeColor: "bg-amber-100 text-amber-800 border-amber-300",
+    pages: 4,
+    fee: 20,
+    createdAt: "13 ก.ย. 2569, 08:40 น.",
+    updatedAt: "13 ก.ย. 2569, 09:02 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.สามง่าม", note: "รับคำร้องยื่นคัดแบบ ภ.ธ.40 ธุรกิจเฉพาะ", timestamp: "13 ก.ย. 2569, 08:40 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.สามง่าม", note: "ส่งเรื่องมาส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 08:42 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "ค้นพบต้นฉบับเอกสารจำนวน 4 หน้า ส่งงานคลังเพื่อเตรียมออก QR", timestamp: "13 ก.ย. 2569, 09:02 น." }
+    ]
+  },
+  {
+    id: "REQ-2569-0439",
+    trackingNo: "RCT-6906-058",
+    fullName: "นางศิริพร บุญส่ง",
+    citizenId: "1-6606-00123-45-7",
+    taxForm: "ภ.ง.ด.94",
+    taxYears: ["2568"],
+    submittedBranch: "สส.วังทรายพูน",
+    status: "COMPLETED",
+    statusLabel: "ส่งมอบสำเร็จแล้ว",
+    statusBadgeColor: "bg-green-100 text-green-800 border-green-300",
+    pages: 2,
+    fee: 20,
+    createdAt: "13 ก.ย. 2569, 08:20 น.",
+    updatedAt: "13 ก.ย. 2569, 08:55 น.",
+    isCurrentDemoCase: false,
+    timeline: [
+      { status: "SUBMITTED", role: "เจ้าหน้าที่ สส.วังทรายพูน", note: "ยื่นคำขอคัด ภ.ง.ด.94 ครึ่งปีสำหรับบุคคลธรรมดา", timestamp: "13 ก.ย. 2569, 08:20 น." },
+      { status: "FORWARDED", role: "เจ้าหน้าที่ สส.วังทรายพูน", note: "ส่งคำขอให้ส่วนคัดแบบ สท.พิจิตร", timestamp: "13 ก.ย. 2569, 08:22 น." },
+      { status: "SEARCHING", role: "งานบริการแบบฯ สท.", note: "ค้นพบแบบในระบบ สแกนและอัปโหลด PDF", timestamp: "13 ก.ย. 2569, 08:30 น." },
+      { status: "PAID", role: "งานคลัง / EDC", note: "ชำระเงินเรียบร้อย 20.00 บาท ออกใบเสร็จ", timestamp: "13 ก.ย. 2569, 08:40 น." },
+      { status: "COMPLETED", role: "เจ้าหน้าที่ สส.วังทรายพูน", note: "พิมพ์เอกสารประทับ e-Seal และส่งมอบให้ผู้เสียภาษีเรียบร้อย", timestamp: "13 ก.ย. 2569, 08:55 น." }
+    ]
+  }
+];
 
 // Comprehensive Watermark Preset Options based on Real-World Tax Form Intake
 export interface WatermarkPreset {
@@ -260,6 +442,110 @@ export default function RCTDemoApp() {
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
 
+  // Role-Based Task Board States
+  const [branchViewTab, setBranchViewTab] = useState<"intake_form" | "branch_board">("intake_form");
+  const [centralBranchFilter, setCentralBranchFilter] = useState<string>("ALL");
+  const [selectedTimelineReq, setSelectedTimelineReq] = useState<ConsolidatedRequest | null>(null);
+
+  // Dynamic Demo Case Request (matches live simulation state)
+  const getDemoCaseRequest = (): ConsolidatedRequest => {
+    let status: ConsolidatedRequest["status"] = "SUBMITTED";
+    let statusLabel = "ยื่นคำร้องแล้ว รอส่งต่อ";
+    let statusBadgeColor = "bg-slate-100 text-slate-700 border-slate-300";
+
+    const tl: RequestTimelineEvent[] = [
+      {
+        status: "SUBMITTED",
+        role: "เจ้าหน้าที่ สส.โพทะเล",
+        note: "รับคำร้อง ณ เคาน์เตอร์ สส.โพทะเล (Dip-Chip บัตรประชาชน IAL 2.3)",
+        timestamp: "13 ก.ย. 2569, 09:15 น."
+      }
+    ];
+
+    if (requestSubmitted || currentStep !== "branch_intake") {
+      tl.push({
+        status: "FORWARDED",
+        role: "เจ้าหน้าที่ สส.โพทะเล",
+        note: "บันทึกคำร้องและส่งต่อไปยัง ส่วนคัดแบบ (สท.พิจิตร)",
+        timestamp: "13 ก.ย. 2569, 09:18 น."
+      });
+      status = "SEARCHING";
+      statusLabel = "ส่งต่อแล้ว กำลังค้นหาแบบฯ ในคลัง";
+      statusBadgeColor = "bg-indigo-100 text-indigo-800 border-indigo-300";
+    }
+
+    if (currentStep === "central_search" && fileUploaded) {
+      tl.push({
+        status: "SEARCHING",
+        role: "งานบริการแบบฯ สท.พิจิตร",
+        note: "พบต้นฉบับแบบ ภ.ง.ด.90 ปีภาษี 2568 ตรวจสอบแล้วจำนวน 2 หน้า",
+        timestamp: "13 ก.ย. 2569, 09:20 น."
+      });
+    }
+
+    if (currentStep === "branch_payment" || currentStep === "treasury_finance" || currentStep === "branch_print" || currentStep === "executive_sla") {
+      tl.push({
+        status: "FEE_CALCULATED",
+        role: "งานบริการแบบฯ / การเงิน",
+        note: "อัปโหลด PDF เข้าระบบและออก Dynamic QR ค่าธรรมเนียม 40.00 บาท",
+        timestamp: "13 ก.ย. 2569, 09:22 น."
+      });
+      status = "AWAITING_PAYMENT";
+      statusLabel = "รอชำระเงินผ่าน QR (40 บ.)";
+      statusBadgeColor = "bg-orange-100 text-orange-800 border-orange-300";
+    }
+
+    if (qrScanned || currentStep === "treasury_finance" || currentStep === "branch_print" || currentStep === "executive_sla") {
+      tl.push({
+        status: "PAID",
+        role: "ระบบการเงิน / PromptPay",
+        note: "ชำระเงินสำเร็จ 40.00 บาท ออกใบเสร็จรับเงินอิเล็กทรอนิกส์แล้ว",
+        timestamp: "13 ก.ย. 2569, 09:24 น."
+      });
+      status = "PAID";
+      statusLabel = "ชำระเงินแล้ว ออกใบเสร็จ";
+      statusBadgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+    }
+
+    if (currentStep === "branch_print" || currentStep === "executive_sla") {
+      tl.push({
+        status: "READY_FOR_PICKUP",
+        role: "เจ้าหน้าที่ สส.โพทะเล",
+        note: "ระบบส่งภาพแบบฯ พร้อม e-Seal ให้สาขา พิมพ์เอกสารฉบับทางการแล้ว",
+        timestamp: "13 ก.ย. 2569, 09:27 น."
+      });
+      status = printedCopies >= totalCopies ? "COMPLETED" : "READY_FOR_PICKUP";
+      statusLabel = printedCopies >= totalCopies ? "ส่งมอบสำเร็จแล้ว" : "พร้อมพิมพ์/ส่งมอบ (e-Seal)";
+      statusBadgeColor = printedCopies >= totalCopies ? "bg-green-100 text-green-800 border-green-300" : "bg-teal-100 text-teal-800 border-teal-300";
+    }
+
+    return {
+      id: "REQ-2569-0449",
+      trackingNo: "RCT-6909-088",
+      fullName: "นายสมชาย มุ่งมั่นพัฒนา",
+      citizenId: "1-6699-00123-45-6",
+      taxForm: "ภ.ง.ด.90",
+      taxYears: ["2568"],
+      submittedBranch: "สส.โพทะเล",
+      status,
+      statusLabel,
+      statusBadgeColor,
+      pages: 2,
+      fee: 40,
+      createdAt: "13 ก.ย. 2569, 09:15 น.",
+      updatedAt: "13 ก.ย. 2569, 09:27 น.",
+      isCurrentDemoCase: true,
+      timeline: tl
+    };
+  };
+
+  const currentDemoReq = getDemoCaseRequest();
+  const allConsolidatedRequests = [currentDemoReq, ...OTHER_PROVINCE_REQUESTS];
+  const phoThaleRequests = allConsolidatedRequests.filter(r => r.submittedBranch === "สส.โพทะเล");
+  const filteredCentralRequests = centralBranchFilter === "ALL" 
+    ? allConsolidatedRequests 
+    : allConsolidatedRequests.filter(r => r.submittedBranch === centralBranchFilter);
+
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -348,6 +634,9 @@ export default function RCTDemoApp() {
     setPrintedCopies(0);
     setShowDocumentModal(false);
     setShowGuideModal(false);
+    setBranchViewTab("intake_form");
+    setCentralBranchFilter("ALL");
+    setSelectedTimelineReq(null);
     showToast("🔄 รีเซ็ตข้อมูลการสาธิตกลับสู่หน้าแรก (Hero & แผนงาน ๓ เฟส) เรียบร้อย");
   };
 
@@ -1129,6 +1418,48 @@ export default function RCTDemoApp() {
               </button>
             </div>
 
+            {/* Sub-Tabs for Branch Staff View: Intake Form vs Pho Thale Request Board */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setBranchViewTab("intake_form")}
+                  className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition cursor-pointer border ${
+                    branchViewTab === "intake_form"
+                      ? "bg-blue-700 text-white border-blue-700 shadow-sm"
+                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                  }`}
+                >
+                  <FileSignature className="w-4 h-4" />
+                  <span>📝 รับคำร้องใหม่ & อ่านบัตร Smart Card (3 ขั้นตอน)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setBranchViewTab("branch_board")}
+                  className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition cursor-pointer border ${
+                    branchViewTab === "branch_board"
+                      ? "bg-blue-700 text-white border-blue-700 shadow-sm"
+                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
+                  <span>📋 กระดานติดตามสถานะงาน — สส.โพทะเล</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-black ${
+                    branchViewTab === "branch_board" ? "bg-amber-400 text-slate-950" : "bg-blue-100 text-blue-800"
+                  }`}>
+                    {phoThaleRequests.length} รายการ
+                  </span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-xl border border-slate-200">
+                <Lock className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                <span>สิทธิ์การเข้าถึง: <strong>สส.โพทะเล (เห็นเฉพาะคำขอในพื้นที่รับผิดชอบ)</strong></span>
+              </div>
+            </div>
+
+            {branchViewTab === "intake_form" ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Left Column: 3 Operational Steps at Counter สส. */}
@@ -1450,6 +1781,105 @@ export default function RCTDemoApp() {
               </div>
 
             </div>
+            ) : (
+              /* Pho Thale Branch Board View */
+              <div className="space-y-5">
+                {/* Governance Alert */}
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4.5 text-xs text-blue-950 flex items-start gap-3.5 shadow-sm">
+                  <ShieldCheck className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="space-y-1 leading-relaxed">
+                    <span className="font-extrabold text-sm block text-blue-900">
+                      🔒 มาตรการรักษาความลับข้อมูลภาษีและสิทธิ์การเข้าถึง (ม.10 ป.รัษฎากร & PDPA)
+                    </span>
+                    <p className="text-blue-800">
+                      หน้าจอนี้แสดง<strong>เฉพาะรายการคำขอที่ยื่น ณ สส.โพทะเล</strong> เท่านั้น เพื่อป้องกันการรั่วไหลของข้อมูลส่วนบุคคลและข้อมูลภาษีอากร เจ้าหน้าที่สาขาจะไม่สามารถมองเห็นหรือเข้าถึงคำขอของอำเภออื่น (ระบบรวมศูนย์ทุกอำเภอจะอยู่ที่หน้าจอ <strong>ส่วนคัดแบบ สท.พิจิตร</strong>)
+                    </p>
+                  </div>
+                </div>
+
+                {/* Queue Cards for Pho Thale */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {phoThaleRequests.map((req) => (
+                    <div
+                      key={req.id}
+                      className={`rounded-2xl border p-5 shadow-sm space-y-4 transition ${
+                        req.isCurrentDemoCase
+                          ? "bg-white border-blue-500 ring-2 ring-blue-500/20"
+                          : "bg-white border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-slate-900 text-base font-mono">{req.id}</span>
+                            {req.isCurrentDemoCase && (
+                              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
+                                เคสสาธิตสด
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-500 font-mono mt-0.5">Tracking: {req.trackingNo}</p>
+                        </div>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${req.statusBadgeColor}`}>
+                          {req.statusLabel}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1.5 text-xs text-slate-700">
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">ผู้ยื่นคำขอ:</span>
+                          <span className="font-bold text-slate-900">{req.fullName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">เลขประจำตัวประชาชน:</span>
+                          <span className="font-mono text-slate-700">{req.citizenId}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">แบบและปีภาษี:</span>
+                          <span className="font-semibold text-blue-700">{req.taxForm} (ปี {req.taxYears.join(", ")})</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">จุดรับเรื่อง:</span>
+                          <span className="font-semibold text-slate-800">{req.submittedBranch}</span>
+                        </div>
+                        {req.fee && (
+                          <div className="flex justify-between pt-1 border-t border-slate-100 font-medium">
+                            <span className="text-slate-500">ค่าธรรมเนียม:</span>
+                            <span className="font-bold text-emerald-700 font-mono">{req.fee.toFixed(2)} บาท ({req.pages} หน้า)</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTimelineReq(req)}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border border-slate-200"
+                        >
+                          <History className="w-3.5 h-3.5 text-blue-600" />
+                          <span>ดูประวัติไทม์ไลน์</span>
+                        </button>
+
+                        {req.isCurrentDemoCase ? (
+                          <button
+                            type="button"
+                            onClick={() => setBranchViewTab("intake_form")}
+                            className="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>กลับไปเคาน์เตอร์ สส. ➔</span>
+                          </button>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            ✓ ดำเนินการเสร็จสมบูรณ์
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
           </div>
         )}
@@ -1487,7 +1917,159 @@ export default function RCTDemoApp() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* ========================================================================= */}
+            {/* CONSOLIDATED CENTRAL RECORDS BOARD: All Phichit Districts Overview */}
+            {/* ========================================================================= */}
+            <div className="bg-white border border-slate-300 rounded-2xl p-6 shadow-sm space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-purple-700 text-white flex items-center justify-center font-bold shadow-sm">
+                      <Layers className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <span>🌐 กระดานรวมคำร้องทั่วทั้งจังหวัด (สท.พิจิตร)</span>
+                        <span className="bg-purple-100 text-purple-900 text-xs font-bold px-2.5 py-0.5 rounded-full border border-purple-200">
+                          ศูนย์รวม ๖ อำเภอ
+                        </span>
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        ส่วนคัดแบบ สท.พิจิตร เป็นศูนย์กลางคลังเอกสาร ทำหน้าที่ค้นหาแบบและประสานงานคลังสำหรับทุกสาขาในจังหวัด
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs bg-purple-50 text-purple-900 px-3 py-1.5 rounded-xl border border-purple-200 font-medium">
+                  <Building2 className="w-4 h-4 text-purple-700" />
+                  <span>รวมคำร้องในระบบ: <strong>{allConsolidatedRequests.length} รายการ</strong></span>
+                </div>
+              </div>
+
+              {/* Branch Filter Pills */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                  <Filter className="w-3.5 h-3.5 text-purple-700" />
+                  <span>ตัวกรองสาขาที่ยื่นคำขอ (เลือกดูเฉพาะอำเภอ หรือภาพรวมทั้งจังหวัด):</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {PHICHIT_BRANCHES.map((b) => {
+                    const count = b.id === "ALL" 
+                      ? allConsolidatedRequests.length 
+                      : allConsolidatedRequests.filter(r => r.submittedBranch === b.id).length;
+                    const isActive = centralBranchFilter === b.id;
+                    return (
+                      <button
+                        key={b.id}
+                        type="button"
+                        onClick={() => setCentralBranchFilter(b.id)}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border ${
+                          isActive
+                            ? "bg-purple-700 text-white border-purple-700 shadow-sm ring-2 ring-purple-500/20"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>{b.label}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[11px] font-black ${
+                          isActive ? "bg-amber-400 text-slate-950" : "bg-slate-200 text-slate-700"
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Request Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+                {filteredCentralRequests.map((req) => (
+                  <div
+                    key={req.id}
+                    className={`rounded-2xl border p-4.5 shadow-sm space-y-3 transition relative flex flex-col justify-between ${
+                      req.isCurrentDemoCase
+                        ? "bg-purple-50/60 border-purple-500 ring-2 ring-purple-500/30"
+                        : "bg-white border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-black text-slate-900 text-sm font-mono">{req.id}</span>
+                            {req.isCurrentDemoCase && (
+                              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
+                                สาธิตสด
+                              </span>
+                            )}
+                          </div>
+                          <span className="inline-block mt-1 text-[11px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                            {req.submittedBranch}
+                          </span>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border text-center ${req.statusBadgeColor}`}>
+                          {req.statusLabel}
+                        </span>
+                      </div>
+
+                      <div className="text-xs text-slate-700 space-y-1 bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-2xs">
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">ผู้เสียภาษี:</span>
+                          <span className="font-bold text-slate-900">{req.fullName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">แบบภาษี:</span>
+                          <span className="font-semibold text-purple-700">{req.taxForm} ({req.taxYears.join(", ")})</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">เวลาที่ยื่น:</span>
+                          <span className="font-mono text-slate-500 text-[11px]">{req.createdAt}</span>
+                        </div>
+                        {req.fee && (
+                          <div className="flex justify-between pt-1 border-t border-slate-100 font-semibold text-emerald-800">
+                            <span>ค่าธรรมเนียม:</span>
+                            <span className="font-mono">{req.fee.toFixed(2)} บ.</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTimelineReq(req)}
+                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer border border-slate-200"
+                      >
+                        <History className="w-3.5 h-3.5 text-purple-700" />
+                        <span>ดูประวัติ</span>
+                      </button>
+
+                      {req.isCurrentDemoCase ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const el = document.getElementById("central-upload-section");
+                            if (el) el.scrollIntoView({ behavior: "smooth" });
+                          }}
+                          className="px-3 py-1.5 bg-purple-700 hover:bg-purple-800 text-white rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer shadow-xs"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>ค้นหา/อัปโหลด ➔</span>
+                        </button>
+                      ) : (
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          คิวงานในพื้นที่
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Direct Processing & Upload Section for the Active Demo Case */}
+            <div id="central-upload-section" className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Left Column: Direct File Upload Controls */}
               <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
@@ -2892,6 +3474,81 @@ export default function RCTDemoApp() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: Request Timeline History (ดูประวัติคำขอ / Audit Trail) */}
+      {/* ========================================================================= */}
+      {selectedTimelineReq && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full p-6 space-y-4 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-slate-900 text-lg flex items-center gap-1.5">
+                    <History className="w-5 h-5 text-blue-600" />
+                    <span>ประวัติคำขอ (Timeline Log)</span>
+                  </h3>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded font-mono">
+                    {selectedTimelineReq.id}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {selectedTimelineReq.fullName} • {selectedTimelineReq.taxForm} ({selectedTimelineReq.submittedBranch})
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedTimelineReq(null)}
+                className="text-slate-400 hover:text-slate-700 font-bold text-xl p-1 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Timeline Steps */}
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1 py-1">
+              <ol className="space-y-3.5 pl-1">
+                {selectedTimelineReq.timeline.map((ev, idx) => (
+                  <li key={idx} className="relative flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`mt-1 h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm flex-shrink-0 ${
+                          idx === selectedTimelineReq.timeline.length - 1 
+                            ? "bg-blue-600 ring-4 ring-blue-100" 
+                            : "bg-slate-300"
+                        }`}
+                      />
+                      {idx !== selectedTimelineReq.timeline.length - 1 && (
+                        <div className="w-0.5 flex-1 bg-slate-200 mt-1 min-h-[35px]" />
+                      )}
+                    </div>
+                    <div className="pb-1 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-bold text-slate-900">{ev.role}</p>
+                        <span className="text-[11px] text-slate-400 font-mono">{ev.timestamp}</span>
+                      </div>
+                      <p className="text-xs text-slate-700 mt-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 leading-relaxed">
+                        {ev.note}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-[11px] text-slate-400">
+                สถานะปัจจุบัน: <strong className="text-slate-700">{selectedTimelineReq.statusLabel}</strong>
+              </span>
+              <button
+                onClick={() => setSelectedTimelineReq(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
           </div>
         </div>
       )}
