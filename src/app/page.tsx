@@ -34,7 +34,8 @@ import {
   Search,
   Edit3,
   X,
-  FileSignature
+  FileSignature,
+  Save
 } from "lucide-react";
 
 // Flow Step Types
@@ -1356,7 +1357,7 @@ export default function RCTDemoApp() {
                     <span className="bg-emerald-200 text-emerald-950 text-xs font-bold px-2 py-0.5 rounded">ปลอดภัย ไร้การทำซ้ำ</span>
                   </h3>
                   <p className="text-sm text-emerald-900 mt-1 leading-relaxed">
-                    <strong>จุดสังเกตสำหรับคณะกรรมการ:</strong> สังเกตการเลือกลายน้ำระบุธนาคารปลายทาง (Targeted Watermark), การประทับตรา e-Seal และตัวนับโควตาการพิมพ์ที่จะลดลงตามจริง (2/2 -&gt; 1/2) ป้องกันการนำไฟล์ไปพิมพ์ซ้ำโดยเด็ดขาด
+                    <strong>จุดสังเกตสำหรับคณะกรรมการ:</strong> ลายน้ำระบุปลายทางถูกล็อคตามที่ระบุไว้ในคำร้องอัตโนมัติ (Targeted Watermark), มีการประทับตราดิจิทัล e-Seal และตัวนับโควตาการพิมพ์จะลดลงตามจริง ({printedCopies}/{totalCopies}) ป้องกันการนำไฟล์ไปพิมพ์ซ้ำโดยเด็ดขาด
                   </p>
                 </div>
               </div>
@@ -1373,7 +1374,7 @@ export default function RCTDemoApp() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
-              {/* Left Column: Watermark Selection & Print Control */}
+              {/* Left Column: Watermark Display & Print Control */}
               <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
                   <div>
@@ -1397,67 +1398,50 @@ export default function RCTDemoApp() {
                   </div>
                 </div>
 
-                {/* 1. Watermark Selector */}
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-3.5 text-sm">
-                  <div className="flex items-center justify-between">
-                    <label className="font-bold text-slate-800 flex items-center gap-2 text-base">
-                      <Shield className="w-5 h-5 text-blue-600" />
-                      เลือกลายน้ำระบุปลายทาง (Targeted Watermark เพื่อป้องกันการนำไปใช้ผิดวัตถุประสงค์):
-                    </label>
-                    <span className="text-xs font-bold bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full">
-                      {currentPreset.category}
+                {/* 1. Watermark Status (Locked from Request Form) */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-3 text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                      <span className="font-extrabold text-slate-900 text-base">
+                        ลายน้ำระบุปลายทาง (ล็อคตามคำร้องขอคัดแบบแล้ว)
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5 text-emerald-700" />
+                      ระบุไว้ตั้งแต่ขั้นตอนคำร้อง
                     </span>
                   </div>
 
-                  <select
-                    value={selectedPurposeId}
-                    onChange={(e) => setSelectedPurposeId(e.target.value)}
-                    className="w-full bg-white border-2 border-slate-300 rounded-xl p-3 text-sm md:text-base font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
-                  >
-                    {Array.from(new Set(WATERMARK_PRESETS.map(p => p.category))).map(cat => (
-                      <optgroup key={cat} label={`📂 ${cat}`}>
-                        {WATERMARK_PRESETS.filter(p => p.category === cat).map(p => (
-                          <option key={p.id} value={p.id}>{p.label}</option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
-
-                  {selectedPurposeId === "custom" && (
-                    <div className="pt-1">
-                      <label className="text-xs font-bold text-slate-700 block mb-1">ระบุข้อความลายน้ำ/หน่วยงานปลายทางเอง:</label>
-                      <input
-                        type="text"
-                        placeholder="เช่น บริษัท ABC จำกัด (มหาชน) หรือ ยื่นประกอบขอสินเชื่อ..."
-                        value={customWatermark}
-                        onChange={(e) => setCustomWatermark(e.target.value)}
-                        className="w-full bg-white border-2 border-blue-400 rounded-xl p-2.5 text-sm text-slate-900 font-bold focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  )}
-
-                  {/* Watermark Details Grid from user's requirement */}
-                  <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 text-xs">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-slate-700">
+                  <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-slate-700">
+                      <div>
+                        <span className="text-slate-500 block text-[11px]">วัตถุประสงค์ / หมวดหมู่:</span>
+                        <span className="font-bold text-slate-900 text-sm">{currentPreset.label}</span>
+                        <span className="text-blue-700 text-[10px] ml-1 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                          {currentPreset.category}
+                        </span>
+                      </div>
                       <div>
                         <span className="text-slate-500 block text-[11px]">หน่วยงานปลายทาง:</span>
                         <span className="font-bold text-slate-900">{currentPreset.targetOrg}</span>
                       </div>
-                      <div>
+                      <div className="sm:col-span-2">
                         <span className="text-slate-500 block text-[11px]">สิ่งที่ปลายทางต้องการตรวจ:</span>
                         <span className="font-bold text-blue-900">{currentPreset.inspectionFocus}</span>
                       </div>
                     </div>
-                    <div className="border-t border-slate-100 pt-2 flex items-center justify-between text-slate-600">
-                      <span>ข้อความลายน้ำบนเอกสาร:</span>
-                      <span className="font-mono font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+
+                    <div className="border-t border-slate-100 pt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-slate-600">
+                      <span className="font-semibold">ข้อความลายน้ำที่ถูกพิมพ์ลงบนเอกสาร:</span>
+                      <span className="font-mono font-bold text-red-600 bg-red-50 px-3 py-1 rounded border border-red-200 text-sm">
                         "ใช้สำหรับ {activeWatermarkText} เท่านั้น"
                       </span>
                     </div>
                   </div>
 
-                  <div className="text-xs text-slate-500 font-medium">
-                    * ข้อความนี้จะถูกพิมพ์พาดทแยงมุมเป็นลายน้ำสีแดงจางบนเนื้อเอกสาร ทำให้ไม่สามารถนำไปยื่นต่อหน่วยงานอื่น หรือใช้ผิดวัตถุประสงค์ได้
+                  <div className="text-xs text-slate-500 font-medium leading-relaxed">
+                    * ข้อความลายน้ำนี้ถูกกำหนดและล็อคมาจากขั้นตอนการยื่นคำร้อง (คำร้องเลขที่ REQ-2569-0449) เพื่อความปลอดภัย ป้องกันเจ้าหน้าที่หรือบุคคลภายนอกแก้ไขเปลี่ยนแปลงปลายทาง และป้องกันการนำเอกสารไปใช้ผิดวัตถุประสงค์
                   </div>
                 </div>
 
@@ -2108,12 +2092,12 @@ export default function RCTDemoApp() {
                 onClick={() => {
                   setRequestSubmitted(true);
                   setShowRequestModal(false);
-                  showToast("✓ ส่งคำร้องขอคัดแบบ (REQ-2569-0449) เรียบร้อย -> กลับมาที่หน้าเคาน์เตอร์ สส.");
+                  showToast("✓ บันทึกคำร้องขอคัดแบบ (REQ-2569-0449) เรียบร้อย -> กลับมาที่หน้าเคาน์เตอร์ สส.");
                 }}
                 className="px-7 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-base rounded-xl shadow-lg flex items-center gap-2.5 transition cursor-pointer transform hover:scale-[1.02]"
               >
-                <Send className="w-5 h-5" />
-                <span>📨 ส่งคำร้อง (กลับสู่หน้าเคาน์เตอร์ สส.)</span>
+                <Save className="w-5 h-5" />
+                <span>💾 บันทึกคำร้อง (กลับสู่หน้าเคาน์เตอร์ สส.)</span>
               </button>
             </div>
 
@@ -2264,8 +2248,8 @@ export default function RCTDemoApp() {
 
               <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1.5">
                 <span className="font-extrabold text-emerald-950 text-base block">ขั้นตอนที่ ๕ : เคาน์เตอร์ สส. (พิมพ์เอกสาร & ป้องกันการทำซ้ำ)</span>
-                <p className="text-slate-700"><strong>การกระทำ:</strong> หน้าระบบสลับกลับมาที่สาขา เลือกลายน้ำธนาคาร แล้วกดปุ่ม <em>"สั่งพิมพ์เอกสารชุดที่ 1"</em></p>
-                <p className="text-emerald-900 font-semibold"><strong>บทพูด:</strong> "นี่คือไฮไลท์ของระบบครับ! เอกสารที่พิมพ์ออกมาจะมีลายน้ำทแยงมุมระบุธนาคารปลายทางชัดเจน มี e-Seal รับรอง และมี Print Quota Lock นับถอยหลังตามใบเสร็จ ป้องกันการแอบพิมพ์ซ้ำซ้อนโดยไม่เสียค่าธรรมเนียมได้ 100%"</p>
+                <p className="text-slate-700"><strong>การกระทำ:</strong> หน้าระบบสลับกลับมาที่สาขา แสดงลายน้ำปลายทางที่ล็อคตามคำร้องไว้แล้ว แล้วกดปุ่ม <em>"สั่งพิมพ์เอกสารชุดที่ 1"</em></p>
+                <p className="text-emerald-900 font-semibold"><strong>บทพูด:</strong> "นี่คือไฮไลท์ของระบบครับ! เอกสารที่พิมพ์ออกมาจะมีลายน้ำทแยงมุมระบุปลายทางตามคำร้องอย่างชัดเจน มี e-Seal รับรอง และมี Print Quota Lock นับถอยหลังตามใบเสร็จ ป้องกันการแอบพิมพ์ซ้ำซ้อนโดยไม่เสียค่าธรรมเนียมได้ 100%"</p>
               </div>
 
               <div className="p-4 bg-slate-100 border border-slate-300 rounded-xl space-y-1.5">
