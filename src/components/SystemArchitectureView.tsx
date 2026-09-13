@@ -42,6 +42,7 @@ interface SystemArchitectureViewProps {
 
 export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: SystemArchitectureViewProps) {
   const [activeTab, setActiveTab] = useState<"topology" | "tech_stack" | "security" | "workflow" | "roi">("topology");
+  const [diagramView, setDiagramView] = useState<"visual" | "blueprint">("visual");
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -207,193 +208,559 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
       </div>
 
       {/* ===================================================================== */}
-      {/* TAB 1: TOPOLOGY & DOCKER ARCHITECTURE */}
+      {/* TAB 1: TOPOLOGY & DOCKER ARCHITECTURE (FIBER OPTIC INTRANET) */}
       {/* ===================================================================== */}
       {activeTab === "topology" && (
         <div className="space-y-6">
           
-          {/* Main Architectural Visual Container */}
+          {/* Header & Mode Switcher */}
           <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div>
-                <span className="text-xs font-bold text-blue-700 uppercase tracking-wider block">Production Topology Diagram</span>
+                <span className="text-xs font-bold text-blue-700 uppercase tracking-wider block">Production Network & Host Topology</span>
                 <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5 mt-0.5">
                   <Server className="w-6 h-6 text-blue-600" />
-                  ผังการติดตั้งและเชื่อมต่อระบบจริงภายในสำนักงาน (On-Premise)
+                  ผังระบบเครือข่าย Fiber Optic และเซิร์ฟเวอร์ On-Premise (สท.พิจิตร)
                 </h2>
+                <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                  ระบบแลนภายใน (Intranet) จากสำนักงานสรรพากรพื้นที่สาขาวิ่งผ่านสาย <strong>Fiber Optic</strong> ตรงเข้ามายัง สำนักงานสรรพากรพื้นที่พิจิตร
+                </p>
               </div>
-              <div className="bg-emerald-50 text-emerald-800 border border-emerald-300 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 self-start md:self-auto">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                ระบบปิดในเครือข่าย Intranet 100% ปลอดภัยจากการเข้าถึงภายนอก
+
+              {/* View Mode Toggle Buttons */}
+              <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start md:self-auto">
+                <button
+                  onClick={() => setDiagramView("visual")}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer flex items-center gap-1.5 ${
+                    diagramView === "visual"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <Zap className="w-3.5 h-3.5 text-amber-300" />
+                  <span>ผังกราฟิกวิศวกรรม (Visual Flow)</span>
+                </button>
+
+                <button
+                  onClick={() => setDiagramView("blueprint")}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer flex items-center gap-1.5 ${
+                    diagramView === "blueprint"
+                      ? "bg-[#0F2942] text-amber-300 shadow-sm"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <Terminal className="w-3.5 h-3.5" />
+                  <span>ผังพิมพ์เขียวทางการ (Blueprint)</span>
+                </button>
               </div>
             </div>
 
-            {/* Visual Box Architecture */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              
-              {/* Left Column: Branch Offices (Clients) */}
-              <div className="lg:col-span-4 flex flex-col justify-between space-y-4">
-                <div className="bg-gradient-to-br from-slate-50 to-blue-50/50 p-5 rounded-2xl border-2 border-dashed border-blue-200 space-y-3">
-                  <div className="flex items-center gap-2.5 text-blue-900 font-extrabold text-base">
-                    <Building2 className="w-5 h-5 text-blue-600" />
-                    <span>เคาน์เตอร์ สส. ๙ สาขาทั่วพิจิตร</span>
-                  </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    จุดบริการประชาชน ณ สาขาใกล้บ้าน (เช่น สส.โพทะเล, สส.ทับคล้อ, สส.บางมูลนาก ฯลฯ)
-                  </p>
-                  
-                  <div className="space-y-2 pt-2 border-t border-blue-100 text-xs text-slate-700">
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2.5 shadow-sm">
-                      <HardDrive className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                      <span><strong>เครื่องอ่านบัตร Smart Card:</strong> Dip-Chip อ่านบัตร ปชช. เติมข้อมูล 1 วินาที</span>
-                    </div>
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2.5 shadow-sm">
-                      <Laptop className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                      <span><strong>Web Browser (Edge / Chrome):</strong> เข้าใช้งานผ่าน WebApp ไม่ต้องลงโปรแกรม</span>
-                    </div>
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2.5 shadow-sm">
-                      <Printer className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                      <span><strong>เครื่องพิมพ์เคาน์เตอร์:</strong> สั่งพิมพ์พร้อมลายน้ำปลายทาง + ล็อคโควตา</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Network Conduit Indicator */}
-                <div className="bg-blue-900 text-white p-3.5 rounded-xl flex items-center justify-between text-xs font-bold shadow-md">
-                  <div className="flex items-center gap-2">
-                    <Network className="w-4 h-4 text-amber-400" />
-                    <span>WAN / VPN กรมสรรพากร (Intranet)</span>
-                  </div>
-                  <span className="bg-blue-800 text-blue-200 px-2 py-0.5 rounded text-[11px] font-mono">Port 80/443</span>
-                </div>
-
-                {/* Central Office Internal Users */}
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2">
-                  <span className="font-bold text-slate-800 block flex items-center gap-1.5">
-                    <Users className="w-4 h-4 text-slate-600" />
-                    เจ้าหน้าที่ส่วนกลาง (สท.พิจิตร)
-                  </span>
-                  <ul className="space-y-1 text-slate-600 list-disc list-inside">
-                    <li><strong>งานบริการแบบฯ:</strong> ค้นหาแบบในคลัง / สแกนแนบไฟล์</li>
-                    <li><strong>งานการเงิน / คลัง:</strong> ตรวจรับเงิน PromptPay / ออกใบเสร็จ</li>
-                    <li><strong>ผู้บริหาร:</strong> ตรวจสอบ SLA / กำกับติดตามแบบเรียลไทม์</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Middle & Right Column: On-Premise Host Server & Docker Cluster */}
-              <div className="lg:col-span-8 bg-gradient-to-b from-[#0F2942] to-[#16365C] text-white p-6 sm:p-7 rounded-3xl shadow-xl border-2 border-blue-400/40 relative overflow-hidden flex flex-col justify-between space-y-6">
+            {/* =================================================================== */}
+            {/* VIEW MODE 1: VISUAL GRAPHICAL ARCHITECTURE (MATCHING ATTACHED IMAGE) */}
+            {/* =================================================================== */}
+            {diagramView === "visual" && (
+              <div className="space-y-6">
                 
-                {/* Server Badge */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-blue-400/20">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-md">
-                      <Server className="w-5 h-5 text-white" />
+                {/* 1. TOP NODE: FIBER OPTIC WAN/INTRANET HEADER */}
+                <div className="relative mx-auto max-w-4xl bg-gradient-to-r from-blue-900 via-indigo-900 to-[#0F2942] text-white p-5 rounded-2xl shadow-lg border-2 border-blue-400/40 text-center overflow-hidden">
+                  <div className="absolute inset-0 bg-[radial-gradient(#38BDF8_1px,transparent_1px)] [background-size:12px_12px] opacity-15"></div>
+                  <div className="relative z-10 space-y-1.5">
+                    <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-0.5 rounded-full text-xs font-extrabold">
+                      <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                      <span>เครือข่ายแลนภายใน (Intranet) ความเร็วสูง</span>
                     </div>
-                    <div>
-                      <h3 className="text-base sm:text-lg font-black text-white">เครื่องเซิร์ฟเวอร์ On-Premise ในห้อง Server สำนักงาน</h3>
-                      <p className="text-xs text-blue-200">ระบบปฏิบัติการ Linux Server / Windows Server • ข้อมูลอยู่ในความครอบครอง 100%</p>
-                    </div>
+                    <h3 className="text-base sm:text-lg font-black tracking-wide text-white">
+                      [ เครือข่าย LAN ภายใน (Intranet) วิ่งผ่านสาย Fiber Optic กรมสรรพากร ]
+                    </h3>
+                    <p className="text-xs text-blue-200">
+                      เชื่อมโยงระหว่างสำนักงานสรรพากรพื้นที่สาขาทั่วทั้งจังหวัดพิจิตร วิ่งตรงสู่สำนักงานสรรพากรพื้นที่พิจิตร (ไม่ผ่าน Internet สาธารณะ)
+                    </p>
                   </div>
-                  <span className="bg-emerald-500 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow">
-                    DOCKER CLUSTER
-                  </span>
                 </div>
 
-                {/* Inside Docker Network Grid */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-blue-200 font-bold px-1">
-                    <span>🐳 Docker Bridge Network (Isolated Internal Network - ปิดพอร์ตภายนอก)</span>
-                    <span className="text-amber-300 font-mono">rct-internal-net</span>
+                {/* Symmetrical Branches Split Connectors */}
+                <div className="relative max-w-4xl mx-auto">
+                  
+                  {/* Top Stem from Fiber Header */}
+                  <div className="w-1 h-6 bg-gradient-to-b from-indigo-600 to-blue-500 mx-auto"></div>
+
+                  {/* Horizontal Fiber Optic Bus Bar */}
+                  <div className="relative h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500 rounded-full mx-12 sm:mx-24 shadow-sm">
+                    {/* Pulsing optical light dots */}
+                    <div className="absolute -top-1.5 left-1/4 w-4 h-4 rounded-full bg-cyan-400 blur-xs animate-ping"></div>
+                    <div className="absolute -top-1.5 right-1/4 w-4 h-4 rounded-full bg-cyan-400 blur-xs animate-ping"></div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* 2 Dropping Stems into Branch A and Branch B */}
+                  <div className="flex justify-between px-12 sm:px-24">
+                    <div className="w-1 h-6 bg-blue-500"></div>
+                    <div className="w-1 h-6 bg-blue-500"></div>
+                  </div>
+
+                  {/* 2 BRANCH CLIENT CARDS */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
                     
-                    {/* Container 1: Web App */}
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-blue-400/30 hover:border-blue-400 transition space-y-2">
+                    {/* Branch A Card */}
+                    <div className="bg-gradient-to-br from-white to-blue-50/60 p-5 rounded-2xl border-2 border-blue-300 shadow-md hover:shadow-lg transition space-y-3 relative">
                       <div className="flex items-center justify-between">
-                        <span className="font-black text-sm text-white flex items-center gap-2">
-                          <Laptop className="w-4 h-4 text-blue-400" />
-                          ๑. Web & API Gateway
+                        <span className="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                          <Building2 className="w-5 h-5 text-blue-600" />
+                          [ เครื่องเคาน์เตอร์สาขา A ]
                         </span>
-                        <span className="bg-blue-600/60 text-blue-100 text-[10px] font-mono px-2 py-0.5 rounded">rct-app</span>
+                        <span className="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-300">
+                          สส.โพทะเล
+                        </span>
                       </div>
-                      <p className="text-xs text-blue-150">Next.js 16 + TypeScript รัน UI ทุกบทบาท พร้อม Server Actions ซ่อนความลับฝั่งเซิร์ฟเวอร์</p>
-                      <div className="text-[11px] text-emerald-300 flex items-center gap-1.5 font-mono">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Port 80 / 443 (เข้าใช้งานผ่านเว็บ)</span>
+                      
+                      <div className="text-xs text-slate-600 space-y-2">
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <HardDrive className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                          <span>Smart Card Reader (Dip-Chip บัตร ปชช.)</span>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <Laptop className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                          <span>WebApp Client (บันทึกคำขอ / แสดงผล)</span>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <Printer className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                          <span>เครื่องพิมพ์เคาน์เตอร์ (ลายน้ำ + ล็อคโควตา)</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Container 2: PostgreSQL Database */}
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border-2 border-emerald-400/50 hover:border-emerald-400 transition space-y-2 bg-emerald-950/20">
+                    {/* Branch B Card */}
+                    <div className="bg-gradient-to-br from-white to-blue-50/60 p-5 rounded-2xl border-2 border-blue-300 shadow-md hover:shadow-lg transition space-y-3 relative">
                       <div className="flex items-center justify-between">
-                        <span className="font-black text-sm text-emerald-300 flex items-center gap-2">
-                          <Database className="w-4 h-4 text-emerald-400" />
-                          ๒. PostgreSQL 16 DB
+                        <span className="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                          <Building2 className="w-5 h-5 text-indigo-600" />
+                          [ เครื่องเคาน์เตอร์สาขา B ]
                         </span>
-                        <span className="bg-emerald-600/60 text-emerald-100 text-[10px] font-mono px-2 py-0.5 rounded">rct-db</span>
-                      </div>
-                      <p className="text-xs text-blue-150">ฐานข้อมูลหลัก เก็บคำร้อง, การเงิน, บันทึกสิทธิ์ และ Audit Log คุยเฉพาะในวงปิด</p>
-                      <div className="text-[11px] text-amber-300 flex items-center gap-1.5 font-mono">
-                        <Lock className="w-3.5 h-3.5" />
-                        <span>Internal Only (Port 5432 ไม่เปิดข้างนอก)</span>
-                      </div>
-                    </div>
-
-                    {/* Container 3: MinIO Storage */}
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-blue-400/30 hover:border-blue-400 transition space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-black text-sm text-sky-300 flex items-center gap-2">
-                          <HardDrive className="w-4 h-4 text-sky-400" />
-                          ๓. MinIO Object Storage
+                        <span className="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-indigo-300">
+                          สส.ทับคล้อ / บางมูลนาก ฯลฯ
                         </span>
-                        <span className="bg-sky-600/60 text-sky-100 text-[10px] font-mono px-2 py-0.5 rounded">rct-storage</span>
                       </div>
-                      <p className="text-xs text-blue-150">จัดเก็บไฟล์แบบภาษี PDF และใบเสร็จอย่างปลอดภัย สร้างลิงก์เปิดดูแบบจำกัดเวลา</p>
-                      <div className="text-[11px] text-sky-200 flex items-center gap-1.5 font-mono">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>S3-Compatible Local Storage</span>
-                      </div>
-                    </div>
-
-                    {/* Container 4: Automated Backup Cron */}
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-blue-400/30 hover:border-blue-400 transition space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-black text-sm text-purple-300 flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-purple-400" />
-                          ๔. Daily Auto-Backup
-                        </span>
-                        <span className="bg-purple-600/60 text-purple-100 text-[10px] font-mono px-2 py-0.5 rounded">rct-backup</span>
-                      </div>
-                      <p className="text-xs text-blue-150">สำรองฐานข้อมูลอัตโนมัติทุกเที่ยงคืน บีบอัด .sql.gz เก็บย้อนหลัง 30 วันลงดิสก์</p>
-                      <div className="text-[11px] text-purple-200 flex items-center gap-1.5 font-mono">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Zero Effort Maintenance</span>
+                      
+                      <div className="text-xs text-slate-600 space-y-2">
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <HardDrive className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                          <span>Smart Card Reader (Dip-Chip บัตร ปชช.)</span>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <Laptop className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                          <span>WebApp Client (บันทึกคำขอ / แสดงผล)</span>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-2 shadow-2xs font-semibold text-slate-800">
+                          <Printer className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                          <span>เครื่องพิมพ์เคาน์เตอร์ (ลายน้ำ + ล็อคโควตา)</span>
+                        </div>
                       </div>
                     </div>
 
                   </div>
+
+                  {/* Symmetrical Converging Lines from Branches into Central Fiber Pipe */}
+                  <div className="flex justify-between px-12 sm:px-24">
+                    <div className="w-1 h-6 bg-blue-500"></div>
+                    <div className="w-1 h-6 bg-blue-500"></div>
+                  </div>
+
+                  <div className="relative h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500 rounded-full mx-12 sm:mx-24 shadow-sm"></div>
+
+                  <div className="w-1 h-6 bg-indigo-600 mx-auto"></div>
+
                 </div>
 
-                {/* Persistent Storage Layer Below Docker */}
-                <div className="bg-black/30 p-4 rounded-2xl border border-blue-400/20 space-y-2">
-                  <span className="text-xs font-bold text-amber-300 flex items-center gap-2">
-                    <HardDrive className="w-4 h-4" />
-                    ฮาร์ดดิสก์จริงของเครื่องเซิร์ฟเวอร์สำนักงาน (Host Persistent Volumes)
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-mono text-blue-200">
-                    <div className="bg-white/5 p-2 rounded border border-white/10">📁 ./data/postgres (ข้อมูลตาราง)</div>
-                    <div className="bg-white/5 p-2 rounded border border-white/10">📁 ./data/minio (ไฟล์ PDF แบบ)</div>
-                    <div className="bg-white/5 p-2 rounded border border-white/10">📁 ./data/backups (ไฟล์กู้คืนระบบ)</div>
+                {/* 2. FIBER OPTIC CONDUIT LABEL & INTRANET PORT BADGE */}
+                <div className="max-w-md mx-auto text-center space-y-1">
+                  <div className="bg-gradient-to-r from-[#0F2942] to-blue-900 text-white px-5 py-3 rounded-2xl shadow-md border border-cyan-400/40 inline-flex items-center gap-2.5 text-xs font-mono font-bold">
+                    <Zap className="w-4 h-4 text-cyan-300 animate-pulse flex-shrink-0" />
+                    <span>│ (เข้าใช้งานผ่าน Port 80 / 443 ผ่านสาย Fiber Optic)</span>
                   </div>
-                  <p className="text-[11px] text-slate-300 italic pt-1">
-                    * แม้จะมีการรีสตาร์ทเครื่อง ปิด Container หรืออัปเกรดเวอร์ชันซอฟต์แวร์ ข้อมูลทั้งหมดในฮาร์ดดิสก์จริงจะไม่สูญหาย 100%
+                  <div className="flex justify-center">
+                    <div className="w-0.5 h-4 bg-indigo-500"></div>
+                  </div>
+                  <div className="text-indigo-600 font-bold text-lg leading-none">▼</div>
+                </div>
+
+                {/* 3. MAIN ON-PREMISE HOST SERVER BOX */}
+                <div className="max-w-5xl mx-auto rounded-3xl bg-slate-900 text-white p-6 sm:p-8 shadow-2xl border-4 border-slate-700 relative space-y-6">
+                  
+                  {/* Host Server Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-700">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <Server className="w-6 h-6 text-amber-400" />
+                        <h3 className="text-lg sm:text-xl font-black text-white">
+                          เครื่องเซิร์ฟเวอร์สำนักงาน (On-Premise Host Server)
+                        </h3>
+                      </div>
+                      <p className="text-xs text-slate-300 mt-1">
+                        ติดตั้งในห้อง Server ณ สำนักงานสรรพากรพื้นที่พิจิตร • รองรับระบบ Linux / Windows Server
+                      </p>
+                    </div>
+
+                    <div className="bg-slate-800 text-emerald-300 border border-emerald-500/40 px-3.5 py-1 rounded-xl text-xs font-bold flex items-center gap-2 self-start sm:self-auto">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      <span>ควบคุมข้อมูลภายในสำนักงาน 100%</span>
+                    </div>
+                  </div>
+
+                  {/* ======================================================== */}
+                  {/* DOCKER INTERNAL BRIDGE NETWORK BOX                       */}
+                  {/* ======================================================== */}
+                  <div className="rounded-2xl bg-[#0F2942]/90 border-2 border-blue-400/50 p-5 sm:p-6 space-y-6 relative overflow-hidden shadow-inner">
+                    
+                    {/* Docker Network Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-blue-400/30">
+                      <div className="flex items-center gap-2 font-mono text-xs sm:text-sm text-cyan-300 font-bold">
+                        <span>┌─ Docker Internal Bridge Network (ไม่เปิดพอร์ต DB สู่ภายนอก) ──┐</span>
+                      </div>
+                      <span className="bg-blue-600/70 text-blue-100 text-[11px] font-mono px-2.5 py-0.5 rounded-full border border-blue-400/40">
+                        Network: rct-internal-net
+                      </span>
+                    </div>
+
+                    {/* CONTAINER 1: rct-app WebApp & API Gateway */}
+                    <div className="bg-slate-800/90 rounded-2xl p-5 border-2 border-blue-400 shadow-md space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs">
+                            1
+                          </div>
+                          <span className="font-black text-sm sm:text-base text-white">
+                            [ rct-app Container ]
+                          </span>
+                        </div>
+                        <span className="text-xs font-mono bg-blue-950 text-blue-200 px-3 py-1 rounded-lg border border-blue-500/40">
+                          Next.js WebApp (Frontend + API Gateway)
+                        </span>
+                      </div>
+
+                      {/* 3 Sub-modules */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 text-xs font-mono">
+                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700 text-slate-200 flex items-center gap-2">
+                          <span className="text-cyan-400 font-bold">├──</span>
+                          <span>Authentication & Role Middleware</span>
+                        </div>
+                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700 text-slate-200 flex items-center gap-2">
+                          <span className="text-cyan-400 font-bold">├──</span>
+                          <span>PDF Processing & e-Seal Engine</span>
+                        </div>
+                        <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700 text-slate-200 flex items-center gap-2">
+                          <span className="text-cyan-400 font-bold">└──</span>
+                          <span>Prisma ORM Client</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CONNECTING PIPELINES: Port 5432 & Port 9000 */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                      
+                      {/* Left Pipe: To PostgreSQL */}
+                      <div className="flex items-center gap-2 text-emerald-300 bg-emerald-950/40 p-2 rounded-xl border border-emerald-500/30">
+                        <span className="font-bold">├── (คุยภายใน Port 5432)</span>
+                        <ArrowRight className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span className="text-[11px] text-slate-300">เข้าถึง PostgreSQL เท่านั้น</span>
+                      </div>
+
+                      {/* Right Pipe: To MinIO */}
+                      <div className="flex items-center gap-2 text-sky-300 bg-sky-950/40 p-2 rounded-xl border border-sky-500/30">
+                        <span className="font-bold">└── (คุยภายใน Port 9000)</span>
+                        <ArrowRight className="w-4 h-4 text-sky-400 flex-shrink-0" />
+                        <span className="text-[11px] text-slate-300">เข้าถึง MinIO Object Storage</span>
+                      </div>
+
+                    </div>
+
+                    {/* CONTAINERS 2, 3, 4, 5 GRID */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      
+                      {/* CONTAINER 2: PostgreSQL Database */}
+                      <div className="bg-emerald-950/50 rounded-2xl p-4.5 border-2 border-emerald-400/60 shadow-md space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-black text-xs">
+                              2
+                            </div>
+                            <span className="font-black text-sm text-emerald-300">
+                              [ rct-db Container ]
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono bg-emerald-900/80 text-emerald-200 px-2 py-0.5 rounded border border-emerald-500/40">
+                            Port 5432 (Internal)
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-white">PostgreSQL 16 Engine</p>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          ฐานข้อมูลการเงิน, คำร้อง, ผู้เสียภาษี, ข้อมูลสิทธิ์ และ Audit Logs (ไม่เปิดพอร์ตออกข้างนอก)
+                        </p>
+                      </div>
+
+                      {/* CONTAINER 3: MinIO Object Storage */}
+                      <div className="bg-sky-950/50 rounded-2xl p-4.5 border-2 border-sky-400/60 shadow-md space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center font-black text-xs">
+                              3
+                            </div>
+                            <span className="font-black text-sm text-sky-300">
+                              [ rct-storage Container ]
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono bg-sky-900/80 text-sky-200 px-2 py-0.5 rounded border border-sky-500/40">
+                            Port 9000 (Internal)
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-white">MinIO Object Storage</p>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          จัดเก็บไฟล์แบบภาษี PDF ต้นฉบับ, เอกสารรับรอง e-Seal และภาพสลิปหลักฐานอย่างปลอดภัย
+                        </p>
+                      </div>
+
+                      {/* CONTAINER 4: Daily Backup Container */}
+                      <div className="bg-purple-950/50 rounded-2xl p-4.5 border-2 border-purple-400/60 shadow-md space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center font-black text-xs">
+                              4
+                            </div>
+                            <span className="font-black text-sm text-purple-300">
+                              [ rct-backup Container ]
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono bg-purple-900/80 text-purple-200 px-2 py-0.5 rounded border border-purple-500/40">
+                            Cron: @daily
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-white">pg_dump สำรองข้อมูลทุกคืน</p>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          ดูดแบ็กอัปอัตโนมัติจาก rct-db บีบอัด .sql.gz เก็บย้อนหลัง 30 วันลงฮาร์ดดิสก์จริง
+                        </p>
+                      </div>
+
+                      {/* CONTAINER 5: pgAdmin Database Management */}
+                      <div className="bg-slate-800/80 rounded-2xl p-4.5 border border-slate-600 shadow-md space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg bg-slate-700 text-white flex items-center justify-center font-black text-xs">
+                              5
+                            </div>
+                            <span className="font-black text-sm text-slate-200">
+                              [ rct-pgadmin Container ]
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono bg-amber-900/70 text-amber-200 px-2 py-0.5 rounded border border-amber-500/40">
+                            Port 8080 (เฉพาะ IT)
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-white">คอนโซลจัดการฐานข้อมูล</p>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          หน้าจอเว็บสำหรับเจ้าหน้าที่ไอทีของสำนักงาน เข้าดูโครงสร้างตาราง ตรวจสอบ และดูแลระบบ
+                        </p>
+                      </div>
+
+                    </div>
+
+                    {/* Docker Footer Line */}
+                    <div className="pt-2 border-t border-blue-400/30 text-center text-xs font-mono text-cyan-300">
+                      <span>└──────────────────────────────────────────┼──────────────────────────────────┘</span>
+                    </div>
+
+                  </div>
+
+                  {/* Connecting Arrow Down to Host Persistent Storage */}
+                  <div className="flex flex-col items-center justify-center text-amber-400 font-mono font-bold leading-none">
+                    <div className="w-1 h-4 bg-amber-400"></div>
+                    <div className="text-xl">▼</div>
+                  </div>
+
+                  {/* ======================================================== */}
+                  {/* HOST PERSISTENT STORAGE BOX                              */}
+                  {/* ======================================================== */}
+                  <div className="rounded-2xl bg-black/50 border-2 border-amber-400/60 p-5 space-y-3">
+                    
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-amber-300 font-bold text-sm sm:text-base">
+                        <HardDrive className="w-5 h-5 text-amber-400" />
+                        <span>[ Host Persistent Storage ฮาร์ดดิสก์จริงของเครื่องเซิร์ฟเวอร์ ]</span>
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
+                        ข้อมูลไม่สูญหายเมื่อปิด Container 100%
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs">
+                      
+                      <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-700 space-y-1">
+                        <div className="text-amber-300 font-bold flex items-center gap-1.5">
+                          <span>├──</span>
+                          <span>./data/postgres</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 pl-6">
+                          ข้อมูลตารางและธุรกรรมทั้งหมด - ปลอดภัย ไม่หายเมื่อปิด container
+                        </p>
+                      </div>
+
+                      <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-700 space-y-1">
+                        <div className="text-amber-300 font-bold flex items-center gap-1.5">
+                          <span>├──</span>
+                          <span>./data/minio</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 pl-6">
+                          ไฟล์เอกสาร PDF ราชการ แบบแสดงรายการภาษี และใบเสร็จ
+                        </p>
+                      </div>
+
+                      <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-700 space-y-1">
+                        <div className="text-amber-300 font-bold flex items-center gap-1.5">
+                          <span>└──</span>
+                          <span>./data/backups</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 pl-6">
+                          ไฟล์สำรองฐานข้อมูล .sql.gz ย้อนหลัง 30 วัน กู้คืนได้ทันที
+                        </p>
+                      </div>
+
+                    </div>
+
+                    <p className="text-[11px] text-slate-400 italic pt-1 text-center">
+                      * ผูก Mount Volumes ระหว่าง Container กับ Disk จริงของเครื่อง Host ทำให้เซิร์ฟเวอร์ดับหรือเปลี่ยนเครื่อง ข้อมูลก็ยังอยู่ครบถ้วน
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* =================================================================== */}
+            {/* VIEW MODE 2: OFFICIAL BLUEPRINT ASCII DIAGRAM (MATCHING ATTACHED IMAGE) */}
+            {/* =================================================================== */}
+            {diagramView === "blueprint" && (
+              <div className="space-y-4 animate-fadeIn">
+                
+                <div className="flex items-center justify-between bg-slate-900 text-white px-5 py-3 rounded-t-2xl border-x-2 border-t-2 border-slate-700">
+                  <div className="flex items-center gap-2.5">
+                    <Terminal className="w-4 h-4 text-emerald-400" />
+                    <span className="font-mono text-xs font-bold text-slate-200">
+                      architecture_blueprint.txt • Official System Topology Specifications
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleCopy(`[ เครือข่าย LAN ภายใน (Intranet) ผ่านสาย Fiber Optic กรมสรรพากร ]
+                                      │
+            ┌─────────────────────────┴─────────────────────────┐
+            │                                                   │
+  [ เครื่องเคาน์เตอร์สาขา A ]                            [ เครื่องเคาน์เตอร์สาขา B ]
+ (Smart Card Reader + WebApp)                         (Smart Card Reader + WebApp)
+            │                                                   │
+            └─────────────────────────┬─────────────────────────┘
+                                      │ (เข้าใช้งานผ่าน Port 80 / 443 ผ่านสาย Fiber Optic)
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ เครื่องเซิร์ฟเวอร์สำนักงาน (On-Premise Host Server ณ สำนักงานสรรพากรพื้นที่พิจิตร)│
+│                                                                             │
+│  ┌─ Docker Internal Bridge Network (ไม่เปิดพอร์ต DB สู่ภายนอก) ──────────┐  │
+│  │                                                                       │  │
+│  │  1. [ rct-app Container ]                                             │  │
+│  │     Next.js WebApp (Frontend + API Gateway)                          │  │
+│  │     ├── Authentication & Role Middleware                              │  │
+│  │     ├── PDF Processing & e-Seal Engine                                 │  │
+│  │     └── Prisma ORM Client                                              │  │
+│  │             │                                                         │  │
+│  │             ├── (คุยภายใน Port 5432) ────────┐                        │  │
+│  │             │                                ▼                        │  │
+│  │             │                     2. [ rct-db Container ]             │  │
+│  │             │                        PostgreSQL 16 Engine             │  │
+│  │             │                                │                        │  │
+│  │             └── (คุยภายใน Port 9000) ──┐     │                        │  │
+│  │                                        ▼     ▼                        │  │
+│  │  3. [ rct-storage Container ]     4. [ rct-backup Container ]         │  │
+│  │     MinIO Object Storage             pg_dump สำรองข้อมูลทุกคืน         │  │
+│  │     (เก็บ PDF และรูปภาพ)             (เก็บประวัติย้อนหลัง 30 วัน)      │  │
+│  │                                              │                        │  │
+│  │  5. [ rct-pgadmin Container ] (Port 8080 เฉพาะเครื่อง IT สำนักงาน)    │  │
+│  └──────────────────────────────────────────────┼────────────────────────┘  │
+│                                                 ▼                           │
+│  [ Host Persistent Storage ฮาร์ดดิสก์จริงของเครื่องเซิร์ฟเวอร์ ]             │
+│  ├── ./data/postgres (ข้อมูลตารางและธุรกรรมทั้งหมด - ไม่หายเมื่อปิด container)│
+│  ├── ./data/minio    (ไฟล์เอกสาร PDF ราชการและใบเสร็จ)                      │
+│  └── ./data/backups  (ไฟล์สำรองฐานข้อมูล .sql.gz รายวัน)                    │
+└─────────────────────────────────────────────────────────────────────────────┘`, "blueprint_full")}
+                    className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  >
+                    {copiedSnippet === "blueprint_full" ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-300" />
+                        <span>คัดลอกเรียบร้อย!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Terminal className="w-3.5 h-3.5" />
+                        <span>คัดลอกผังข้อความ (Copy Diagram)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Monospace Code Blueprint Container */}
+                <div className="bg-[#0B132B] text-cyan-300 p-5 sm:p-7 rounded-b-2xl border-x-2 border-b-2 border-slate-700 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed shadow-xl">
+                  <pre className="select-all">
+{`          [ เครือข่าย LAN ภายใน (Intranet) วิ่งผ่านสาย Fiber Optic กรมสรรพากร ]
+                                      │
+            ┌─────────────────────────┴─────────────────────────┐
+            │                                                   │
+  [ เครื่องเคาน์เตอร์สาขา A ]                            [ เครื่องเคาน์เตอร์สาขา B ]
+ (Smart Card Reader + WebApp)                         (Smart Card Reader + WebApp)
+            │                                                   │
+            └─────────────────────────┬─────────────────────────┘
+                                      │ (เข้าใช้งานผ่าน Port 80 / 443 ผ่านสาย Fiber Optic)
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ เครื่องเซิร์ฟเวอร์สำนักงาน (On-Premise Host Server ณ สท.พิจิตร)              │
+│                                                                             │
+│  ┌─ Docker Internal Bridge Network (ไม่เปิดพอร์ต DB สู่ภายนอก) ──────────┐  │
+│  │                                                                       │  │
+│  │  1. [ rct-app Container ]                                             │  │
+│  │     Next.js WebApp (Frontend + API Gateway)                          │  │
+│  │     ├── Authentication & Role Middleware                              │  │
+│  │     ├── PDF Processing & e-Seal Engine                                 │  │
+│  │     └── Prisma ORM Client                                              │  │
+│  │             │                                                         │  │
+│  │             ├── (คุยภายใน Port 5432) ────────┐                        │  │
+│  │             │                                ▼                        │  │
+│  │             │                     2. [ rct-db Container ]             │  │
+│  │             │                        PostgreSQL 16 Engine             │  │
+│  │             │                                │                        │  │
+│  │             └── (คุยภายใน Port 9000) ──┐     │                        │  │
+│  │                                        ▼     ▼                        │  │
+│  │  3. [ rct-storage Container ]     4. [ rct-backup Container ]         │  │
+│  │     MinIO Object Storage             pg_dump สำรองข้อมูลทุกคืน         │  │
+│  │     (เก็บ PDF และรูปภาพ)             (เก็บประวัติย้อนหลัง 30 วัน)      │  │
+│  │                                              │                        │  │
+│  │  5. [ rct-pgadmin Container ] (Port 8080 เฉพาะเครื่อง IT สำนักงาน)    │  │
+│  └──────────────────────────────────────────────┼────────────────────────┘  │
+│                                                 ▼                           │
+│  [ Host Persistent Storage ฮาร์ดดิสก์จริงของเครื่องเซิร์ฟเวอร์ ]             │
+│  ├── ./data/postgres (ข้อมูลตารางและธุรกรรมทั้งหมด - ไม่หายเมื่อปิด container)│
+│  ├── ./data/minio    (ไฟล์เอกสาร PDF ราชการและใบเสร็จ)                      │
+│  └── ./data/backups  (ไฟล์สำรองฐานข้อมูล .sql.gz รายวัน)                    │
+└─────────────────────────────────────────────────────────────────────────────┘`}
+                  </pre>
+                </div>
+
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl text-xs text-blue-900 flex items-start gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <p>
+                    <strong>จุดเด่นสำหรับนำเสนอ:</strong> ผังโครงสร้างนี้แสดงให้คณะกรรมการเห็นอย่างชัดเจนว่า เครือข่ายที่ใช้เป็น <strong>สาย Fiber Optic วงแลนภายใน (Intranet)</strong> ไม่มีการเชื่อมต่อกับ Public Internet ภายนอก และฐานข้อมูล <strong>PostgreSQL 16</strong> ถูกซ่อนอยู่หลัง Docker Network โดยไม่มีการเปิดพอร์ต 5432 ออกมาภายนอก จึงปลอดภัยจากการถูกโจมตีทางไซเบอร์ 100%
                   </p>
                 </div>
 
               </div>
-            </div>
+            )}
 
           </div>
 
