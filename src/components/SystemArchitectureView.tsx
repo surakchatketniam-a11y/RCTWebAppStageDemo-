@@ -35,7 +35,10 @@ import {
   Check,
   Landmark,
   CreditCard,
-  Receipt
+  Receipt,
+  Download,
+  Maximize2,
+  Image as ImageIcon
 } from "lucide-react";
 
 interface SystemArchitectureViewProps {
@@ -44,7 +47,7 @@ interface SystemArchitectureViewProps {
 }
 
 export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: SystemArchitectureViewProps) {
-  const [activeTab, setActiveTab] = useState<"topology" | "tech_stack" | "security" | "roi">("topology");
+  const [activeTab, setActiveTab] = useState<"infographic" | "topology" | "tech_stack" | "security" | "roi">("infographic");
   const [diagramView, setDiagramView] = useState<"visual" | "blueprint">("visual");
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
@@ -150,6 +153,18 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
       {/* 2. INTERACTIVE TAB NAVIGATION */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 flex flex-wrap gap-2">
         <button
+          onClick={() => setActiveTab("infographic")}
+          className={`flex-1 min-w-[170px] py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
+            activeTab === "infographic"
+              ? "bg-gradient-to-r from-[#0F2942] via-blue-900 to-indigo-900 text-white shadow-md ring-2 ring-amber-400/60"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+          <span>๑. ภาพรวมระบบ (Infographic 16:9)</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab("topology")}
           className={`flex-1 min-w-[170px] py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
             activeTab === "topology"
@@ -158,7 +173,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
           }`}
         >
           <Network className="w-4 h-4 text-blue-400" />
-          <span>๑. ผังสถาปัตยกรรมระบบ (Topology)</span>
+          <span>๒. ผังสถาปัตยกรรม (Topology)</span>
         </button>
 
         <button
@@ -170,7 +185,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
           }`}
         >
           <Layers className="w-4 h-4 text-emerald-400" />
-          <span>๒. เทคโนโลยีที่เลือกใช้ (Tech Stack)</span>
+          <span>๓. เทคโนโลยีที่เลือกใช้ (Tech Stack)</span>
         </button>
 
         <button
@@ -182,7 +197,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
           }`}
         >
           <ShieldCheck className="w-4 h-4 text-purple-400" />
-          <span>๓. มาตรการความปลอดภัย & PDPA</span>
+          <span>๔. ความปลอดภัย & PDPA</span>
         </button>
 
         <button
@@ -194,9 +209,189 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
           }`}
         >
           <TrendingUp className="w-4 h-4 text-rose-400" />
-          <span>๔. ความคุ้มค่าและผลประโยชน์ (ROI)</span>
+          <span>๕. ความคุ้มค่า (ROI)</span>
         </button>
       </div>
+
+      {/* ===================================================================== */}
+      {/* TAB 0: EXECUTIVE SYSTEM INFOGRAPHIC (16:9 HIGH RESOLUTION POSTER)     */}
+      {/* ===================================================================== */}
+      {activeTab === "infographic" && (
+        <div className="space-y-6 animate-fadeIn">
+          
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+            
+            {/* Infographic Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    Executive Presentation (16:9 Widescreen)
+                  </span>
+                  <span className="bg-blue-100 text-blue-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                    โทนสว่าง มองภาพเดียวเข้าใจทั้งระบบ
+                  </span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5 mt-1.5">
+                  <Sparkles className="w-6 h-6 text-amber-500 flex-shrink-0" />
+                  ภาพรวมสถาปัตยกรรมและกระบวนการให้บริการระบบ RCT WebApp
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                  สรุปการเชื่อมโยงระบบแบบครบวงจร: จากเคาน์เตอร์สาขา สู่สาย Fiber Optic เข้าแม่ข่ายกลาง สท.พิจิตร จนถึงการพิมพ์เอกสารลายน้ำ e-Seal
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 self-start md:self-auto">
+                <a
+                  href="/rct_system_infographic.jpg"
+                  download="RCT_WebApp_System_Infographic_16x9.jpg"
+                  className="px-4 py-2.5 bg-[#0F2942] hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-amber-400" />
+                  <span>ดาวน์โหลดภาพ 16:9 สำหรับนำเสนอ</span>
+                </a>
+                <a
+                  href="/rct_system_infographic.jpg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition border border-slate-300"
+                  title="เปิดดูภาพความละเอียดสูงเต็มจอ"
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* 16:9 Poster Display Box */}
+            <div className="relative rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl bg-slate-50 group">
+              <img
+                src="/rct_system_infographic.jpg"
+                alt="ภาพอินโฟกราฟิกสรุปภาพรวมระบบ RCT WebApp อัตราส่วน 16:9 โทนสว่าง"
+                className="w-full h-auto object-cover rounded-2xl transition duration-300 group-hover:scale-[1.01]"
+              />
+            </div>
+
+            {/* 4 Process Workflow Cards Matching Infographic */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+              
+              {/* Step 1 Card */}
+              <div className="bg-gradient-to-br from-blue-50/60 to-white p-4.5 rounded-2xl border-2 border-blue-200 shadow-2xs space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                    1
+                  </div>
+                  <span className="font-extrabold text-sm text-slate-900">
+                    เคาน์เตอร์สาขา (Front-Office)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  • <strong>Smart Card Dip-Chip:</strong> เสียบอ่านบัตรประชาชน ดึงเลข 13 หลักอัตโนมัติ<br />
+                  • <strong>Thai QR Payment:</strong> จอเคาน์เตอร์แสดง QR ล็อคยอด 40 บาท เงินเข้าบัญชีราชการ<br />
+                  • <strong>2D Barcode Scanner:</strong> สแกน Mini-QR บนสลิปมือถือยืนยันใน 0.1 วินาที
+                </p>
+              </div>
+
+              {/* Step 2 Card */}
+              <div className="bg-gradient-to-br from-emerald-50/60 to-white p-4.5 rounded-2xl border-2 border-emerald-200 shadow-2xs space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                    2
+                  </div>
+                  <span className="font-extrabold text-sm text-slate-900">
+                    วงแลน Fiber Optic (Intranet)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  • <strong>High-Speed WAN:</strong> เชื่อมตรงจาก สส.สาขาทั่วจังหวัด สู่ สท.พิจิตร<br />
+                  • <strong>Closed Air-Gapped:</strong> วงแลนปิด 100% ไม่ผ่านอินเทอร์เน็ตสาธารณะ<br />
+                  • <strong>Zero Attack Surface:</strong> แฮกเกอร์จากภายนอกไม่สามารถเจาะระบบได้
+                </p>
+              </div>
+
+              {/* Step 3 Card */}
+              <div className="bg-gradient-to-br from-indigo-50/60 to-white p-4.5 rounded-2xl border-2 border-indigo-200 shadow-2xs space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                    3
+                  </div>
+                  <span className="font-extrabold text-sm text-slate-900">
+                    แม่ข่ายกลาง สท.พิจิตร (Hub)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  • <strong>On-Premise Server:</strong> เครื่องเซิร์ฟเวอร์ในห้องแม่ข่ายสำนักงาน<br />
+                  • <strong>Docker & PostgreSQL 16:</strong> ฐานข้อมูล ACID 100% ฟรีค่า License<br />
+                  • <strong>MinIO Vault:</strong> คลังจัดเก็บเอกสารแบบภาษีและใบเสร็จรับเงิน
+                </p>
+              </div>
+
+              {/* Step 4 Card */}
+              <div className="bg-gradient-to-br from-purple-50/60 to-white p-4.5 rounded-2xl border-2 border-purple-200 shadow-2xs space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-purple-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                    4
+                  </div>
+                  <span className="font-extrabold text-sm text-slate-900">
+                    ผลลัพธ์ & ตรวจรับรอง (Output)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  • <strong>Targeted Watermark:</strong> ลายน้ำระบุสถาบันการเงิน ป้องกันเวียนเทียน<br />
+                  • <strong>Digital e-Seal & QR Hash:</strong> ตรารับรองความถูกต้องอิเล็กทรอนิกส์<br />
+                  • <strong>Print Quota Lock:</strong> ล็อคพิมพ์ตรงตามใบเสร็จ ป้องกันเงินรั่วไหล
+                </p>
+              </div>
+
+            </div>
+
+            {/* Bottom 4 KPI Badges */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2">
+              <div className="bg-slate-900 text-white p-3.5 rounded-xl border border-slate-700 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-black text-xs flex-shrink-0">
+                  KPI 1
+                </div>
+                <div>
+                  <p className="font-black text-sm text-white">ส่งมอบใน ๑๐ นาที</p>
+                  <p className="text-[11px] text-slate-400">จากเดิมต้องรอคอย ๑๕ วัน</p>
+                </div>
+              </div>
+
+              <div className="bg-slate-900 text-white p-3.5 rounded-xl border border-slate-700 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-black text-xs flex-shrink-0">
+                  KPI 2
+                </div>
+                <div>
+                  <p className="font-black text-sm text-white">100% Closed Intranet</p>
+                  <p className="text-[11px] text-slate-400">ปลอดภัยสูงสุดตามกฎหมาย PDPA</p>
+                </div>
+              </div>
+
+              <div className="bg-slate-900 text-white p-3.5 rounded-xl border border-slate-700 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-xs flex-shrink-0">
+                  KPI 3
+                </div>
+                <div>
+                  <p className="font-black text-sm text-white">๐ บาท ค่าลิขสิทธิ์</p>
+                  <p className="text-[11px] text-slate-400">ซอฟต์แวร์ Open-Source ทั้งระบบ</p>
+                </div>
+              </div>
+
+              <div className="bg-slate-900 text-white p-3.5 rounded-xl border border-slate-700 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xs flex-shrink-0">
+                  KPI 4
+                </div>
+                <div>
+                  <p className="font-black text-sm text-white">Print Quota Lock</p>
+                  <p className="text-[11px] text-slate-400">ป้องกันการพิมพ์ซ้ำและเงินรั่วไหล</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       {/* ===================================================================== */}
       {/* TAB 1: TOPOLOGY & DOCKER ARCHITECTURE (FIBER OPTIC INTRANET) */}
