@@ -348,12 +348,12 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
             {/* Bottom 4 KPI Badges */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2">
               <div className="bg-slate-900 text-white p-3.5 rounded-xl border border-slate-700 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-black text-xs flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-xs flex-shrink-0">
                   KPI 1
                 </div>
                 <div>
-                  <p className="font-black text-sm text-white">ส่งมอบใน ๑๐ นาที</p>
-                  <p className="text-[11px] text-slate-400">จากเดิมต้องรอคอย ๑๕ วัน</p>
+                  <p className="font-black text-sm text-white">ลดเดินทาง ๖๐-๑๒๐ กม.</p>
+                  <p className="text-[11px] text-slate-400">ประหยัดเวลา ๒ ชม. ยื่นสาขาใกล้บ้าน</p>
                 </div>
               </div>
 
