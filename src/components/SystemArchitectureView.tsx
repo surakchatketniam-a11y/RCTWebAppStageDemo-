@@ -299,13 +299,13 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                     2
                   </div>
                   <span className="font-extrabold text-sm text-slate-900">
-                    วงแลน Fiber Optic (Intranet)
+                    ระบบฐานข้อมูลหลัก (Database)
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  • <strong>High-Speed WAN:</strong> เชื่อมตรงจาก สส.สาขาทั่วจังหวัด สู่ สท.พิจิตร<br />
-                  • <strong>Closed Air-Gapped:</strong> วงแลนปิด 100% ไม่ผ่านอินเทอร์เน็ตสาธารณะ<br />
-                  • <strong>Zero Attack Surface:</strong> แฮกเกอร์จากภายนอกไม่สามารถเจาะระบบได้
+                  • <strong>PostgreSQL 16 (On-Premise):</strong> ฐานข้อมูลติดตั้งในสำนักงาน มาตรฐาน ACID การเงิน 100%<br />
+                  • <strong>MinIO Document Vault:</strong> คลังจัดเก็บเอกสารแบบภาษีและใบเสร็จอย่างปลอดภัย<br />
+                  • <strong>Zero License Fee:</strong> สถาปัตยกรรม Open-Source ไร้ค่าลิขสิทธิ์ซอฟต์แวร์
                 </p>
               </div>
 
@@ -316,13 +316,13 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                     3
                   </div>
                   <span className="font-extrabold text-sm text-slate-900">
-                    แม่ข่ายกลาง สท.พิจิตร (Hub)
+                    ศูนย์ประมวลผลส่วนคัดแบบ
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  • <strong>On-Premise Server:</strong> เครื่องเซิร์ฟเวอร์ในห้องแม่ข่ายสำนักงาน<br />
-                  • <strong>Docker & PostgreSQL 16:</strong> ฐานข้อมูล ACID 100% ฟรีค่า License<br />
-                  • <strong>MinIO Vault:</strong> คลังจัดเก็บเอกสารแบบภาษีและใบเสร็จรับเงิน
+                  • <strong>สืบค้นแบบแสดงรายการภาษี:</strong> ค้นหาแบบ ภ.ง.ด.90/91/50 ได้รวดเร็วใน 1 นาที<br />
+                  • <strong>สถาปัตยกรรม Docker:</strong> ควบคุมระบบแยกส่วน เสถียรสูง กู้คืนระบบได้ทันที<br />
+                  • <strong>ตรวจสอบความถูกต้อง:</strong> ตรวจยอดชำระเงินและออกใบเสร็จราชการ
                 </p>
               </div>
 
@@ -333,13 +333,13 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                     4
                   </div>
                   <span className="font-extrabold text-sm text-slate-900">
-                    ผลลัพธ์ & ตรวจรับรอง (Output)
+                    เอกสารผลลัพธ์ & ปลอดภัย
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  • <strong>Targeted Watermark:</strong> ลายน้ำระบุสถาบันการเงิน ป้องกันเวียนเทียน<br />
+                  • <strong>Targeted Watermark:</strong> ลายน้ำระบุสถาบันการเงิน ป้องกันเวียนเทียนยื่นกู้<br />
                   • <strong>Digital e-Seal & QR Hash:</strong> ตรารับรองความถูกต้องอิเล็กทรอนิกส์<br />
-                  • <strong>Print Quota Lock:</strong> ล็อคพิมพ์ตรงตามใบเสร็จ ป้องกันเงินรั่วไหล
+                  • <strong>Print Quota Lock:</strong> ล็อคพิมพ์ตรงตามใบเสร็จ ป้องกันเงินรั่วไหล 100%
                 </p>
               </div>
 
