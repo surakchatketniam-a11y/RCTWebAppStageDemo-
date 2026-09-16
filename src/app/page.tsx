@@ -4179,7 +4179,7 @@ export default function RCTDemoApp() {
               <div className="p-4 bg-slate-100 border border-slate-300 rounded-xl space-y-1.5">
                 <span className="font-extrabold text-slate-950 text-base block">ขั้นตอนที่ ๖ : แดชบอร์ด SLA & ผู้บริหาร</span>
                 <p className="text-slate-700"><strong>การกระทำ:</strong> กดปุ่มส่งมอบ แล้วกระโดดไปหน้าแดชบอร์ด SLA</p>
-                <p className="text-slate-900 font-semibold"><strong>บทพูด:</strong> "ส่งผลให้ภาพรวมลดระยะเวลาจาก 1-2 วัน เหลือเพียง 4.2 นาที ความพึงพอใจ 99.4% และข้อมูลเชื่อมโยงโปร่งใสตรวจสอบได้ทุกขั้นตอนครับ"</p>
+                <p className="text-slate-900 font-semibold"><strong>บทพูด:</strong> "ส่งผลให้ภาพรวมลดระยะเวลา เหลือไม่เกิน 10 นาที ความพึงพอใจ 99.4% และข้อมูลเชื่อมโยงโปร่งใสตรวจสอบได้ทุกขั้นตอนครับ"</p>
               </div>
 
             </div>

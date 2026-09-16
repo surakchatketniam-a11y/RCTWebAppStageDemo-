@@ -40,6 +40,7 @@ import {
   Maximize2,
   Image as ImageIcon
 } from "lucide-react";
+import UmphangCaseInfographic from "./UmphangCaseInfographic";
 
 interface SystemArchitectureViewProps {
   onGoToDemo: () => void;
@@ -48,6 +49,7 @@ interface SystemArchitectureViewProps {
 
 export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: SystemArchitectureViewProps) {
   const [activeTab, setActiveTab] = useState<"infographic" | "topology" | "tech_stack" | "security" | "roi">("infographic");
+  const [infographicSubView, setInfographicSubView] = useState<"system" | "umphang">("system");
   const [diagramView, setDiagramView] = useState<"visual" | "blueprint">("visual");
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
@@ -218,8 +220,10 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
       {/* ===================================================================== */}
       {activeTab === "infographic" && (
         <div className="space-y-6 animate-fadeIn">
-          
-          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+          {infographicSubView === "umphang" ? (
+            <UmphangCaseInfographic onBackToSystem={() => setInfographicSubView("system")} />
+          ) : (
+            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
             
             {/* Infographic Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
@@ -241,25 +245,36 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2.5 self-start md:self-auto">
-                <a
-                  href="/rct_system_infographic.jpg"
-                  download="RCT_WebApp_System_Infographic_16x9.jpg"
-                  className="px-4 py-2.5 bg-[#0F2942] hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer"
+              {/* Action Buttons & Yellow-Box Switcher */}
+              <div className="flex flex-col sm:items-end gap-2.5 self-start md:self-auto">
+                {/* Button placed at the user's yellow box */}
+                <button
+                  onClick={() => setInfographicSubView("umphang")}
+                  className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-rose-600 via-amber-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white font-extrabold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition cursor-pointer ring-2 ring-amber-300/70 hover:scale-[1.02]"
                 >
-                  <Download className="w-4 h-4 text-amber-400" />
-                  <span>ดาวน์โหลดภาพ 16:9 สำหรับนำเสนอ</span>
-                </a>
-                <a
-                  href="/rct_system_infographic.jpg"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition border border-slate-300"
-                  title="เปิดดูภาพความละเอียดสูงเต็มจอ"
-                >
-                  <Maximize2 className="w-4 h-4" />
-                </a>
+                  <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
+                  <span>⚡ จุดตัดความคุ้มค่า (อุ้มผาง-ตาก)</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href="/rct_system_infographic.jpg"
+                    download="RCT_WebApp_System_Infographic_16x9.jpg"
+                    className="px-4 py-2.5 bg-[#0F2942] hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 text-amber-400" />
+                    <span>ดาวน์โหลดภาพ 16:9 สำหรับนำเสนอ</span>
+                  </a>
+                  <a
+                    href="/rct_system_infographic.jpg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition border border-slate-300"
+                    title="เปิดดูภาพความละเอียดสูงเต็มจอ"
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -389,6 +404,7 @@ export default function SystemArchitectureView({ onGoToDemo, onGoToLanding }: Sy
             </div>
 
           </div>
+          )}
 
         </div>
       )}
